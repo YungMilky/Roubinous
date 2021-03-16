@@ -1,0 +1,12 @@
+{
+  "name": "Roubine",
+  "displayName": "Roubine",
+  "expo": {
+    "name": "Roubine",
+    "slug": "Roubine",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
