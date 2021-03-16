@@ -10,7 +10,7 @@ import Screen from '../components/Screen';
 import colors from '../config/colors';
 import { TouchableOpacity } from 'react-native';
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }) => {
   const user = auth.currentUser;
 
   const [name, setName] = useState('');
@@ -62,7 +62,10 @@ const ProfileScreen = () => {
                 having your own avatar!
               </Text>
               <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.rowButton}>
+                <TouchableOpacity
+                  style={styles.rowButton}
+                  onPress={() => navigation.navigate('Register')}
+                >
                   <MaterialCommunityIcons
                     name="creation"
                     size={40}
@@ -70,7 +73,10 @@ const ProfileScreen = () => {
                   />
                   <Text style={styles.buttonText}>Register</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.rowButton}>
+                <TouchableOpacity
+                  style={styles.rowButton}
+                  onPress={() => navigation.navigate('Login')}
+                >
                   <MaterialCommunityIcons
                     name="login"
                     size={40}

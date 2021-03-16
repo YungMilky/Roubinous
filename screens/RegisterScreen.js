@@ -18,6 +18,9 @@ const RegisterScreen = () => {
       .then((cred) => {
         return db.collection('Users').doc(cred.user.uid).set({
           Name: name,
+          Guest: false,
+          UserRank: 'Amateur',
+          Roubies: 100,
           //   .then().navigation.navigate('Profile');
         });
       })
