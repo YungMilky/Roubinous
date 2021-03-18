@@ -4,11 +4,9 @@ import { Input, Button } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 import { db, auth } from '../firebase';
 
-import Screen from '../components/Screen';
 import AppButton from '../components/AppButton';
 import colors from '../config/colors';
 import PropTypes from 'prop-types';
-import RoubineShower from '../components/RoubineViewer';
 
 const WelcomeScreen = ({ navigation }) => {
   const [name, setName] = useState('');

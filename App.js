@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import 'react-native-gesture-handler';
@@ -10,13 +11,27 @@ import WelcomeScreen from './screens/WelcomeScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import HomeScreen from './screens/HomeScreen';
+=======
+import React from "react";
+import { StyleSheet } from "react-native";
+
+import "react-native-gesture-handler";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+
+import LoginScreen from "./screens/LoginScreen";
+import WelcomeScreen from "./screens/WelcomeScreen";
+import RegisterScreen from "./screens/RegisterScreen";
+import ProfileScreen from "./screens/ProfileScreen";
+import RoutinesScreen from "./screens/RoutinesScreen";
+>>>>>>> 515541efdd3adca03679dd6d008569266a74f72c
 
 const Stack = createStackNavigator();
 
 const globalScreenOptions = {
-  headerStyle: { backgroundColor: '#121212' },
-  headerTitleStyle: { color: 'white' },
-  headerTintColor: 'white',
+  headerStyle: { backgroundColor: "#121212" },
+  headerTitleStyle: { color: "white" },
+  headerTintColor: "white",
 };
 
 export default function App() {
@@ -42,6 +57,7 @@ export default function App() {
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Routines" component={RoutinesScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -51,9 +67,9 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'blue',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "blue",
+    alignItems: "center",
+    justifyContent: "center",
   },
   input: {
     marginTop: 200,
