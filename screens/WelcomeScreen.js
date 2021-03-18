@@ -56,11 +56,6 @@ const WelcomeScreen = ({ navigation }) => {
           <Text>Register</Text>
         </Text>
       </TouchableOpacity>
-
-      <AppButton
-        title="Profile"
-        onPress={() => navigation.navigate('Profile')}
-      />
     </View>
   );
 };

@@ -4,7 +4,7 @@ import { db, auth } from '../firebase';
 
 import colors from '../config/colors';
 
-function RoubineShower(props) {
+function RoubineViewer(props) {
   const [roubies, setRoubies] = useState('');
 
   const getUserInfo = () => {
@@ -40,4 +40,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RoubineShower;
+export default RoubineViewer;

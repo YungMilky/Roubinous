@@ -7,7 +7,7 @@ import { auth, db } from '../firebase';
 import PropTypes from 'prop-types';
 import { KeyboardAvoidingView } from 'react-native';
 
-const RegisterScreen = () => {
+const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
