@@ -8,6 +8,7 @@ import Screen from '../components/Screen';
 import AppButton from '../components/AppButton';
 import colors from '../config/colors';
 import PropTypes from 'prop-types';
+import RoubineShower from '../components/RoubineViewer';
 
 const WelcomeScreen = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -77,6 +78,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.samBlack,
     justifyContent: 'center',
     alignItems: 'center',
+    flex: 1,
   },
   input: {
     width: '80%',

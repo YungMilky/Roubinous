@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Avatar } from 'react-native-elements';
 // import firestore from '@react-native-firebase/firestore';
 import { db, auth } from '../firebase';
@@ -8,7 +8,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import Screen from '../components/Screen';
 import colors from '../config/colors';
-import { TouchableOpacity } from 'react-native';
+import RoubineShower from '../components/RoubineViewer';
 
 const ProfileScreen = ({ navigation }) => {
   const user = auth.currentUser;
@@ -48,6 +48,7 @@ const ProfileScreen = ({ navigation }) => {
           {!guest ? ( //if (guest == false)
             <View style={styles.bodyContent}>
               <Text style={styles.info}>Rank: {userRank}</Text>
+              <RoubineShower />
               <Text style={styles.info}>Roubies: {roubies}</Text>
               <Text style={styles.description}>
                 Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum
