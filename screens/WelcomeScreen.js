@@ -1,21 +1,19 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Input, Button } from 'react-native-elements';
-import { StatusBar } from 'expo-status-bar';
-import { db, auth } from '../firebase';
+import React, { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Input, Button } from "react-native-elements";
+import { StatusBar } from "expo-status-bar";
+import { db, auth } from "../firebase";
 
-import Screen from '../components/Screen';
-import AppButton from '../components/AppButton';
-import colors from '../config/colors';
-import PropTypes from 'prop-types';
-import RoubineShower from '../components/RoubineViewer';
+import AppButton from "../components/AppButton";
+import colors from "../config/colors";
+import PropTypes from "prop-types";
 
 const WelcomeScreen = ({ navigation }) => {
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
 
   const signInAnonymously = () => {
     auth.signInAnonymously().then((cred) => {
-      return db.collection('Users').doc(cred.user.uid).set({
+      return db.collection("Users").doc(cred.user.uid).set({
         Name: name,
         Guest: true,
       });
@@ -43,23 +41,27 @@ const WelcomeScreen = ({ navigation }) => {
       />
       <AppButton
         title="Go to Login"
-        onPress={() => navigation.navigate('Login')}
+        onPress={() => navigation.navigate("Login")}
       />
       <TouchableOpacity>
         <Text
           title="Register"
           onPress={() => {
-            navigation.navigate('Register');
+            navigation.navigate("Register");
           }}
         >
-          {' '}
+          {" "}
           <Text>Register</Text>
         </Text>
       </TouchableOpacity>
 
       <AppButton
         title="Profile"
-        onPress={() => navigation.navigate('Profile')}
+        onPress={() => navigation.navigate("Profile")}
+      />
+      <AppButton
+        title="Routines"
+        onPress={() => navigation.navigate("Routines")}
       />
     </View>
   );
@@ -69,19 +71,19 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: colors.samBlack,
     borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 15,
     marginVertical: 10,
   },
   container: {
     backgroundColor: colors.samBlack,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     flex: 1,
   },
   input: {
-    width: '80%',
+    width: "80%",
   },
 });
 
