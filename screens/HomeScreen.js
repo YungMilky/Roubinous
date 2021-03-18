@@ -20,6 +20,17 @@ const HomeScreen = ({ navigation }) => {
         />
         <Text>Profile Page</Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('Routines')}
+      >
+        <MaterialCommunityIcons
+          name="baseball"
+          size={100}
+          color={colors.samRed}
+        />
+        <Text>Routines</Text>
+      </TouchableOpacity>
     </Screen>
   );
 };
