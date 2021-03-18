@@ -21,8 +21,10 @@ const RegisterScreen = ({ navigation }) => {
           Guest: false,
           UserRank: 'Amateur',
           Roubies: 100,
-          //   .then().navigation.navigate('Profile');
-        });
+        })
+        .then(() => {
+          navigation.replace('Home')
+        })
       })
       .catch((error) => alert(error.message));
   };

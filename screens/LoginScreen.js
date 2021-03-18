@@ -1,12 +1,12 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, TouchableOpacity, Text } from 'react-native';
 import { useState } from 'react';
 import { Button, Input } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 import { auth } from '../firebase';
 import PropTypes from 'prop-types';
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -59,6 +59,17 @@ const LoginScreen = () => {
         />
       </View>
       <Button title="Login" onPress={signInWithEmailAndPassword} />
+      <TouchableOpacity>
+        <Text
+          title="Register"
+          onPress={() => {
+            navigation.navigate('Register');
+          }}
+        >
+          {' '}
+          <Text>Register</Text>
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
