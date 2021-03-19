@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, Text } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useState } from 'react';
 import { Button, Input } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
@@ -27,8 +27,10 @@ const LoginScreen = ({ navigation }) => {
     console.log(email);
     auth
       .signInWithEmailAndPassword(email, password)
-
-      .catch((error) => {
+      .then(() => {
+        navigation.navigate('Profile')}
+      
+        ).catch((error) => {
         if (error.code === 'auth/invalid-email') {
           console.log('That email address is invalid!');
         }
@@ -37,8 +39,9 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={{}}>
-      <View>
+    <View style={styles.container}>
+
+      <View style={styles.inputContainer}>
         <StatusBar style="light" />
         <Input
           placeholder="Email"
@@ -47,32 +50,56 @@ const LoginScreen = ({ navigation }) => {
           value={email}
           onChangeText={(text) => setEmail(text)}
         />
-      </View>
-      <View>
+   
         <StatusBar style="light" />
         <Input
           placeholder="Password"
           autoFocus
           type="password"
+          secureTextEntry
           value={password}
           onChangeText={(text) => setPassword(text)}
         />
       </View>
-      <Button title="Login" onPress={signInWithEmailAndPassword} />
       <TouchableOpacity>
-        <Text
-          title="Register"
-          onPress={() => {
-            navigation.navigate('Register');
+        <Text onPress={() => {navigation.navigate('Reset Password');
           }}
+          >
+        <Text> Forgot your password?</Text>
+      </Text>
+      </TouchableOpacity>
+
+      <Button style={styles.button} title="Login" onPress={signInWithEmailAndPassword} />
+     
+      <TouchableOpacity>
+        <Text onPress={() => {navigation.navigate('Register');
+        }}
         >
-          {' '}
-          <Text>Register</Text>
+          <Text> Click here to register</Text>
         </Text>
       </TouchableOpacity>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  button: {
+    width: 300,
+    margin: 20
+  },
+
+  inputContainer: {
+    width: 300,
+  },
+})
+
+
 
 LoginScreen.propTypes = {
   navigation: PropTypes.object.isRequired,
