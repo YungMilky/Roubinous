@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { Avatar } from 'react-native-elements';
+import { Avatar, Button } from 'react-native-elements';
 // import firestore from '@react-native-firebase/firestore';
 import { db, auth } from '../firebase';
 import PropTypes from 'prop-types';
@@ -16,6 +16,14 @@ const ProfileScreen = ({ navigation }) => {
   const [roubies, setRoubies] = useState('');
   const [userRank, setUserRank] = useState('');
   const [guest, setGuest] = useState('');
+
+  const signOutUser = () => {
+    auth.signOut().then(() => {
+      navigation.goBack('Login')
+      }).catch((error) => {
+    // An error happened.
+  })};
+  
 
   // kolla om man är inloggad med facebook/gmail
   const getUserInfo = () => {
@@ -113,6 +121,7 @@ const ProfileScreen = ({ navigation }) => {
               />
               <Text style={styles.buttonText}>My Statistics</Text>
             </TouchableOpacity>
+            <Button title="Sign Out" onPress={signOutUser} />
           </View>
         </View>
       </View>

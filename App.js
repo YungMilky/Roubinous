@@ -17,6 +17,7 @@ import ProfileScreen from './screens/ProfileScreen';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import RoutinesScreen from './screens/RoutinesScreen';
+import ResetPasswordScreen from './screens/ResetPasswordScreen';
 
 //  TODO:
 //  keep adding nested navigation
@@ -112,6 +113,7 @@ export default function App() {
       content = <NavigationContainer>
                   <Stack.Navigator screenOptions={defaultScreenOptions}>
                     <Stack.Screen name="Welcome" component={WelcomeScreen} />
+                    <Stack.Screen name="Reset Password" component={ResetPasswordScreen} />
                   </Stack.Navigator>
                 </NavigationContainer>
   }

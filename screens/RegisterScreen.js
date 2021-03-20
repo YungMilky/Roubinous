@@ -77,7 +77,8 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    width: 300,
+    width: 200,
+    marginTop: 20,
   },
 
   inputContainer: {
