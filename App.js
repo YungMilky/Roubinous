@@ -4,6 +4,7 @@ import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { TransitionSpecs } from '@react-navigation/stack';
 
 import { FontAwesome5, MaterialCommunityIcons, Octicons } from '@expo/vector-icons';
 
@@ -21,13 +22,10 @@ import ResetPasswordScreen from './screens/ResetPasswordScreen';
 
 //  TODO:
 //  keep adding nested navigation
-//  icons
 //  loop through tab items with array prop?
 //  remove on press highlight on tabbar
 //  fix back button behavior
 //  back button color not applying
-//  delete TabBar.js
-
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -37,7 +35,7 @@ const ProfileStack = createStackNavigator();
 const HomeStackScreen = () => {
   return (
     <HomeStack.Navigator screenOptions={{ headerStyle: { backgroundColor: colors.darkmodeBlack}, headerTitleStyle: {color: colors.darkmodeHighWhite}, tintColor: {color: colors.darkmodeMediumWhite} }}>
-      <HomeStack.Screen name="Home" component={HomeScreen}/>
+      <HomeStack.Screen name="Home" component={HomeScreen} />
       <HomeStack.Screen name="Profile" component={ProfileScreen}/>
       <HomeStack.Screen name="Routines" component={RoutinesScreen}/>
     </HomeStack.Navigator>
@@ -47,7 +45,10 @@ const HomeStackScreen = () => {
 const ProfileStackScreen = () => {
   return (
     <ProfileStack.Navigator screenOptions={{ headerStyle: { backgroundColor: colors.samRed}, headerTitleStyle: {color: colors.darkmodeHighWhite}, tintColor: {color: colors.darkmodeMediumWhite} }}>
-      <ProfileStack.Screen name="Profile" component={ProfileScreen}/>
+      <ProfileStack.Screen name="Profile" component={ProfileScreen} options={{transitionSpec: {
+      open: TransitionSpecs.RevealFromBottomAndroidSpec,
+      close: TransitionSpecs.RevealFromBottomAndroidSpec ,
+    }}}/>
       <ProfileStack.Screen name="Register" component={RegisterScreen}/>
       <ProfileStack.Screen name="Login" component={LoginScreen}/>
     </ProfileStack.Navigator>
