@@ -63,7 +63,7 @@ const ProfileScreen = ({ navigation }) => {
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   style={styles.rowButton}
-                  onPress={() => navigation.navigate('Register')}
+                  onPress={() => navigation.navigate('Home', {screen: 'Register'})}
                 >
                   <MaterialCommunityIcons
                     name="creation"
@@ -74,7 +74,7 @@ const ProfileScreen = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.rowButton}
-                  onPress={() => navigation.navigate('Login')}
+                  onPress={() => navigation.navigate('Home', {screen:'Login'})}
                 >
                   <MaterialCommunityIcons
                     name="login"

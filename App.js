@@ -3,22 +3,91 @@ import { StyleSheet } from 'react-native';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+
+import { FontAwesome5, MaterialCommunityIcons, Octicons } from '@expo/vector-icons';
+
 import { db, auth } from './firebase';
 
-import LoginScreen from './screens/LoginScreen';
+import colors from './config/colors';
+
 import WelcomeScreen from './screens/WelcomeScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import HomeScreen from './screens/HomeScreen';
+import LoginScreen from './screens/LoginScreen';
 import RoutinesScreen from './screens/RoutinesScreen';
 
-const Stack = createStackNavigator();
+//  TODO:
+//  keep adding nested navigation
+//  icons
+//  loop through tab items with array prop?
+//  remove on press highlight on tabbar
+//  fix back button behavior
+//  back button color not applying
+//  delete TabBar.js
 
-const globalScreenOptions = {
-  headerStyle: { backgroundColor: '#121212' },
+
+const Tab = createMaterialBottomTabNavigator();
+const Stack = createStackNavigator();
+const HomeStack = createStackNavigator();
+const ProfileStack = createStackNavigator();
+
+const HomeStackScreen = () => {
+  return (
+    <HomeStack.Navigator screenOptions={{ headerStyle: { backgroundColor: colors.darkmodeBlack}, headerTitleStyle: {color: colors.darkmodeHighWhite}, tintColor: {color: colors.darkmodeMediumWhite} }}>
+      <HomeStack.Screen name="Home" component={HomeScreen}/>
+      <HomeStack.Screen name="Profile" component={ProfileScreen}/>
+      <HomeStack.Screen name="Routines" component={RoutinesScreen}/>
+    </HomeStack.Navigator>
+  )
+}
+
+const ProfileStackScreen = () => {
+  return (
+    <ProfileStack.Navigator screenOptions={{ headerStyle: { backgroundColor: colors.samRed}, headerTitleStyle: {color: colors.darkmodeHighWhite}, tintColor: {color: colors.darkmodeMediumWhite} }}>
+      <ProfileStack.Screen name="Profile" component={ProfileScreen}/>
+      <ProfileStack.Screen name="Register" component={RegisterScreen}/>
+      <ProfileStack.Screen name="Login" component={LoginScreen}/>
+    </ProfileStack.Navigator>
+  )
+}
+
+const defaultScreenOptions = {
   headerTitleStyle: { color: 'white' },
   headerTintColor: 'white',
 };
+
+function TabBar(){
+  return (
+    <Tab.Navigator
+        initialRouteName="Home" 
+        backBehavior="history"
+        activeColor={colors.darkmodeHighWhite}
+        inactiveColor={colors.darkmodeMediumWhite}
+        activeColor={colors.darkmodeHighWhite}
+        inactiveColor={colors.darkmodeMediumWhite}>
+      <Tab.Screen name="Home" component={HomeStackScreen} 
+        options={{tabBarColor: colors.darkmodeBlack, tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="flower-tulip-outline" color={color} size={22} />
+          )}} 
+        tabBarAccessibilityLabel="Home"/>
+      <Tab.Screen name="Journey" component={LoginScreen} options={{tabBarColor: colors.samGreen, tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="crystal-ball" color={color} size={22} />
+          )}} 
+        tabBarAccessibilityLabel="Journey"/>
+      <Tab.Screen name="Profile" component={ProfileStackScreen} options={{tabBarColor: colors.samRed, tabBarIcon: ({ color }) => (
+            <FontAwesome5 name="user-astronaut" color={color} size={18} />
+          )}} 
+        tabBarAccessibilityLabel="Profile"/>
+      <Tab.Screen name="Settings" component={RoutinesScreen} options={{tabBarColor: colors.lindaPurple, tabBarIcon: ({ color }) => (
+            <Octicons name="settings" color={color} size={20} />
+          )}} 
+        tabBarAccessibilityLabel="Settings"/>
+    </Tab.Navigator>
+  )
+}
+
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState('');
@@ -32,21 +101,22 @@ export default function App() {
       setIsLoggedIn(false);
     }
   });
-  return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={globalScreenOptions}>
-        {isLoggedIn ? (
-          <Stack.Screen name="Home" component={HomeScreen} />
-        ) : (
-          <Stack.Screen name="Welcome" component={WelcomeScreen} />
-        )}
-        <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="Routines" component={RoutinesScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+
+  let content;
+  if (isLoggedIn) {
+      content =  <NavigationContainer>
+                  <TabBar/>
+                </NavigationContainer>
+                
+  } else {
+      content = <NavigationContainer>
+                  <Stack.Navigator screenOptions={defaultScreenOptions}>
+                    <Stack.Screen name="Welcome" component={WelcomeScreen} />
+                  </Stack.Navigator>
+                </NavigationContainer>
+  }
+  
+  return content;
 }
 
 // eslint-disable-next-line no-unused-vars

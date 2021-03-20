@@ -63,7 +63,7 @@ const LoginScreen = ({ navigation }) => {
         <Text
           title="Register"
           onPress={() => {
-            navigation.navigate('Register');
+            navigation.navigate('Profile', {screen: 'Login'});
           }}
         >
           {' '}
