@@ -12,14 +12,19 @@ const WelcomeScreen = ({ navigation }) => {
   const [name, setName] = useState('');
 
   const signInAnonymously = () => {
-    auth.signInAnonymously().then((cred) => {
-      return db.collection('Users').doc(cred.user.uid).set({
-        Name: name,
-        Guest: true,
-        UserRank: 1,
-        Roubies: 50,
+    if (!name.trim()) {
+      alert('Please Enter a Name');
+      return;
+    } else {
+      auth.signInAnonymously().then((cred) => {
+        return db.collection('Users').doc(cred.user.uid).set({
+          Name: name,
+          Guest: true,
+          UserRank: 1,
+          Roubies: 50,
+        });
       });
-    });
+    }
   };
 
   return (
@@ -43,18 +48,12 @@ const WelcomeScreen = ({ navigation }) => {
       />
       <AppButton
         title="Go to Login"
-        onPress={() => navigation.navigate('Login')}
+        onPress={() => navigation.navigate('Login', { screen: 'Login' })}
       />
-      <TouchableOpacity>
-        <Text
-          title="Register"
-          onPress={() => {
-            navigation.navigate('Register');
-          }}
-        >
-          {' '}
-          <Text>Register</Text>
-        </Text>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Register', { screen: 'Register' })}
+      >
+        <Text>Register</Text>
       </TouchableOpacity>
     </View>
   );

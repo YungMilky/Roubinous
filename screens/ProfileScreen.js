@@ -18,14 +18,11 @@ const ProfileScreen = ({ navigation }) => {
   const [guest, setGuest] = useState('');
 
   const signOutUser = () => {
-    auth
-      .signOut()
-      .then(() => {
-        navigation.goBack('Login');
-      })
-      .catch((error) => {
-        // An error happened.
-      });
+    auth.signOut();
+    // .then(() => {})
+    // .catch((error) => {
+    //   console.log(error)
+    // });
   };
 
   // kolla om man är inloggad med facebook/gmail
@@ -59,10 +56,10 @@ const ProfileScreen = ({ navigation }) => {
             <View style={styles.bodyContent}>
               <Text style={styles.info}>Rank: {userRank}</Text>
               <Text style={styles.info}>Roubies: {roubies}</Text>
-              <Text style={styles.description}>
-                Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum
-                electram expetendis, omittam deseruisse consequuntur ius an,
-              </Text>
+
+              <TouchableOpacity onPress={signOutUser}>
+                <Text style={styles.link}>I want to Logout</Text>
+              </TouchableOpacity>
             </View>
           ) : (
             //else
@@ -75,7 +72,7 @@ const ProfileScreen = ({ navigation }) => {
                 <TouchableOpacity
                   style={styles.rowButton}
                   onPress={() =>
-                    navigation.navigate('Home', { screen: 'Register' })
+                    navigation.navigate('Register', { screen: 'Register' })
                   }
                 >
                   <MaterialCommunityIcons
@@ -88,7 +85,7 @@ const ProfileScreen = ({ navigation }) => {
                 <TouchableOpacity
                   style={styles.rowButton}
                   onPress={() =>
-                    navigation.navigate('Home', { screen: 'Login' })
+                    navigation.navigate('Login', { screen: 'Login' })
                   }
                 >
                   <MaterialCommunityIcons
@@ -128,7 +125,6 @@ const ProfileScreen = ({ navigation }) => {
               />
               <Text style={styles.buttonText}>My Statistics</Text>
             </TouchableOpacity>
-            <Button title="Sign Out" onPress={signOutUser} />
           </View>
         </View>
       </View>
@@ -155,6 +151,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFE9F3',
     flex: 1,
+    marginBottom: 100,
   },
   description: {
     fontSize: 16,
@@ -167,6 +164,14 @@ const styles = StyleSheet.create({
     color: colors.samBlack,
     marginBottom: 10,
     textAlign: 'center',
+  },
+  link: {
+    fontSize: 16,
+    color: colors.blue,
+    marginBottom: 10,
+    textAlign: 'center',
+    fontStyle: 'italic',
+    fontWeight: 'bold',
   },
   name: {
     fontSize: 22,

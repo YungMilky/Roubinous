@@ -10,8 +10,7 @@ const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-
-// shoooooo
+  // shoooooo
 
   //const signInAnonymously = () => {
   // auth.signInAnonymously().then((cred) => {
@@ -25,12 +24,13 @@ const LoginScreen = ({ navigation }) => {
   //FirebaseAuth.getInstance().getCurrentUser().getUid()
   const signInWithEmailAndPassword = () => {
     console.log(email);
+    auth.signOut();
     auth
       .signInWithEmailAndPassword(email, password)
       .then(() => {
-        navigation.navigate('Profile')}
-      
-        ).catch((error) => {
+        navigation.navigate('Profile');
+      })
+      .catch((error) => {
         if (error.code === 'auth/invalid-email') {
           console.log('That email address is invalid!');
         }
@@ -40,7 +40,6 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-
       <View style={styles.inputContainer}>
         <StatusBar style="light" />
         <Input
@@ -50,7 +49,7 @@ const LoginScreen = ({ navigation }) => {
           value={email}
           onChangeText={(text) => setEmail(text)}
         />
-   
+
         <StatusBar style="light" />
         <Input
           placeholder="Password"
@@ -62,18 +61,26 @@ const LoginScreen = ({ navigation }) => {
         />
       </View>
       <TouchableOpacity>
-        <Text onPress={() => {navigation.navigate('Reset Password');
+        <Text
+          onPress={() => {
+            navigation.navigate('Reset Password');
           }}
-          >
-        <Text> Forgot your password?</Text>
-      </Text>
+        >
+          <Text> Forgot your password?</Text>
+        </Text>
       </TouchableOpacity>
 
-      <Button style={styles.button} title="Login" onPress={signInWithEmailAndPassword} />
-     
+      <Button
+        style={styles.button}
+        title="Login"
+        onPress={signInWithEmailAndPassword}
+      />
+
       <TouchableOpacity>
-        <Text onPress={() => {navigation.navigate('Register');
-        }}
+        <Text
+          onPress={() => {
+            navigation.navigate('Register');
+          }}
         >
           <Text> Click here to register</Text>
         </Text>
@@ -91,15 +98,13 @@ const styles = StyleSheet.create({
 
   button: {
     width: 300,
-    margin: 20
+    margin: 20,
   },
 
   inputContainer: {
     width: 300,
   },
-})
-
-
+});
 
 LoginScreen.propTypes = {
   navigation: PropTypes.object.isRequired,

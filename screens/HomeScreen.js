@@ -11,7 +11,7 @@ const HomeScreen = ({ navigation }) => {
     <Screen style={styles.container}>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Profile')}
+        onPress={() => navigation.navigate('Profile', { screen: 'Profile' })}
       >
         <MaterialCommunityIcons
           name="account"
