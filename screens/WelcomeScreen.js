@@ -16,6 +16,8 @@ const WelcomeScreen = ({ navigation }) => {
       return db.collection('Users').doc(cred.user.uid).set({
         Name: name,
         Guest: true,
+        UserRank: 1,
+        Roubies: 50,
       });
     });
   };

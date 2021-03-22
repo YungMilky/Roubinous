@@ -16,15 +16,18 @@ const RegisterScreen = ({ navigation }) => {
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((cred) => {
-        return db.collection('Users').doc(cred.user.uid).set({
-          Name: name,
-          Guest: false,
-          UserRank: 'Amateur',
-          Roubies: 100,
-        })
-        .then(() => {
-          navigation.replace('Home')
-        })
+        return db
+          .collection('Users')
+          .doc(cred.user.uid)
+          .set({
+            Name: name,
+            Guest: false,
+            UserRank: 1,
+            Roubies: 100,
+          })
+          .then(() => {
+            navigation.replace('Home');
+          });
       })
       .catch((error) => alert(error.message));
   };
