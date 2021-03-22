@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import colors from "../config/colors";
 import AppText from "./AppText";
 
-function RoutineItems({ title, image, subtitle, onPressOut }) {
+function RoutineItems({ title, image, subtitle, userLevelReq, onPressOut }) {
   return (
     <TouchableHighlight
       delayPressIn={200}
@@ -17,6 +17,7 @@ function RoutineItems({ title, image, subtitle, onPressOut }) {
         <View>
           <AppText style={styles.title}>{title}</AppText>
           <AppText style={styles.subtitle}>{subtitle}</AppText>
+          <AppText style={styles.userLevelReq}>{userLevelReq}</AppText>
         </View>
       </View>
     </TouchableHighlight>
@@ -42,6 +43,12 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 15,
     marginLeft: 5,
+  },
+  userLevelReq: {
+    fontSize: 15,
+    marginLeft: 7,
+    marginTop: 25,
+    color: colors.samGreen,
   },
 });
 

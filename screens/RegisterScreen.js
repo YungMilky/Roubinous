@@ -1,33 +1,28 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { useState } from 'react';
-import { Button, Input, Text } from 'react-native-elements';
-import { StatusBar } from 'expo-status-bar';
-import { auth, db } from '../firebase';
-import PropTypes from 'prop-types';
-import { KeyboardAvoidingView } from 'react-native';
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import { useState } from "react";
+import { Button, Input, Text } from "react-native-elements";
+import { StatusBar } from "expo-status-bar";
+import { auth, db } from "../firebase";
+import PropTypes from "prop-types";
+import { KeyboardAvoidingView } from "react-native";
 
 const RegisterScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
 
   const register = () => {
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((cred) => {
-        return db
-          .collection('Users')
-          .doc(cred.user.uid)
-          .set({
-            Name: name,
-            Guest: false,
-            UserRank: 1,
-            Roubies: 100,
-          })
-          .then(() => {
-            navigation.replace('Home');
-          });
+        return db.collection("Users").doc(cred.user.uid).set({
+          Name: name,
+          Guest: false,
+          UserRank: 1,
+          Roubies: 100,
+          //   .then().navigation.navigate('Profile');
+        });
       })
       .catch((error) => alert(error.message));
   };
@@ -36,8 +31,8 @@ const RegisterScreen = ({ navigation }) => {
     <KeyboardAvoidingView style={styles.container}>
       <StatusBar style="light" />
       <Text h2 style={{ marginBottom: 20 }}>
-        {' '}
-        Register{' '}
+        {" "}
+        Register{" "}
       </Text>
 
       <View style={styles.inputContainer}>
@@ -75,8 +70,8 @@ const RegisterScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   button: {
