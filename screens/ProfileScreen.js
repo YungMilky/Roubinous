@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Avatar, Button } from 'react-native-elements';
 // import firestore from '@react-native-firebase/firestore';
@@ -20,10 +20,6 @@ const ProfileScreen = ({ navigation }) => {
 
   const signOutUser = () => {
     auth.signOut();
-    // .then(() => {})
-    // .catch((error) => {
-    //   console.log(error)
-    // });
   };
 
   // kolla om man är inloggad med facebook/gmail

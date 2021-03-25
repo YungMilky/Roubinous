@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import 'react-native-gesture-handler';
 import { NavigationContainer, StackActions } from '@react-navigation/native';
@@ -23,7 +23,7 @@ import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import RoutinesScreen from './screens/RoutinesScreen';
 import ResetPasswordScreen from './screens/ResetPasswordScreen';
-import SignedOutScreen from './screens/SignedOutScreen';
+import LoginAsGuestScreen from './screens/LoginAsGuestScreen';
 
 //  TODO:
 //  keep adding nested navigation
@@ -74,7 +74,7 @@ const ProfileStackScreen = () => {
       />
       <ProfileStack.Screen name="Register" component={RegisterScreen} />
       <ProfileStack.Screen name="Login" component={LoginScreen} />
-      <ProfileStack.Screen name="SignedOut" component={SignedOutScreen} />
+      <ProfileStack.Screen name="LoginAsGuest" component={LoginAsGuestScreen} />
     </ProfileStack.Navigator>
   );
 };
@@ -153,15 +153,17 @@ function TabBar() {
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState('');
 
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      console.log('logged in ', user.uid);
-      setIsLoggedIn(true);
-    } else {
-      console.log('NOT logged in ', user);
-      setIsLoggedIn(false);
-    }
-  });
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        console.log('logged in ', user.uid);
+        setIsLoggedIn(true);
+      } else {
+        console.log('NOT logged in ', user);
+        setIsLoggedIn(false);
+      }
+    });
+  }, [auth.user]);
 
   let content;
   if (isLoggedIn) {
@@ -178,7 +180,7 @@ export default function App() {
           <Stack.Screen name="Reset Password" component={ResetPasswordScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="SignedOut" component={SignedOutScreen} />
+          <Stack.Screen name="LoginAsGuest" component={LoginAsGuestScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     );

@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { useState } from 'react';
 import { Button, Input } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 import { auth } from '../firebase';
@@ -23,12 +22,11 @@ const LoginScreen = ({ navigation }) => {
 
   //FirebaseAuth.getInstance().getCurrentUser().getUid()
   const signInWithEmailAndPassword = () => {
-    console.log(email);
     auth.signOut();
     auth
       .signInWithEmailAndPassword(email, password)
       .then(() => {
-        navigation.navigate('Profile');
+        //navigation.navigate('Profile');
       })
       .catch((error) => {
         if (error.code === 'auth/invalid-email') {
