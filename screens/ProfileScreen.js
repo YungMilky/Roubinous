@@ -5,6 +5,7 @@ import { Avatar, Button } from 'react-native-elements';
 import { db, auth } from '../firebase';
 import PropTypes from 'prop-types';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { ScrollView } from 'react-native-gesture-handler';
 
 import Screen from '../components/Screen';
 import colors from '../config/colors';
@@ -36,94 +37,102 @@ const ProfileScreen = ({ navigation }) => {
   getUserInfo();
   return (
     <Screen style={styles.container}>
-      <Avatar
-        rounded
-        size="xlarge"
-        source={{
-          uri:
-            'https://png.pngtree.com/png-vector/20190803/ourlarge/pngtree-avatar-user-basic-abstract-circle-background-flat-color-icon-png-image_1647265.jpg',
-        }}
-      />
-      <View>
-        <View style={styles.bodyContent}>
-          <Text style={styles.name}>{name}</Text>
-          <View style={styles.separator} />
-          {!guest ? ( //if (guest == false)
-            <View style={styles.bodyContent}>
-              <Text style={styles.info}>Rank: {userRank}</Text>
-              <Text style={styles.info}>Roubies: {roubies}</Text>
-
-              <TouchableOpacity onPress={signOutUser}>
-                <Text style={styles.link}>I want to Logout</Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            //else
-            <View style={styles.bodyContent}>
-              <Text style={styles.info}>
-                Psst, {name}! Register or log in to unlock more functions like
-                having your own avatar!
-              </Text>
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  style={styles.rowButton}
-                  onPress={() =>
-                    navigation.navigate('Register', { screen: 'Register' })
-                  }
-                >
-                  <MaterialCommunityIcons
-                    name="creation"
-                    size={40}
-                    color={colors.samRed}
-                  />
-                  <Text style={styles.buttonText}>Register</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.rowButton}
-                  onPress={() =>
-                    navigation.navigate('Login', { screen: 'Login' })
-                  }
-                >
-                  <MaterialCommunityIcons
-                    name="login"
-                    size={40}
-                    color={colors.samRed}
-                  />
-                  <Text style={styles.buttonText}>Log in</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-
-          <View style={styles.separator} />
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.rowButton}>
-              <MaterialCommunityIcons
-                name="clock-time-eight"
-                size={60}
-                color={colors.samRed}
-              />
-              <Text style={styles.buttonText}>My Routines</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.rowButton}>
-              <MaterialCommunityIcons
-                name="run"
-                size={60}
-                color={colors.samRed}
-              />
-              <Text style={styles.buttonText}>My Journey</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.rowButton}>
-              <MaterialCommunityIcons
-                name="chart-areaspline-variant"
-                size={60}
-                color={colors.samRed}
-              />
-              <Text style={styles.buttonText}>My Statistics</Text>
-            </TouchableOpacity>
+      <ScrollView>
+        <View style={styles.topContainer}>
+          <Avatar
+            rounded
+            size="large"
+            source={{
+              uri:
+                'https://png.pngtree.com/png-vector/20190803/ourlarge/pngtree-avatar-user-basic-abstract-circle-background-flat-color-icon-png-image_1647265.jpg',
+            }}
+          />
+          <View style={styles.topTextContainer}>
+            <Text style={styles.name}>{name}</Text>
+            <Text style={styles.description}>Rank: {userRank}</Text>
           </View>
         </View>
-      </View>
+
+        <View>
+          <View style={styles.bodyContent}>
+            <View style={styles.separator} />
+            {!guest ? ( //if (guest == false)
+              <View style={styles.bodyContent}>
+                <Text style={styles.info}>Rank: {userRank}</Text>
+                <Text style={styles.info}>Roubies: {roubies}</Text>
+
+                <TouchableOpacity onPress={signOutUser}>
+                  <Text style={styles.link}>I want to Logout</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              //else
+              <View style={styles.bodyContent}>
+                <Text style={styles.info}>
+                  Psst, {name}! Register or log in to unlock more functions like
+                  having your own avatar!
+                </Text>
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={styles.rowButton}
+                    onPress={() =>
+                      navigation.navigate('Register', { screen: 'Register' })
+                    }
+                  >
+                    <MaterialCommunityIcons
+                      name="creation"
+                      size={40}
+                      color={colors.samRed}
+                    />
+                    <Text style={styles.buttonText}>Register</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.rowButton}
+                    onPress={() =>
+                      navigation.navigate('Login', { screen: 'Login' })
+                    }
+                  >
+                    <MaterialCommunityIcons
+                      name="login"
+                      size={40}
+                      color={colors.samRed}
+                    />
+                    <Text style={styles.buttonText}>Log in</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+
+            <View style={styles.separator} />
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.rowButton}>
+                <MaterialCommunityIcons
+                  name="clock-time-eight"
+                  size={60}
+                  color={colors.samRed}
+                />
+                <Text style={styles.buttonText}>My Routines</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.rowButton}>
+                <MaterialCommunityIcons
+                  name="run"
+                  size={60}
+                  color={colors.samRed}
+                />
+                <Text style={styles.buttonText}>My Journey</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.rowButton}>
+                <MaterialCommunityIcons
+                  name="chart-areaspline-variant"
+                  size={60}
+                  color={colors.samRed}
+                />
+                <Text style={styles.buttonText}>My Statistics</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
     </Screen>
   );
 };
@@ -144,10 +153,9 @@ const styles = StyleSheet.create({
     color: colors.samBlack,
   },
   container: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     backgroundColor: '#FFE9F3',
     flex: 1,
-    marginBottom: 100,
   },
   description: {
     fontSize: 16,
@@ -183,7 +191,17 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 1,
     backgroundColor: 'lightgrey',
-    marginTop: 50,
+    marginTop: 10,
+  },
+  topContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginLeft: 100,
+    paddingTop: 20,
+  },
+  topTextContainer: {
+    justifyContent: 'center',
+    marginLeft: 20,
   },
 });
 

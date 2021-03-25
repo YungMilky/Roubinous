@@ -49,6 +49,8 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name="Home" component={HomeScreen} />
       <HomeStack.Screen name="Profile" component={ProfileScreen} />
       <HomeStack.Screen name="Routines" component={RoutinesScreen} />
+      <HomeStack.Screen name="Register" component={RegisterScreen} />
+      <HomeStack.Screen name="Login" component={LoginScreen} />
     </HomeStack.Navigator>
   );
 };
