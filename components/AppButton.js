@@ -16,12 +16,11 @@ function AppButton({ title, onPress, color = 'samRed' }) {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: colors.samRed,
-    borderRadius: 25,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 15,
-    width: '100%',
+    width: '77%',
     marginVertical: 10,
   },
   text: {
