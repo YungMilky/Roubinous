@@ -18,6 +18,7 @@ const ProfileScreen = ({ navigation }) => {
   const [userRank, setUserRank] = useState('');
   const [guest, setGuest] = useState('');
 
+
   const signOutUser = () => {
     auth.signOut();
   };
