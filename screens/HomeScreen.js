@@ -22,7 +22,7 @@ const HomeScreen = ({ navigation }) => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Routines')}
+        onPress={() => navigation.navigate('Routines', {screen: 'Routines'})}
       >
         <MaterialCommunityIcons
           name="baseball"

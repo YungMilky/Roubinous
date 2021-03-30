@@ -4,7 +4,18 @@ import { View, StyleSheet } from "react-native";
 import colors from "../config/colors";
 import AppText from "./AppText";
 
-function RoutineItems({ title, image, subtitle, userLevelReq, onPressOut }) {
+import * as Animatable from "react-native-animatable";
+
+import { SharedElement } from "react-navigation-shared-element";
+
+function RoutineItems({
+  title,
+  image,
+  shortDescription,
+  userLevelReq,
+  onPressOut,
+  item,
+}) {
   return (
     <TouchableHighlight
       delayPressIn={200}
@@ -12,14 +23,35 @@ function RoutineItems({ title, image, subtitle, userLevelReq, onPressOut }) {
       underlayColor={colors.white}
       onPressOut={onPressOut}
     >
-      <View style={styles.container}>
-        <Image style={styles.image} source={image} />
-        <View>
-          <AppText style={styles.title}>{title}</AppText>
-          <AppText style={styles.subtitle}>{subtitle}</AppText>
-          <AppText style={styles.userLevelReq}>{userLevelReq}</AppText>
+      <Animatable.View
+        style={{ flex: 1, padding: 20 }}
+        animation="bounceIn"
+        delay={420}
+      >
+        <SharedElement
+          id={`item.${item.id}.color`}
+          style={[StyleSheet.absoluteFillObject]}
+        >
+          <View
+            style={[
+              StyleSheet.absoluteFillObject,
+              { backgroundColor: item.color, borderRadius: 6 },
+            ]}
+          />
+        </SharedElement>
+        <View style={styles.container}>
+          <SharedElement id={`item.${item.id}.image`} style={styles.image}>
+            <Image style={styles.image} source={image} />
+          </SharedElement>
+          <View>
+            <SharedElement id={`item.${item.id}.title`}>
+              <AppText style={styles.title}>{title}</AppText>
+            </SharedElement>
+            <AppText style={styles.subtitle}>{shortDescription}</AppText>
+            <AppText style={styles.userLevelReq}>{userLevelReq}</AppText>
+          </View>
         </View>
-      </View>
+      </Animatable.View>
     </TouchableHighlight>
   );
 }
@@ -37,7 +69,7 @@ const styles = StyleSheet.create({
   },
   title: {
     marginLeft: 5,
-    fontSize: 20,
+    fontSize: 28,
     marginTop: 10,
   },
   subtitle: {

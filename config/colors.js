@@ -15,6 +15,8 @@ export default {
   samBlack: "#373E40",
   lindaPurple: "#947BD3",
   samBlue: "#00B2CA",
+  samDeepRed: "#5A0D29",
+  yungBlue: '#2E86AB',
 
 
   //  DARK MODE STANDARD COLORS:
