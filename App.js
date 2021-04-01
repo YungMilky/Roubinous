@@ -26,6 +26,7 @@ import RoutinesScreen from './screens/RoutinesScreen';
 import ResetPasswordScreen from './screens/ResetPasswordScreen';
 import LoginAsGuestScreen from './screens/LoginAsGuestScreen';
 import NotificationSettingScreen from './screens/NotificationSettingScreen';
+import AddRoutineScreen from './screens/AddRoutineScreen';
 
 //  TODO:
 //  keep adding nested navigation
@@ -51,6 +52,7 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name="Home" component={HomeScreen} />
       <HomeStack.Screen name="Profile" component={ProfileScreen} />
       <HomeStack.Screen name="Routines" component={RoutinesScreen} />
+      <HomeStack.Screen name="AddRoutine" component={AddRoutineScreen} />
       <HomeStack.Screen name="Register" component={RegisterScreen} />
       <HomeStack.Screen name="Login" component={LoginScreen} />
       <HomeStack.Screen name="Reset Password" component={ResetPasswordScreen} />
@@ -194,6 +196,7 @@ export default function App() {
           <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="LoginAsGuest" component={LoginAsGuestScreen} />
+          <Stack.Screen name="AddRoutine" component={AddRoutineScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     );
