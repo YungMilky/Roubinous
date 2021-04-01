@@ -22,6 +22,7 @@ const styles = StyleSheet.create({
     padding: 15,
     width: '77%',
     marginVertical: 10,
+    marginHorizontal: 10,
   },
   text: {
     color: colors.samBlack,

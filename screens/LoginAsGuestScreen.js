@@ -22,6 +22,8 @@ const LoginAsGuestScreen = ({ navigation }) => {
           Guest: true,
           UserRank: 1,
           Roubies: 50,
+          UserAlertHour: 10,
+          UserAlertMinute: 30,
         });
       });
     }

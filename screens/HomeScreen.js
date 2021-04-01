@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -30,6 +30,19 @@ const HomeScreen = ({ navigation }) => {
           color={colors.samRed}
         />
         <Text>Routines</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button}>
+        <MaterialCommunityIcons
+          name="alarm-light"
+          size={100}
+          color={colors.samRed}
+          onPress={() =>
+            navigation.navigate('NotificationSetting', {
+              screen: 'NotificationSetting',
+            })
+          }
+        />
+        <Text>Notification Settings</Text>
       </TouchableOpacity>
     </Screen>
   );

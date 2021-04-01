@@ -5,6 +5,7 @@ import { NavigationContainer, StackActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { TransitionSpecs } from '@react-navigation/stack';
+import { Constants } from 'react-native-unimodules';
 
 import {
   FontAwesome5,
@@ -24,6 +25,7 @@ import LoginScreen from './screens/LoginScreen';
 import RoutinesScreen from './screens/RoutinesScreen';
 import ResetPasswordScreen from './screens/ResetPasswordScreen';
 import LoginAsGuestScreen from './screens/LoginAsGuestScreen';
+import NotificationSettingScreen from './screens/NotificationSettingScreen';
 
 //  TODO:
 //  keep adding nested navigation
@@ -51,6 +53,11 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name="Routines" component={RoutinesScreen} />
       <HomeStack.Screen name="Register" component={RegisterScreen} />
       <HomeStack.Screen name="Login" component={LoginScreen} />
+      <HomeStack.Screen name="Reset Password" component={ResetPasswordScreen} />
+      <HomeStack.Screen
+        name="NotificationSetting"
+        component={NotificationSettingScreen}
+      />
     </HomeStack.Navigator>
   );
 };
@@ -77,6 +84,10 @@ const ProfileStackScreen = () => {
       <ProfileStack.Screen name="Register" component={RegisterScreen} />
       <ProfileStack.Screen name="Login" component={LoginScreen} />
       <ProfileStack.Screen name="LoginAsGuest" component={LoginAsGuestScreen} />
+      <ProfileStack.Screen
+        name="Reset Password"
+        component={ResetPasswordScreen}
+      />
     </ProfileStack.Navigator>
   );
 };
