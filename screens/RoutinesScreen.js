@@ -8,8 +8,10 @@ import Separator from "../components/Separator";
 import colors from "../config/colors";
 import AppText from "../components/AppText";
 import { db, auth } from "../firebase";
+import { AntDesign } from '@expo/vector-icons';
 
-function RoutinesScreen() {
+
+function RoutinesScreen({ navigation }) {
   const user = auth.currentUser;
   const [userRankNumber, setuserRankNumber] = useState();
   // var userRank;
@@ -97,6 +99,14 @@ function RoutinesScreen() {
     <Screen>
       <ScrollView>
         <View style={styles.max}>
+       <TouchableOpacity
+                  style={styles.rowButton}
+                  onPress={() =>
+                    navigation.navigate('AddRoutine', { screen: 'AddRoutine' })
+                  }
+                >
+      <AntDesign name="plus" size={35} color="black" />
+     </TouchableOpacity>
           <View style={styles.container}>{getUserRank()}</View>
           {/* <View style={styles.container}>
             <AppText style={styles.levelText}>{userRank}</AppText>
