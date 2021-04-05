@@ -31,6 +31,7 @@ import RoutinesScreen from "./screens/RoutinesScreen";
 import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 import SignedOutScreen from "./screens/SignedOutScreen";
 import RoutineScreen from "./screens/RoutineScreen";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 //  TODO:
 //  keep adding nested navigation
@@ -49,13 +50,24 @@ const RoutinesStack = createSharedElementStackNavigator();
 const ProfileStack = createStackNavigator();
 const RootStack = createStackNavigator();
 
+const headerSettingsButton = () => {
+  return (
+    <TouchableOpacity
+      style={{ paddingRight: 10 }}
+      onPress={() => alert("Set navigation to SettingsScreen")}
+    >
+      <Octicons name="settings" size={26} color={colors.darkmodeHighWhite} />
+    </TouchableOpacity>
+  );
+};
+
 const ProfileStackScreen = () => {
   return (
     <ProfileStack.Navigator
       screenOptions={{
         headerStyle: { backgroundColor: colors.samRed },
         headerTitleStyle: { color: colors.darkmodeHighWhite },
-        tintColor: { color: colors.darkmodeMediumWhite },
+        tintColor: { color: "rgba(255,255,255,0.60)" },
       }}
     >
       <ProfileStack.Screen name="Profile" component={ProfileScreen} />
@@ -76,14 +88,18 @@ const RoutinesStackScreen = () => {
       screenOptions={{
         headerStyle: { backgroundColor: colors.darkmodeBlack },
         headerTitleStyle: { color: colors.darkmodeHighWhite },
-        tintColor: { color: colors.darkmodeMediumWhite },
       }}
     >
       <RoutinesStack.Screen name="TabBar" component={TabBar} />
       <RoutinesStack.Screen
         name="Routines"
         component={RoutinesScreen}
-        options={{ headerShown: true }}
+        options={{
+          headerShown: true,
+          headerRight: () => headerSettingsButton(),
+          headerTintColor: { color: colors.darkmodeMediumWhite },
+          tintColor: { color: colors.darkmodeMediumWhite },
+        }}
       />
       <RoutinesStack.Screen
         name="Routine"
@@ -104,11 +120,12 @@ function TabBar() {
     <Tab.Navigator
       initialRouteName="Home"
       backBehavior="history"
-      activeColor={colors.darkmodeHighWhite}
-      inactiveColor={colors.darkmodeMediumWhite}
-      activeColor={colors.darkmodeHighWhite}
-      inactiveColor={colors.darkmodeMediumWhite}
+      shifting={true}
       // shifting={false} lägger till labels men förstör activecolor
+      activeColor={colors.darkmodeHighWhite}
+      inactiveColor={colors.darkmodeMediumWhite}
+      activeColor={colors.darkmodeHighWhite}
+      inactiveColor={colors.darkmodeMediumWhite}
     >
       <Tab.Screen
         name="Home"
@@ -145,13 +162,14 @@ function TabBar() {
         name="Profile"
         component={ProfileScreen}
         options={{
+          headerRight: () => headerSettingsButton(),
           tabBarColor: colors.samRed,
           tabBarIcon: ({ color }) => (
             <FontAwesome5 name="user-astronaut" color={color} size={18} />
           ),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Settings"
         tabBarAccessibilityLabel="Settings"
         component={RoutineScreen}
@@ -162,7 +180,7 @@ function TabBar() {
           ),
           headerShown: false,
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 }
@@ -195,9 +213,12 @@ export default function App() {
           <RootStack.Screen
             name="Home"
             component={TabBar}
-            options={{ headerShown: false }}
+            options={{
+              headerRight: () => headerSettingsButton(),
+              headerShown: true,
+            }}
           />
-          <RootStack.Screen name="Profile" component={ProfileScreen} />
+          <RootStack.Screen name="Profile" component={ProfileStackScreen} />
           <RootStack.Screen
             name="Routines"
             component={RoutinesStackScreen}
@@ -220,11 +241,11 @@ export default function App() {
     );
   }
 
-  if (!isLoggedIn) {
-    return <AppLoading />;
-  } else {
-    return content;
-  }
+  // if (!isLoggedIn) { skapar white screen om man inte e inloggad :/
+  //   return <AppLoading />;
+  // } else {
+  return content;
+  // }
 }
 
 // eslint-disable-next-line no-unused-vars

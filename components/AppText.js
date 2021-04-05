@@ -9,6 +9,7 @@ function AppText({
   adjustsFontSizeToFit,
   minimumFontScale,
   numberOfLines,
+  duration,
 }) {
   return (
     <Animatable.Text
@@ -16,6 +17,8 @@ function AppText({
       minimumFontScale={minimumFontScale}
       numberOfLines={numberOfLines}
       animation="fadeIn"
+      useNativeDriver={true}
+      duration={duration}
       style={[styles.text, style]}
     >
       {children}

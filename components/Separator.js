@@ -2,15 +2,15 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import colors from "../config/colors";
 
-function Separator() {
-  return <View style={styles.separator} />;
+function Separator(style) {
+  return <View style={[styles.separator, style]} />;
 }
 
 const styles = StyleSheet.create({
   separator: {
     width: "100%",
     height: 1,
-    backgroundColor: colors.floralWhite,
+    backgroundColor: colors.darkmodeDisabledWhite,
   },
 });
 export default Separator;

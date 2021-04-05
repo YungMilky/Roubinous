@@ -12,6 +12,7 @@ function RoutineDetails({ description, size }) {
     <View style={[styles.container, { width: size }]}>
       <Animatable.View animation="fadeIn" duration={800} style={{ flex: 2 }}>
         <AppText
+          duration={2100}
           adjustsFontSizeToFit={true}
           numberOfLines={10}
           minimumFontScale={0.76}
