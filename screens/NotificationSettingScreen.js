@@ -222,7 +222,7 @@ async function scheduleTest() {
 async function cancelAllNotifications() {
   await Notifications.cancelAllScheduledNotificationsAsync()
     .then(() => {
-      console.log('Done clearing all local notifications.');
+      console.log('Cleared all local notifications.');
     })
     .catch((err) => {
       console.log('Unable to clear local notifications. ' + err);

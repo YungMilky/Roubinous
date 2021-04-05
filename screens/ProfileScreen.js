@@ -9,6 +9,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 
 import Screen from '../components/Screen';
 import colors from '../config/colors';
+import CancelAllNotifications from '../components/notification/CancelAllNotifications';
 
 const ProfileScreen = ({ navigation }) => {
   const user = auth.currentUser;
@@ -19,6 +20,7 @@ const ProfileScreen = ({ navigation }) => {
   const [guest, setGuest] = useState('');
 
   const signOutUser = () => {
+    CancelAllNotifications();
     auth.signOut();
   };
 
@@ -28,10 +30,10 @@ const ProfileScreen = ({ navigation }) => {
       .doc(user.uid)
       .get()
       .then((documentSnapshot) => {
-        setName(documentSnapshot.get('Name'));
-        setRoubies(documentSnapshot.get('Roubies'));
-        setUserRank(documentSnapshot.get('UserRank'));
-        setGuest(documentSnapshot.get('Guest'));
+        setName(documentSnapshot.data().Name);
+        setRoubies(documentSnapshot.data().Roubies);
+        setUserRank(documentSnapshot.data().UserRank);
+        setGuest(documentSnapshot.data().Guest);
       });
   };
   getUserInfo();
@@ -100,6 +102,9 @@ const ProfileScreen = ({ navigation }) => {
                     <Text style={styles.buttonText}>Log in</Text>
                   </TouchableOpacity>
                 </View>
+                <TouchableOpacity onPress={signOutUser}>
+                  <Text style={styles.link}>I want to Logout</Text>
+                </TouchableOpacity>
               </View>
             )}
 

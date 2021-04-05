@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { TransitionSpecs } from '@react-navigation/stack';
 import { Constants } from 'react-native-unimodules';
+import { LogBox } from 'react-native';
 
 import {
   FontAwesome5,
@@ -39,6 +40,8 @@ const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
 const HomeStack = createStackNavigator();
 const ProfileStack = createStackNavigator();
+
+LogBox.ignoreLogs(['Warning: ...', 'Setting a timer']);
 
 const HomeStackScreen = () => {
   return (

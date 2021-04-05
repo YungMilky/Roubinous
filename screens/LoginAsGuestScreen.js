@@ -7,6 +7,7 @@ import { db, auth } from '../firebase';
 import AppButton from '../components/AppButton';
 import colors from '../config/colors';
 import PropTypes from 'prop-types';
+import CreateDailyNotification from '../components/notification/CreateDailyNotification';
 
 const LoginAsGuestScreen = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -26,6 +27,7 @@ const LoginAsGuestScreen = ({ navigation }) => {
           UserAlertMinute: 30,
         });
       });
+      CreateDailyNotification(10, 30);
     }
   };
 

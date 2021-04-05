@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { KeyboardAvoidingView } from 'react-native';
 import { signInWithGoogle } from '../firebase';
 import { signInWithFacebook } from '../firebase';
+import CreateDailyNotification from '../components/notification/CreateDailyNotification';
 
 const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -25,10 +26,10 @@ const RegisterScreen = ({ navigation }) => {
           Roubies: 100,
           UserAlertHour: 10,
           UserAlertMinute: 30,
-          //   .then().navigation.navigate('Profile');
         });
       })
       .catch((error) => alert(error.message));
+    CreateDailyNotification(10, 30);
   };
 
   return (
