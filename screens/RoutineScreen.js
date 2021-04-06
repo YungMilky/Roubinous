@@ -19,9 +19,7 @@ import { useFonts, BadScript_400Regular } from "@expo-google-fonts/bad-script";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
 
-import { SharedElement } from "react-navigation-shared-element";
-
-import { auth, db } from "../firebase";
+// import { SharedElement } from "react-navigation-shared-element";
 
 import Screen from "../components/Screen";
 import AppButton from "../components/AppButton";
@@ -30,6 +28,7 @@ import RoutineDetails from "../components/RoutineDetails";
 import AppText from "../components/AppText";
 
 import { Audio } from "expo-av";
+import AddRoutine from "../components/AddRoutine";
 
 const { width, height } = Dimensions.get("screen");
 const ITEM_HEIGHT = height * 0.18;
@@ -112,33 +111,16 @@ const RoutineScreen = ({ navigation, route }) => {
   //   refFlatList.scrollToIndex({ animated: true, index: currentIndex });
   // };
 
-  function addRoutine() {
-    const userID = auth.currentUser.uid;
-
-    const userRoutines = db
-      .collection("Users")
-      .doc(userID)
-      .collection("routines");
-
-    userRoutines.doc(item.title).set(
-      {
-        ComboFrequency: "2",
-        DaysInCombo: 2,
-        StartDate: new Date(),
-        UserAlertTime: 7,
-        UserRoutineRank: "Rookie",
-      },
-      { merge: true }
-    );
-  }
-
   if (!fontsLoaded) {
     return <AppLoading />;
   } else {
     return (
       <Screen style={{ backgroundColor: item.color, marginTop: -25 }}>
-        <SharedElement
-          id={`item.${item.id}.color`}
+        {/* <SharedElement id={`item.${item.id}.color`} style={[
+            StyleSheet.absoluteFillObject,
+            { backgroundColor: item.color },
+          ]}> */}
+        <View
           style={[
             StyleSheet.absoluteFillObject,
             { backgroundColor: item.color },
@@ -151,7 +133,8 @@ const RoutineScreen = ({ navigation, route }) => {
             end={{ x: 0.1, y: 0.3 }}
             // locations={[0.4, 0.1]}
           ></LinearGradient>
-        </SharedElement>
+        </View>
+        {/* </SharedElement> */}
         <View style={styles.container}>
           <TouchableOpacity
             style={styles.one}
@@ -166,18 +149,24 @@ const RoutineScreen = ({ navigation, route }) => {
             />
           </TouchableOpacity>
           <View style={styles.imgcontainer}>
-            <SharedElement id={`item.${item.id}.image`} style={styles.two}>
+            <View style={styles.two}>
+              {/* <SharedElement id={`item.${item.id}.image`} style={styles.two}> */}
               {item.image ? (
-                <Image style={styles.image} source={{ uri: item.image }} />
+                <Image
+                  style={styles.image}
+                  source={{ uri: item.imageRoutine }}
+                />
               ) : (
                 <Image
                   style={styles.imageDefault}
                   source={require("../assets/RoutinesPics/defaultbig.png")}
                 />
               )}
-            </SharedElement>
+              {/* </SharedElement> */}
+            </View>
           </View>
-          <SharedElement id={`item.${item.id}.title`} style={styles.three}>
+          <View style={styles.three}>
+            {/* <SharedElement id={`item.${item.id}.title`} style={styles.three}> */}
             <Animatable.Text
               animation="fadeIn"
               useNativeDriver={true}
@@ -186,7 +175,8 @@ const RoutineScreen = ({ navigation, route }) => {
             >
               {item.title}
             </Animatable.Text>
-          </SharedElement>
+            {/* </SharedElement> */}
+          </View>
           <Text style={styles.difficultyRating}>
             {"   "}difficulty: {stars}
           </Text>
@@ -208,6 +198,7 @@ const RoutineScreen = ({ navigation, route }) => {
             scrollEventThrottle={16}
             snapToInterval={ITEM_SIZE}
             decelerationRate={0}
+            snapToAlignment={"center"}
             bounces={false}
             horizontal
             onScrollBeginDrag={() => {
@@ -310,7 +301,7 @@ const RoutineScreen = ({ navigation, route }) => {
               title={buttonTitle}
               disabled={buttonDisabled}
               onPress={() => {
-                addRoutine();
+                AddRoutine(item.title);
                 setShowModal(true);
                 playSound();
               }}
@@ -323,9 +314,21 @@ const RoutineScreen = ({ navigation, route }) => {
 };
 
 //  TODO:
-//  janky shared element
+//  style tags by default or non default image, not by locked/ongoing/rest
+//  have only one open swipeable at any given point
+//  remove routine
+//  lock if user is at y level with x amount of routines
+//  optimize
 
 //  DONE:
+//  swipe to add/remove
+//  add routine is now a component for use in more places
+//  removed sharedelement
+//  separated routine and routines pictures
+//  routines style
+//
+
+//  HISTORY
 //  update list on back
 //  added sound lole
 //  hide warning messages
@@ -344,9 +347,6 @@ const RoutineScreen = ({ navigation, route }) => {
 //  assign item id based on index
 //  flatlist optimization
 //  on load animatable
-//
-
-//  HISTORY
 //  I GOT THIS! db route
 //  Success vector
 //  RoutinesScreen colors translate to RoutineScreen colors
@@ -482,20 +482,20 @@ const styles = StyleSheet.create({
   },
 });
 
-RoutineScreen.sharedElements = (route, otherRoute, showing) => {
-  const { item } = route.params;
+// RoutineScreen.sharedElements = (route, otherRoute, showing) => {
+//   const { item } = route.params;
 
-  return [
-    // {
-    //   id: `item.${item.id}.title`,
-    // },
-    {
-      id: `item.${item.id}.image`,
-    },
-    {
-      id: `item.${item.id}.color`,
-    },
-  ];
-};
+//   return [
+//     // {
+//     //   id: `item.${item.id}.title`,
+//     // },
+//     {
+//       id: `item.${item.id}.image`,
+//     },
+//     {
+//       id: `item.${item.id}.color`,
+//     },
+//   ];
+// };
 
 export default RoutineScreen;

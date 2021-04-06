@@ -27,7 +27,7 @@ function Tag({ content, difficulty, lock, style }) {
       useNativeDriver={true}
       style={[
         {
-          backgroundColor: "rgba(0,0,0,0.1)",
+          backgroundColor: "rgba(0,0,0,0.4)",
           height: 20,
           padding: 1,
           paddingBottom: 23,

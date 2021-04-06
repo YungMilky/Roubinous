@@ -4,12 +4,13 @@ import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
-  TouchableOpacity,
   Text,
   Dimensions,
   Image,
   FlatList,
 } from "react-native";
+
+import { debounce } from "lodash";
 
 import { useIsFocused } from "@react-navigation/native";
 
@@ -19,21 +20,20 @@ import { ScrollView, TouchableHighlight } from "react-native-gesture-handler";
 
 import { LinearGradient } from "expo-linear-gradient";
 
-import { SharedElement } from "react-navigation-shared-element";
+import Swipeable from "react-native-swipeable-row";
 
 import * as Animatable from "react-native-animatable";
 
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
 
 import Screen from "../components/Screen";
-import Separator from "../components/Separator";
 import AppText from "../components/AppText";
 import Tag from "../components/Tag";
 import colors from "../config/colors";
-import AppButton from "../components/AppButton";
 
 // RN >= 0.63
 import { LogBox } from "react-native";
+import AddRoutine from "../components/AddRoutine";
 
 LogBox.ignoreLogs(["Warning: ...", "Setting a timer"]);
 
@@ -54,13 +54,30 @@ function RoutinesScreen({ navigation }) {
   const rank1 = "kn00b";
   const rank2 = "Achiever";
   const rank3 = "Bambaclat";
-
   const [userRank, setuserRank] = useState(rank1);
+
+  //routines, locked routines, ongoing routines
   const [items, setItems] = useState([]);
   const [lockedItems, setLockedItems] = useState([]);
   const [alreadyAddeditems, setAlreadyAddedItems] = useState([]);
+
   const [search, setSearch] = useState();
+
+  //to refresh on reload/back
   const [refresh, setRefresh] = useState(false);
+
+  const [longPress, setLongPress] = useState(false);
+
+  //  references to the swipeable objects
+  const [swipeableRef, setSwipeableRef] = useState();
+  const [swipeableRefAdded, setSwipeableRefAdded] = useState();
+
+  //selections
+  const [selectedItem, setSelectedItem] = useState([]);
+  const [selectedAddedItem, setSelectedAddedItem] = useState([]);
+
+  const [swipeText, setSwipeText] = useState("Add me!");
+  const [swipeTextAdded, setSwipeTextAdded] = useState("Remove me");
 
   const isFocused = useIsFocused();
   useEffect(() => {
@@ -74,33 +91,104 @@ function RoutinesScreen({ navigation }) {
     setAlreadyAddedItems([]);
     setLockedItems([]);
     // resetItems;
-    db.collection("Routines").onSnapshot((docs) => {
-      let index = 0;
-      docs.forEach((doc) => {
-        let routineName = doc.id;
+    db.collection("Routines")
+      .get()
+      .then((docs) => {
+        let index = 0;
+        docs.forEach((doc) => {
+          let routineName = doc.id;
 
-        //routine image from storage
-        let imageRef = cloud.ref(routineName + ".png");
+          //routine image from storage
+          let imageRefRoutines = cloud.ref(
+            "RoutinesScreen/" + routineName + ".png"
+          );
+          let imageRefRoutine = cloud.ref(
+            "RoutineScreen/" + routineName + ".png"
+          );
 
-        //set default difficulty to 0
-        let diff = doc.data().DifficultyRank;
-        if (typeof diff === "undefined") {
-          diff = 0;
-        }
+          //set default difficulty to 0
+          let diff = doc.data().DifficultyRank;
+          if (typeof diff === "undefined") {
+            diff = 0;
+          }
 
-        // lock routine based on routine difficulty and user rank
-        let lock = true;
-        if (userRank === rank1 && diff <= 1) {
-          lock = false;
-        } else if (userRank === rank2 && diff <= 2) {
-          lock = false;
-        } else if (userRank === rank3 && diff <= 3) {
-          lock = false;
-        }
+          // lock routine based on routine difficulty and user rank
+          let lock = true;
+          if (userRank === rank1 && diff <= 1) {
+            lock = false;
+          } else if (userRank === rank2 && diff <= 2) {
+            lock = false;
+          } else if (userRank === rank3 && diff <= 3) {
+            lock = false;
+          }
 
-        function onResolve() {
-          if (!alreadyAdded && !lock) {
-            imageRef.getDownloadURL().then((url) => {
+          function onResolve() {
+            if (!alreadyAdded && !lock) {
+              imageRefRoutines.getDownloadURL().then((urlRoutines) => {
+                imageRefRoutine.getDownloadURL().then((urlRoutine) => {
+                  setItems((oldArray1) => [
+                    ...oldArray1,
+                    {
+                      id: index,
+                      title: routineName,
+                      shortDescription: doc.data().ShortDescription,
+                      descriptionArray: doc.data().LongDescription,
+                      color: doc.data().Color,
+                      difficulty: diff,
+                      image: urlRoutines,
+                      imageRoutine: urlRoutine,
+                      lock: lock,
+                      alreadyAdded: alreadyAdded,
+                    },
+                  ]);
+                });
+              });
+            } else if (!alreadyAdded && lock) {
+              imageRefRoutines.getDownloadURL().then((urlRoutines) => {
+                imageRefRoutine.getDownloadURL().then((urlRoutine) => {
+                  setLockedItems((oldArray2) => [
+                    ...oldArray2,
+                    {
+                      id: index,
+                      title: routineName,
+                      shortDescription: doc.data().ShortDescription,
+                      descriptionArray: doc.data().LongDescription,
+                      color: doc.data().Color,
+                      difficulty: diff,
+                      image: urlRoutines,
+                      imageRoutine: urlRoutine,
+                      lock: lock,
+                      alreadyAdded: alreadyAdded,
+                    },
+                  ]);
+                });
+              });
+            } else if (alreadyAdded) {
+              imageRefRoutines.getDownloadURL().then((urlRoutines) => {
+                imageRefRoutine.getDownloadURL().then((urlRoutine) => {
+                  setAlreadyAddedItems((oldArray3) => [
+                    ...oldArray3,
+                    {
+                      id: index,
+                      title: routineName,
+                      shortDescription: doc.data().ShortDescription,
+                      descriptionArray: doc.data().LongDescription,
+                      color: doc.data().Color,
+                      difficulty: diff,
+                      image: urlRoutines,
+                      imageRoutine: urlRoutine,
+                      lock: lock,
+                      alreadyAdded: alreadyAdded,
+                    },
+                  ]);
+                });
+              });
+            }
+            index++;
+          }
+          //routines with default images
+          function onReject() {
+            if (!alreadyAdded && !lock) {
               setItems((oldArray1) => [
                 ...oldArray1,
                 {
@@ -110,14 +198,12 @@ function RoutinesScreen({ navigation }) {
                   descriptionArray: doc.data().LongDescription,
                   color: doc.data().Color,
                   difficulty: diff,
-                  image: url,
+                  imageDefault: require("../assets/RoutinesPics/default.png"),
                   lock: lock,
                   alreadyAdded: alreadyAdded,
                 },
               ]);
-            });
-          } else if (!alreadyAdded && lock) {
-            imageRef.getDownloadURL().then((url) => {
+            } else if (lock) {
               setLockedItems((oldArray2) => [
                 ...oldArray2,
                 {
@@ -127,14 +213,12 @@ function RoutinesScreen({ navigation }) {
                   descriptionArray: doc.data().LongDescription,
                   color: doc.data().Color,
                   difficulty: diff,
-                  image: url,
+                  imageDefault: require("../assets/RoutinesPics/default.png"),
                   lock: lock,
                   alreadyAdded: alreadyAdded,
                 },
               ]);
-            });
-          } else if (alreadyAdded) {
-            imageRef.getDownloadURL().then((url) => {
+            } else if (alreadyAdded) {
               setAlreadyAddedItems((oldArray3) => [
                 ...oldArray3,
                 {
@@ -144,78 +228,28 @@ function RoutinesScreen({ navigation }) {
                   descriptionArray: doc.data().LongDescription,
                   color: doc.data().Color,
                   difficulty: diff,
-                  image: url,
+                  imageDefault: require("../assets/RoutinesPics/default.png"),
                   lock: lock,
                   alreadyAdded: alreadyAdded,
                 },
               ]);
-            });
+            }
+            index++;
           }
-          index++;
-        }
-        function onReject() {
-          if (!alreadyAdded && !lock) {
-            setItems((oldArray1) => [
-              ...oldArray1,
-              {
-                id: index,
-                title: routineName,
-                shortDescription: doc.data().ShortDescription,
-                descriptionArray: doc.data().LongDescription,
-                color: doc.data().Color,
-                difficulty: diff,
-                imageDefault: require("../assets/RoutinesPics/default.png"),
-                lock: lock,
-                alreadyAdded: alreadyAdded,
-              },
-            ]);
-          } else if (lock) {
-            setLockedItems((oldArray2) => [
-              ...oldArray2,
-              {
-                id: index,
-                title: routineName,
-                shortDescription: doc.data().ShortDescription,
-                descriptionArray: doc.data().LongDescription,
-                color: doc.data().Color,
-                difficulty: diff,
-                imageDefault: require("../assets/RoutinesPics/default.png"),
-                lock: lock,
-                alreadyAdded: alreadyAdded,
-              },
-            ]);
-          } else if (alreadyAdded) {
-            setAlreadyAddedItems((oldArray3) => [
-              ...oldArray3,
-              {
-                id: index,
-                title: routineName,
-                shortDescription: doc.data().ShortDescription,
-                descriptionArray: doc.data().LongDescription,
-                color: doc.data().Color,
-                difficulty: diff,
-                imageDefault: require("../assets/RoutinesPics/default.png"),
-                lock: lock,
-                alreadyAdded: alreadyAdded,
-              },
-            ]);
-          }
-          index++;
-        }
 
-        let alreadyAdded = undefined;
-        dbUser
-          .collection("routines")
-          .doc(routineName)
-          .get()
-          .then((documentSnapshot) => {
-            documentSnapshot.exists
-              ? (alreadyAdded = true)
-              : (alreadyAdded = false);
-            imageRef.getDownloadURL().then(onResolve, onReject);
-          });
+          let alreadyAdded = undefined;
+          dbUser
+            .collection("routines")
+            .doc(routineName)
+            .get()
+            .then((documentSnapshot) => {
+              documentSnapshot.exists
+                ? (alreadyAdded = true)
+                : (alreadyAdded = false);
+              imageRefRoutines.getDownloadURL().then(onResolve, onReject);
+            });
+        });
       });
-    });
   }
 
   dbUser.get().then((documentSnapshot) => {
@@ -231,33 +265,91 @@ function RoutinesScreen({ navigation }) {
     setuserRank(translatedUserRank);
   });
 
+  //  Flatlist items pre-render for performance
   let renderItems = ({ item }) => {
     return (
-      <Animatable.View
-        animation="fadeIn"
+      <Swipeable
+        onRef={(ref) => setSwipeableRef(ref)}
+        style={{ width: width, paddingLeft: 0 }}
+        bounceOnMount={true}
         useNativeDriver={true}
-        style={{
-          padding: 3,
-          marginBottom: 8,
-          marginHorizontal: 10,
-          width: width * 0.89,
-          borderRadius: 5,
-          elevation: -8,
-        }}
+        rightActionActivationDistance={200}
+        onSwipeStart={debounce(() => {
+          setTimeout(() => {
+            swipeableRef.recenter();
+          }, 3000);
+        }, 500)}
+        onRightActionRelease={debounce(() => {
+          if (swipeText === "Add me!") {
+            setSwipeText("Added!");
+            AddRoutine(item.title);
+            setTimeout(() => {
+              swipeableRef.recenter();
+            }, 1000);
+            setTimeout(() => {
+              setSwipeText("Remove me");
+            }, 1000);
+          } else if (swipeText === "Remove me") {
+            setSwipeText("Removed!");
+            setTimeout(() => {
+              swipeableRef.recenter();
+            }, 1000);
+            setTimeout(() => {
+              setSwipeText("Add me!");
+            }, 1000);
+          }
+          if (selectedItem.includes(item.title)) {
+            setSelectedItem(
+              selectedItem.filter((added) => added !== item.title)
+            );
+          } else {
+            setSelectedItem((lastItem) => [...lastItem, item.title]);
+          }
+        }, 500)}
+        rightButtons={[
+          <View style={styles.swipeable}>
+            <AppText
+              style={[
+                styles.swipeableText,
+                swipeText === "Removed!" || swipeText === "Remove me"
+                  ? { color: colors.darkmodeErrorColor }
+                  : { color: colors.pastelGreen },
+              ]}
+            >
+              {swipeText}
+            </AppText>
+          </View>,
+        ]}
       >
-        <TouchableHighlight
-          delayPressIn={200}
-          activeOpacity={0.9}
-          underlayColor={colors.white}
-          onPressOut={() => navigation.navigate("Routine", { item })}
+        <Animatable.View
+          animation="fadeIn"
+          duration={400}
+          useNativeDriver={true}
+          style={[
+            selectedItem.includes(item.title) ? styles.selectedOverlay : null,
+            styles.card,
+          ]}
         >
-          <SharedElement
+          <TouchableHighlight
+            delayLongPress={200}
+            onLongPress={() => {
+              setLongPress(true);
+            }}
+            delayPressIn={200}
+            activeOpacity={0.9}
+            onPressOut={() =>
+              longPress
+                ? setLongPress(false)
+                : navigation.navigate("Routine", { item })
+            }
+          >
+            {/* <SharedElement
             id={`item.${item.id}.color`}
             // style={[
             //   StyleSheet.absoluteFillObject,
             //   { backgroundColor: item.color },
             // ]}
-          >
+          > */}
             <LinearGradient
               colors={[
                 colors.OrchidPink,
@@ -269,79 +361,142 @@ function RoutinesScreen({ navigation }) {
               end={{ x: 0.1, y: 0.3 }}
               // locations={[0.4, 0.1]}
             >
-              <View style={itemStyles.container}>
-                <SharedElement
+              <View style={[itemStyles.container]}>
+                {/* <SharedElement
                   id={`item.${item.id}.image`}
                   style={itemStyles.image}
-                >
-                  {item.image ? (
-                    <Image
-                      style={itemStyles.image}
-                      source={{ uri: item.image }}
-                    />
-                  ) : (
-                    <Image
-                      style={itemStyles.imageDefault}
-                      source={item.imageDefault}
-                    />
-                  )}
-                </SharedElement>
+                > */}
+
+                {item.image ? (
+                  <Image
+                    style={itemStyles.image}
+                    source={{ uri: item.image }}
+                  />
+                ) : (
+                  <Image
+                    style={itemStyles.imageDefault}
+                    source={item.imageDefault}
+                  />
+                )}
+                {/* </SharedElement> */}
 
                 <View>
                   {/* <SharedElement id={`item.${item.id}.title`}> */}
-                  <AppText style={itemStyles.title}>{item.title}</AppText>
+                  <AppText
+                    style={[
+                      item.image
+                        ? {
+                            marginLeft: -200,
+                          }
+                        : {
+                            marginLeft: -168,
+                          },
+                      itemStyles.title,
+                    ]}
+                  >
+                    {item.title}
+                  </AppText>
                   {/* </SharedElement> */}
-                  <AppText style={itemStyles.subtitle}>
+                  <AppText
+                    style={[
+                      item.image
+                        ? {
+                            marginLeft: -200,
+                          }
+                        : {
+                            marginLeft: -168,
+                          },
+                      itemStyles.subtitle,
+                    ]}
+                  >
                     {item.shortDescription}
                   </AppText>
                   <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "flex-end",
-                      position: "absolute",
-                      width: 90,
-                      top: 60,
-                      left: width * 0.23,
-                    }}
+                    style={[
+                      item.image
+                        ? {
+                            left: width * 0.074,
+                          }
+                        : {
+                            left: width * 0.15,
+                          },
+
+                      {
+                        flexDirection: "row",
+                        justifyContent: "flex-end",
+                        position: "absolute",
+                        width: 90,
+                        top: 66,
+                      },
+                    ]}
                   >
-                    {item.lock && <Tag lock={true} />}
                     <Tag difficulty={item.difficulty} />
                   </View>
                 </View>
               </View>
             </LinearGradient>
-          </SharedElement>
-        </TouchableHighlight>
-      </Animatable.View>
+            {/* </SharedElement> */}
+          </TouchableHighlight>
+        </Animatable.View>
+      </Swipeable>
     );
   };
   let renderLockedItems = ({ item }) => {
     return (
-      <Animatable.View
-        animation="fadeIn"
+      <Swipeable
+        style={{ width: width, paddingLeft: 0 }}
         useNativeDriver={true}
-        style={{
-          padding: 3,
-          marginBottom: 8,
-          marginHorizontal: 10,
-          width: width * 0.89,
-          borderRadius: 5,
-          elevation: -8,
-        }}
+        rightContent={[
+          <View style={styles.swipeable}>
+            <AppText
+              style={[
+                styles.swipeableText,
+                { color: colors.darkmodeDisabledWhite },
+              ]}
+            >
+              Locked{" "}
+              <FontAwesome
+                name="lock"
+                size={18}
+                color={colors.darkmodeDisabledWhite}
+              />
+            </AppText>
+          </View>,
+        ]}
       >
-        <TouchableHighlight
-          delayPressIn={200}
-          activeOpacity={0.9}
-          underlayColor={colors.white}
-          onPressOut={() => navigation.navigate("Routine", { item })}
+        <Animatable.View
+          animation={"fadeIn"}
+          duration={400}
+          useNativeDriver={true}
+          style={{
+            padding: 3,
+            marginBottom: 8,
+            marginHorizontal: 10,
+            width: width * 0.89,
+            borderRadius: 5,
+            elevation: -8,
+          }}
         >
-          <SharedElement
+          <TouchableHighlight
+            delayLongPress={300}
+            onLongPress={() => {
+              setLongPress(true);
+            }}
+            delayPressIn={200}
+            activeOpacity={0.9}
+            onPressOut={() =>
+              longPress
+                ? setLongPress(false)
+                : navigation.navigate("Routine", { item })
+            }
+          >
+            {/* <SharedElement
             id={`item.${item.id}.color`}
             // style={[
             //   StyleSheet.absoluteFillObject,
             //   { backgroundColor: item.color },
             // ]}
-          >
+          > */}
             <LinearGradient
               colors={[
                 colors.OrchidPink,
@@ -354,28 +509,52 @@ function RoutinesScreen({ navigation }) {
               // locations={[0.4, 0.1]}
             >
               <View style={itemStyles.container}>
-                <SharedElement
+                {/* <SharedElement
                   id={`item.${item.id}.image`}
                   style={itemStyles.image}
-                >
-                  {item.image ? (
-                    <Image
-                      style={itemStyles.image}
-                      source={{ uri: item.image }}
-                    />
-                  ) : (
-                    <Image
-                      style={itemStyles.imageDefault}
-                      source={item.imageDefault}
-                    />
-                  )}
-                </SharedElement>
+                > */}
+                {item.image ? (
+                  <Image
+                    style={itemStyles.image}
+                    source={{ uri: item.image }}
+                  />
+                ) : (
+                  <Image
+                    style={itemStyles.imageDefault}
+                    source={item.imageDefault}
+                  />
+                )}
+                {/* </SharedElement> */}
 
                 <View>
                   {/* <SharedElement id={`item.${item.id}.title`}> */}
-                  <AppText style={itemStyles.title}>{item.title}</AppText>
+                  <AppText
+                    style={[
+                      item.image
+                        ? {
+                            marginLeft: -200,
+                          }
+                        : {
+                            marginLeft: -168,
+                          },
+                      itemStyles.title,
+                    ]}
+                  >
+                    {item.title}
+                  </AppText>
                   {/* </SharedElement> */}
-                  <AppText style={itemStyles.subtitle}>
+                  <AppText
+                    style={[
+                      item.image
+                        ? {
+                            marginLeft: -200,
+                          }
+                        : {
+                            marginLeft: -168,
+                          },
+                      itemStyles.subtitle,
+                    ]}
+                  >
                     {item.shortDescription}
                   </AppText>
                   <View
@@ -384,8 +563,8 @@ function RoutinesScreen({ navigation }) {
                       justifyContent: "flex-end",
                       position: "absolute",
                       width: 90,
-                      top: 60,
-                      left: width * 0.23,
+                      top: 66,
+                      left: width * 0.15,
                     }}
                   >
                     <Tag lock={true} />
@@ -394,38 +573,97 @@ function RoutinesScreen({ navigation }) {
                 </View>
               </View>
             </LinearGradient>
-          </SharedElement>
-        </TouchableHighlight>
-      </Animatable.View>
+            {/* </SharedElement> */}
+          </TouchableHighlight>
+        </Animatable.View>
+      </Swipeable>
     );
   };
   let renderAlreadyAddedItems = ({ item }) => {
     return (
-      <Animatable.View
-        animation="fadeIn"
+      <Swipeable
+        onRef={(ref) => setSwipeableRefAdded(ref)}
+        style={{ width: width, paddingLeft: 0 }}
         useNativeDriver={true}
-        style={{
-          padding: 3,
-          marginBottom: 8,
-          marginHorizontal: 10,
-          width: width * 0.89,
-          borderRadius: 5,
-          elevation: -8,
-        }}
+        rightActionActivationDistance={200}
+        onSwipeStart={debounce(() => {
+          setTimeout(() => {
+            swipeableRefAdded.recenter();
+          }, 3000);
+        }, 500)}
+        onRightActionRelease={debounce(() => {
+          if (swipeTextAdded === "Remove me") {
+            setSwipeTextAdded("Removed!");
+            setTimeout(() => {
+              swipeableRefAdded.recenter();
+            }, 1000);
+            setTimeout(() => {
+              setSwipeTextAdded("Add me!");
+            }, 1000);
+          } else if (swipeTextAdded === "Add me!") {
+            setSwipeTextAdded("Added!");
+            AddRoutine(item.title);
+            setTimeout(() => {
+              swipeableRefAdded.recenter();
+            }, 1000);
+            setTimeout(() => {
+              setSwipeTextAdded("Remove me");
+            }, 1000);
+          }
+          if (selectedAddedItem.includes(item.title)) {
+            setSelectedAddedItem(
+              selectedAddedItem.filter((added) => added !== item.title)
+            );
+          } else {
+            setSelectedAddedItem((lastItem) => [...lastItem, item.title]);
+          }
+        }, 500)}
+        rightButtons={[
+          <View style={styles.swipeable}>
+            <AppText
+              style={[
+                styles.swipeableText,
+                swipeTextAdded === "Removed!" || swipeTextAdded === "Remove me"
+                  ? { color: colors.darkmodeErrorColor }
+                  : { color: colors.pastelGreen },
+              ]}
+            >
+              {swipeTextAdded}
+            </AppText>
+          </View>,
+        ]}
       >
-        <TouchableHighlight
-          delayPressIn={200}
-          activeOpacity={0.9}
-          underlayColor={colors.white}
-          onPressOut={() => navigation.navigate("Routine", { item })}
+        <Animatable.View
+          animation="fadeIn"
+          duration={400}
+          useNativeDriver={true}
+          style={[
+            selectedAddedItem.includes(item.title)
+              ? styles.selectedAddedOverlay
+              : null,
+            styles.card,
+          ]}
         >
-          <SharedElement
+          <TouchableHighlight
+            delayLongPress={300}
+            onLongPress={() => {
+              setLongPress(true);
+            }}
+            delayPressIn={200}
+            activeOpacity={0.9}
+            onPressOut={() =>
+              longPress
+                ? setLongPress(false)
+                : navigation.navigate("Routine", { item })
+            }
+          >
+            {/* <SharedElement
             id={`item.${item.id}.color`}
             // style={[
             //   StyleSheet.absoluteFillObject,
             //   { backgroundColor: item.color },
             // ]}
-          >
+          > */}
             <LinearGradient
               colors={[
                 colors.OrchidPink,
@@ -438,28 +676,52 @@ function RoutinesScreen({ navigation }) {
               // locations={[0.4, 0.1]}
             >
               <View style={itemStyles.container}>
-                <SharedElement
+                {/* <SharedElement
                   id={`item.${item.id}.image`}
                   style={itemStyles.image}
-                >
-                  {item.image ? (
-                    <Image
-                      style={itemStyles.image}
-                      source={{ uri: item.image }}
-                    />
-                  ) : (
-                    <Image
-                      style={itemStyles.imageDefault}
-                      source={item.imageDefault}
-                    />
-                  )}
-                </SharedElement>
+                > */}
+                {item.image ? (
+                  <Image
+                    style={itemStyles.image}
+                    source={{ uri: item.image }}
+                  />
+                ) : (
+                  <Image
+                    style={itemStyles.imageDefault}
+                    source={item.imageDefault}
+                  />
+                )}
+                {/* </SharedElement> */}
 
                 <View>
-                  <SharedElement id={`item.${item.id}.title`}>
-                    <AppText style={itemStyles.title}>{item.title}</AppText>
-                  </SharedElement>
-                  <AppText style={itemStyles.subtitle}>
+                  {/* <SharedElement id={`item.${item.id}.title`}> */}
+                  <AppText
+                    style={[
+                      item.image
+                        ? {
+                            marginLeft: -200,
+                          }
+                        : {
+                            marginLeft: -168,
+                          },
+                      itemStyles.title,
+                    ]}
+                  >
+                    {item.title}
+                  </AppText>
+                  {/* </SharedElement> */}
+                  <AppText
+                    style={[
+                      item.image
+                        ? {
+                            marginLeft: -200,
+                          }
+                        : {
+                            marginLeft: -168,
+                          },
+                      itemStyles.subtitle,
+                    ]}
+                  >
                     {item.shortDescription}
                   </AppText>
                   <View
@@ -468,8 +730,8 @@ function RoutinesScreen({ navigation }) {
                       justifyContent: "flex-end",
                       position: "absolute",
                       width: 90,
-                      top: 60,
-                      left: width * 0.23,
+                      top: 66,
+                      left: width * 0.15,
                     }}
                   >
                     <Tag difficulty={item.difficulty} />
@@ -477,10 +739,11 @@ function RoutinesScreen({ navigation }) {
                 </View>
               </View>
             </LinearGradient>
-          </SharedElement>
-          {/* </View> */}
-        </TouchableHighlight>
-      </Animatable.View>
+            {/* </SharedElement> */}
+            {/* </View> */}
+          </TouchableHighlight>
+        </Animatable.View>
+      </Swipeable>
     );
   };
 
@@ -496,7 +759,7 @@ function RoutinesScreen({ navigation }) {
         <ScrollView
           style={{
             backgroundColor: colors.darkmodeFocused,
-            borderRadius: 16,
+            borderRadius: 4,
             width: width * 0.94,
             height: height * 0.77,
           }}
@@ -516,7 +779,7 @@ function RoutinesScreen({ navigation }) {
                 height: 50,
               }}
               inputContainerStyle={{
-                borderRadius: 15,
+                borderRadius: 4,
                 borderTopWidth: 0,
                 borderBottomWidth: 0,
                 height: 34,
@@ -657,6 +920,34 @@ function RoutinesScreen({ navigation }) {
   );
 }
 const styles = StyleSheet.create({
+  card: {
+    padding: 3,
+    marginBottom: 8,
+    marginHorizontal: 10,
+    width: width * 0.89,
+    borderRadius: 5,
+    elevation: -8,
+  },
+  swipeable: {
+    flex: 1,
+    marginLeft: -23,
+    marginTop: 3,
+    marginBottom: 10,
+    borderRadius: 4,
+    backgroundColor: colors.darkmodeDisabledBlack,
+  },
+  swipeableText: {
+    flex: 1,
+    transform: [{ rotate: "90deg" }],
+    width: width * 0.3,
+    right: 40,
+    fontWeight: "700",
+    fontSize: 16,
+    marginTop: 14,
+    marginBottom: 10,
+    textAlign: "center",
+    padding: 12,
+  },
   separatorText: {
     textAlign: "center",
     paddingBottom: 0,
@@ -667,10 +958,6 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     color: colors.darkmodeDisabledWhite,
   },
-  title: {
-    fontWeight: "700",
-    fontSize: 18,
-  },
   description: {
     fontSize: 11,
   },
@@ -680,44 +967,60 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 20,
   },
+  selectedOverlay: {
+    backgroundColor: colors.darkmodeMediumWhite,
+    padding: 30,
+    // borderWidth: 6,
+    // borderColor: colors.pastelGreen,
+    // borderRadius: 10,
+  },
+  selectedAddedOverlay: {
+    backgroundColor: colors.darkmodeMediumWhite,
+    padding: 30,
+    // borderWidth: 6,
+    // borderColor: colors.pastelGreen,
+    // borderRadius: 10,
+  },
 });
 
 const itemStyles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    padding: 15,
+    overflow: "hidden",
+    padding: 10,
   },
   image: {
-    width: ITEM_HEIGHT * 0.9,
-    height: ITEM_HEIGHT * 0.9,
-    left: -18,
+    overflow: "hidden",
+    width: ITEM_HEIGHT * 1.4,
+    height: ITEM_HEIGHT * 1.4,
+    marginTop: -60,
+    left: width * 0.4,
   },
   imageDefault: {
+    overflow: "hidden",
     width: ITEM_HEIGHT * 1.2,
     height: ITEM_HEIGHT * 1.2,
-    marginTop: -62,
-    marginLeft: 0,
+    marginTop: -55,
+    left: width * 0.4,
   },
   title: {
     color: colors.darkmodeHighWhite,
     fontSize: 22,
-    marginTop: 0,
-    width: width * 0.54,
-    marginLeft: -130,
+    marginTop: 1,
+    width: width * 0.78,
     textShadowOffset: { width: 8, height: 8 },
     textShadowRadius: 8,
-    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowColor: "rgba(0,0,0,0.4)",
   },
   subtitle: {
     color: colors.darkmodeMediumWhite,
     fontSize: 15,
-    marginLeft: -130,
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 8,
-    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowColor: "rgba(0,0,0,0.4)",
   },
   background: {
-    borderRadius: 16,
+    borderRadius: 4,
     height: height * 0.14,
   },
   makeYourOwnRoutine: {
