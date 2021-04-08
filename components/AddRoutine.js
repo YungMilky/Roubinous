@@ -11,14 +11,16 @@ export default (title) => {
     .doc(userID)
     .collection("routines");
 
-  userRoutines.doc(title).set(
-    {
-      ComboFrequency: "2",
-      DaysInCombo: 2,
-      StartDate: new Date(),
-      UserAlertTime: 7,
-      UserRoutineRank: "Rookie",
-    },
-    { merge: true }
-  );
+  console.log(userRoutines.doc(title).exists);
+
+  // .set(
+  //   {
+  //     ComboFrequency: "2",
+  //     DaysInCombo: 2,
+  //     StartDate: new Date(),
+  //     UserAlertTime: 7,
+  //     UserRoutineRank: "Rookie",
+  //   },
+  //   { merge: true }
+  // );
 };

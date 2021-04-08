@@ -16,7 +16,7 @@ import { useIsFocused } from "@react-navigation/native";
 
 import { SearchBar } from "react-native-elements";
 
-import { ScrollView, TouchableHighlight } from "react-native-gesture-handler";
+import { ScrollView, TouchableHighlight, TouchableOpacity } from "react-native";
 
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -34,6 +34,7 @@ import colors from "../config/colors";
 // RN >= 0.63
 import { LogBox } from "react-native";
 import AddRoutine from "../components/AddRoutine";
+import AddAndRemoveButton from "../components/AddAndRemoveButton";
 
 LogBox.ignoreLogs(["Warning: ...", "Setting a timer"]);
 
@@ -430,6 +431,7 @@ function RoutinesScreen({ navigation }) {
                       },
                     ]}
                   >
+                    <AddAndRemoveButton check={true} />
                     <Tag difficulty={item.difficulty} />
                   </View>
                 </View>
@@ -734,6 +736,9 @@ function RoutinesScreen({ navigation }) {
                       left: width * 0.15,
                     }}
                   >
+                    <TouchableOpacity disabled={false}>
+                      <AddAndRemoveButton check={false} />
+                    </TouchableOpacity>
                     <Tag difficulty={item.difficulty} />
                   </View>
                 </View>
@@ -999,7 +1004,7 @@ const itemStyles = StyleSheet.create({
   imageDefault: {
     overflow: "hidden",
     width: ITEM_HEIGHT * 1.2,
-    height: ITEM_HEIGHT * 1.2,
+    height: ITEM_HEIGHT * 1.08,
     marginTop: -55,
     left: width * 0.4,
   },

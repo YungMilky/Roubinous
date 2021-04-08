@@ -314,13 +314,14 @@ const RoutineScreen = ({ navigation, route }) => {
 };
 
 //  TODO:
-//  style tags by default or non default image, not by locked/ongoing/rest
-//  have only one open swipeable at any given point
 //  remove routine
 //  lock if user is at y level with x amount of routines
-//  optimize
+//  style tags by default or non default image, not by locked/ongoing/rest
+//  have only one open swipeable at any given point
 
 //  DONE:
+//  tag styke add/remove button with animations
+//  optimize
 //  swipe to add/remove
 //  add routine is now a component for use in more places
 //  removed sharedelement
@@ -423,7 +424,7 @@ const styles = StyleSheet.create({
 
   buttonContainer: {
     position: "absolute",
-    top: height * 0.86,
+    top: height * 0.26,
     width: width,
   },
   //  Button

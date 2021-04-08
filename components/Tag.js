@@ -21,9 +21,10 @@ function Tag({ content, difficulty, lock, style }) {
       setStars("★★★");
     }
   }, []);
+
   return (
     <Animatable.View
-      animation="fadeIn"
+      animation={"fadeIn"}
       useNativeDriver={true}
       style={[
         {
