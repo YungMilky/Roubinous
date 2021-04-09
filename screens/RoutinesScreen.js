@@ -1,15 +1,14 @@
-import React, { useState } from "react";
-import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
-import { FlatList } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
-import RoutineItems from "../components/RoutineItems";
-import Screen from "../components/Screen";
-import Separator from "../components/Separator";
-import colors from "../config/colors";
-import AppText from "../components/AppText";
-import { db, auth } from "../firebase";
-import { AntDesign } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { FlatList } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
+import RoutineItems from '../components/RoutineItems';
+import Screen from '../components/Screen';
+import Separator from '../components/Separator';
+import colors from '../config/colors';
+import AppText from '../components/AppText';
+import { db, auth } from '../firebase';
 
 function RoutinesScreen({ navigation }) {
   const user = auth.currentUser;
@@ -17,11 +16,11 @@ function RoutinesScreen({ navigation }) {
   // var userRank;
 
   const getUserInfo = () => {
-    db.collection("Users")
+    db.collection('Users')
       .doc(user.uid)
       .get()
       .then((documentSnapshot) => {
-        setuserRankNumber(documentSnapshot.get("UserRank"));
+        setuserRankNumber(documentSnapshot.get('UserRank'));
       });
   };
   getUserInfo();
@@ -43,31 +42,31 @@ function RoutinesScreen({ navigation }) {
   const items = [
     {
       id: 1,
-      title: "Hydration",
-      description: "Water is good",
-      userLevelReq: "Lv 1",
-      image: require("../assets/RoutinesPics/water.jpg"),
+      title: 'Hydration',
+      description: 'Water is good',
+      userLevelReq: 'Lv 1',
+      image: require('../assets/RoutinesPics/water.jpg'),
     },
     {
       id: 2,
-      title: "Yoga",
-      description: "Yoga is good",
-      userLevelReq: "Lv 1",
-      image: require("../assets/RoutinesPics/yoga.jpg"),
+      title: 'Yoga',
+      description: 'Yoga is good',
+      userLevelReq: 'Lv 1',
+      image: require('../assets/RoutinesPics/yoga.jpg'),
     },
     {
       id: 3,
-      title: "Workout",
-      description: "Workout is good",
-      userLevelReq: "Lv 1",
-      image: require("../assets/RoutinesPics/weights.jpg"),
+      title: 'Workout',
+      description: 'Workout is good',
+      userLevelReq: 'Lv 1',
+      image: require('../assets/RoutinesPics/weights.jpg'),
     },
     {
       id: 4,
-      title: "Eat Breakfast",
-      description: "Eat is good",
-      userLevelReq: "Lv 1",
-      image: require("../assets/RoutinesPics/breakfast.jpg"),
+      title: 'Eat Breakfast',
+      description: 'Eat is good',
+      userLevelReq: 'Lv 1',
+      image: require('../assets/RoutinesPics/breakfast.jpg'),
       //Customise icons??? Mosh 11,12 Lists
     },
   ];
@@ -75,38 +74,38 @@ function RoutinesScreen({ navigation }) {
   const itemlevel2 = [
     {
       id: 5,
-      title: "Workout",
-      description: "Workout is good",
-      userLevelReq: "Lv 2",
-      image: require("../assets/RoutinesPics/weights.jpg"),
+      title: 'Workout',
+      description: 'Workout is good',
+      userLevelReq: 'Lv 2',
+      image: require('../assets/RoutinesPics/weights.jpg'),
     },
     {
       id: 6,
-      title: "Workout",
-      description: "Workout is good",
-      userLevelReq: "Lv 2",
-      image: require("../assets/RoutinesPics/weights.jpg"),
+      title: 'Workout',
+      description: 'Workout is good',
+      userLevelReq: 'Lv 2',
+      image: require('../assets/RoutinesPics/weights.jpg'),
     },
     {
       id: 7,
-      title: "Workout",
-      description: "Workout is good",
-      userLevelReq: "Lv 2",
-      image: require("../assets/RoutinesPics/weights.jpg"),
+      title: 'Workout',
+      description: 'Workout is good',
+      userLevelReq: 'Lv 2',
+      image: require('../assets/RoutinesPics/weights.jpg'),
     },
   ];
   return (
     <Screen>
       <ScrollView>
         <View style={styles.max}>
-       <TouchableOpacity
-                  style={styles.rowButton}
-                  onPress={() =>
-                    navigation.navigate('AddRoutine', { screen: 'AddRoutine' })
-                  }
-                >
-      <AntDesign name="plus" size={35} color="black" />
-     </TouchableOpacity>
+          <Text
+            style={styles.text}
+            onPress={() =>
+              navigation.navigate('AddRoutine', { screen: 'AddRoutine' })
+            }
+          >
+            Add a custom routine
+          </Text>
           <View style={styles.container}>{getUserRank()}</View>
           {/* <View style={styles.container}>
             <AppText style={styles.levelText}>{userRank}</AppText>
@@ -123,7 +122,7 @@ function RoutinesScreen({ navigation }) {
                 subtitle={item.description}
                 image={item.image}
                 userLevelReq={item.userLevelReq}
-                onPressOut={() => console.log("Selected", item)}
+                onPressOut={() => console.log('Selected', item)}
               />
             )}
             ItemSeparatorComponent={Separator}
@@ -140,7 +139,7 @@ function RoutinesScreen({ navigation }) {
                 subtitle={item.description}
                 image={item.image}
                 userLevelReq={item.userLevelReq}
-                onPressOut={() => console.log("Selected", item)}
+                onPressOut={() => console.log('Selected', item)}
               />
             )}
             ItemSeparatorComponent={Separator}
@@ -157,16 +156,23 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: colors.samRed,
     borderRadius: 10,
-    alignContent: "center",
-    justifyContent: "center",
+    alignContent: 'center',
+    justifyContent: 'center',
   },
   levelText: {
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 20,
   },
   max: {
-    display: "flex",
+    display: 'flex',
     flex: 1,
+  },
+  text: {
+    textAlign: 'center',
+    textShadowRadius: 3,
+    color: colors.samBlue,
+    fontSize: 20,
+    marginBottom: 20,
   },
 });
 

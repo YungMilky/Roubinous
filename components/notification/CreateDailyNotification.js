@@ -1,4 +1,5 @@
 import * as Notifications from 'expo-notifications';
+import CancelAllNotifications from './CancelAllNotifications';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -9,30 +10,9 @@ Notifications.setNotificationHandler({
 });
 
 async function CreateDailyNotification(hour, minute) {
-  // const [userAlertHour, setUserAlertHour] = useState('');
-  // const [userAlertMinute, setUserAlertMinute] = useState('');
   console.log('inne i metoden' + ' ' + hour + ' ' + minute);
 
-  await Notifications.cancelAllScheduledNotificationsAsync()
-    .then(() => {
-      console.log('Cleared all local notifications.');
-    })
-    .catch((err) => {
-      console.log('Unable to clear local notifications. ' + err);
-      reject(err);
-    });
-
-  // db.collection('Users')
-  //   .doc(auth.currentUser.uid)
-  //   .get()
-  //   .then((documentSnapshot) => {
-  //     setUserAlertHour(documentSnapshot.get('UserAlertHour'));
-  //     setUserAlertMinute(documentSnapshot.get('UserAlertMinute'));
-  //   })
-  //   .catch((err) => {
-  //     console.log('Cant get user alert time. ' + err);
-  //     reject(err);
-  //   });
+  CancelAllNotifications();
 
   await Notifications.scheduleNotificationAsync({
     content: {

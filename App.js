@@ -5,7 +5,6 @@ import { NavigationContainer, StackActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { TransitionSpecs } from '@react-navigation/stack';
-import { Constants } from 'react-native-unimodules';
 import { LogBox } from 'react-native';
 
 import {

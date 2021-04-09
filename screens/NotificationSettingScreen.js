@@ -3,10 +3,11 @@ import * as Notifications from 'expo-notifications';
 import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, Platform, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import PropTypes from 'prop-types';
 
 import { db, auth } from '../firebase';
 import AppButton from '../components/AppButton';
-import SendNotification from '../components/SendNotification';
+import SendNotification from '../components/notification/SendNotification';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -16,7 +17,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export default function App() {
+const NotificationSettingScreen = ({ navigation }) => {
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
@@ -190,7 +191,7 @@ export default function App() {
     });
     console.log({ hour } + ':' + { minute });
   }
-}
+};
 
 // async function schedulePushNotification() {
 //   await Notifications.scheduleNotificationAsync({
@@ -279,3 +280,9 @@ const styles = StyleSheet.create({
     width: '60%',
   },
 });
+
+NotificationSettingScreen.propTypes = {
+  navigation: PropTypes.object.isRequired,
+};
+
+export default NotificationSettingScreen;

@@ -41,6 +41,14 @@ const HomeScreen = ({ navigation }) => {
         style={styles.button}
         onPress={() => navigation.navigate('Profile', { screen: 'Profile' })}
       >
+        <Text
+          style={styles.text}
+          onPress={() =>
+            navigation.navigate('AddRoutine', { screen: 'AddRoutine' })
+          }
+        >
+          Add a custom routine
+        </Text>
         <MaterialCommunityIcons
           name="account"
           size={100}
