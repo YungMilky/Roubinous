@@ -12,26 +12,31 @@ import * as Animatable from "react-native-animatable";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import colors from "../config/colors";
+import AddRoutine from "./AddRoutine";
+import RemoveRoutine from "./RemoveRoutine";
 
-const plus = () => {
-  return (
-    <MaterialCommunityIcons
-      name="plus"
-      size={20}
-      color={colors.darkmodeHighWhite}
-    />
-  );
-};
-const minus = () => {
-  return (
-    <MaterialCommunityIcons
-      name="minus"
-      size={20}
-      color={colors.darkmodeHighWhite}
-    />
-  );
-};
-function AddAndRemoveButton({ style, check }) {
+//check - if true: show plus, if false: show minus
+//routine - routine name
+//size - plus and minus icon size
+function AddAndRemoveButton({ style, size, check, routine }) {
+  const plus = () => {
+    return (
+      <MaterialCommunityIcons
+        name="plus"
+        size={typeof size != "undefined" ? size : 20}
+        color={colors.darkmodeSuccessColor}
+      />
+    );
+  };
+  const minus = () => {
+    return (
+      <MaterialCommunityIcons
+        name="minus"
+        size={typeof size != "undefined" ? size : 20}
+        color={colors.darkmodeErrorColor}
+      />
+    );
+  };
   const [expanded, setExpanded] = useState(true);
   const animationWidth = useRef(new Animated.Value(2)).current;
 
@@ -67,7 +72,7 @@ function AddAndRemoveButton({ style, check }) {
       useNativeDriver={true}
       style={[
         {
-          backgroundColor: "rgba(0,0,0,0.4)",
+          backgroundColor: "rgba(0,0,0,0.2)",
           height: 20,
           padding: 1,
           paddingBottom: 23,
@@ -87,6 +92,10 @@ function AddAndRemoveButton({ style, check }) {
               onPress={() => {
                 toggleExpansion();
                 if (undo) {
+                  console.log(checkMessage);
+                  checkMessage === "Added!"
+                    ? RemoveRoutine(routine)
+                    : AddRoutine(routine);
                   // 3. set message to undone
                   setCheckMessage("Undone!");
                   // set width to adapt to "undone" text
@@ -112,6 +121,9 @@ function AddAndRemoveButton({ style, check }) {
                   // 1. set message to Added!
                   setCheckMessage("Added!");
 
+                  // 2. add routine to db
+                  AddRoutine(routine);
+
                   // 2. toggle undo
                   setTimeout(() => {
                     toggleUndo(true);
@@ -122,6 +134,10 @@ function AddAndRemoveButton({ style, check }) {
                   //  IF REMOVING
                   // 1. set message to Removed!
                   setCheckMessage("Removed");
+
+                  // 2. remove routine from db
+                  RemoveRoutine(routine);
+
                   // 2. toggle undo
                   setTimeout(() => {
                     toggleUndo(true);

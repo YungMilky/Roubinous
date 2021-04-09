@@ -29,6 +29,7 @@ import AppText from "../components/AppText";
 
 import { Audio } from "expo-av";
 import AddRoutine from "../components/AddRoutine";
+import AddAndRemoveButton from "../components/AddAndRemoveButton";
 
 const { width, height } = Dimensions.get("screen");
 const ITEM_HEIGHT = height * 0.18;
@@ -96,9 +97,12 @@ const RoutineScreen = ({ navigation, route }) => {
       setButtonTitle("Locked");
       setButtonDisabled(true);
     }
-    if (item.alreadyAdded) {
+    if (!item.removed && item.alreadyAdded) {
       setButtonTitle("Ongoing routine");
       setButtonDisabled(true);
+    } else if (item.removed) {
+      setButtonTitle("Give it another shot");
+      setButtonDisabled(false);
     }
   }, []);
   const getItemLayout = (data, index) => {
@@ -148,6 +152,18 @@ const RoutineScreen = ({ navigation, route }) => {
               size={28}
             />
           </TouchableOpacity>
+          {item.alreadyAdded && !item.removed && (
+            <AddAndRemoveButton
+              check={false}
+              routine={item.title}
+              style={{
+                backgroundColor: "rgba(0.0.0.0,0)",
+                borderWidth: 0,
+              }}
+              size={40}
+            />
+          )}
+
           <View style={styles.imgcontainer}>
             <View style={styles.two}>
               {/* <SharedElement id={`item.${item.id}.image`} style={styles.two}> */}
@@ -207,6 +223,7 @@ const RoutineScreen = ({ navigation, route }) => {
             renderItem={({ item }) => (
               <RoutineDetails description={item} size={ITEM_SIZE} />
             )}
+            bounces={true}
           />
           {showSwiper &&
             typeof item.descriptionArray != "undefined" &&
@@ -314,12 +331,23 @@ const RoutineScreen = ({ navigation, route }) => {
 };
 
 //  TODO:
-//  remove routine
+//  Show previous routine info if removed = true
+//  AddAndRemoveButton on RoutineScreen
+//  pull to refresh
 //  lock if user is at y level with x amount of routines
+
+//  ISSUES:
 //  style tags by default or non default image, not by locked/ongoing/rest
+//  if routine is added in RoutinesScreen, it doesn't update "removed" in routineScreen
+//  peep this https://rnfirebase.io/firestore/usage-with-flatlists
 //  have only one open swipeable at any given point
 
 //  DONE:
+//  if removed = true, show "give it another shot" on routinescreen
+//  show routines with removed: false on routinesscreen
+//  remove swipeables
+//  remove/add routine component
+//  undo remove/add
 //  tag styke add/remove button with animations
 //  optimize
 //  swipe to add/remove

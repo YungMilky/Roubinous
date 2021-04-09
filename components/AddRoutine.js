@@ -11,16 +11,28 @@ export default (title) => {
     .doc(userID)
     .collection("routines");
 
-  console.log(userRoutines.doc(title).exists);
-
-  // .set(
-  //   {
-  //     ComboFrequency: "2",
-  //     DaysInCombo: 2,
-  //     StartDate: new Date(),
-  //     UserAlertTime: 7,
-  //     UserRoutineRank: "Rookie",
-  //   },
-  //   { merge: true }
-  // );
+  userRoutines
+    .doc(title)
+    .get()
+    .then((documentSnapshot) => {
+      //  if document exists, set removed to false
+      //  else, add brand new routine data
+      if (documentSnapshot.exists) {
+        userRoutines.doc(title).update({
+          removed: false,
+        });
+      } else {
+        userRoutines.doc(title).set(
+          {
+            ComboFrequency: "2",
+            DaysInCombo: 2,
+            StartDate: new Date(),
+            UserAlertTime: 7,
+            UserRoutineRank: "Rookie",
+            removed: false,
+          },
+          { merge: true }
+        );
+      }
+    });
 };

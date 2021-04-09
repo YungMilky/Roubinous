@@ -41,5 +41,6 @@ export default {
   darkmodePressed: "rgba(255,255,255,0.10)",
   darkmodeDragged: "rgba(255,255,255,0.8)",
 
-  darkmodeErrorColor: "#CF6679",
+  darkmodeErrorColor: "#d32f2f",
+  darkmodeSuccessColor: "#81c784",
 };

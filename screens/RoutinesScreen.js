@@ -20,7 +20,7 @@ import { ScrollView, TouchableHighlight, TouchableOpacity } from "react-native";
 
 import { LinearGradient } from "expo-linear-gradient";
 
-import Swipeable from "react-native-swipeable-row";
+// import Swipeable from "react-native-swipeable-row";
 
 import * as Animatable from "react-native-animatable";
 
@@ -33,10 +33,9 @@ import colors from "../config/colors";
 
 // RN >= 0.63
 import { LogBox } from "react-native";
-import AddRoutine from "../components/AddRoutine";
 import AddAndRemoveButton from "../components/AddAndRemoveButton";
 
-LogBox.ignoreLogs(["Warning: ...", "Setting a timer"]);
+// LogBox.ignoreLogs(["Warning: ...", "Setting a timer"]);
 
 const { width, height } = Dimensions.get("screen");
 const ITEM_HEIGHT = height * 0.18;
@@ -70,15 +69,15 @@ function RoutinesScreen({ navigation }) {
   const [longPress, setLongPress] = useState(false);
 
   //  references to the swipeable objects
-  const [swipeableRef, setSwipeableRef] = useState();
-  const [swipeableRefAdded, setSwipeableRefAdded] = useState();
+  // const [swipeableRef, setSwipeableRef] = useState();
+  // const [swipeableRefAdded, setSwipeableRefAdded] = useState();
 
   //selections
   const [selectedItem, setSelectedItem] = useState([]);
   const [selectedAddedItem, setSelectedAddedItem] = useState([]);
 
-  const [swipeText, setSwipeText] = useState("Add me!");
-  const [swipeTextAdded, setSwipeTextAdded] = useState("Remove me");
+  // const [swipeText, setSwipeText] = useState("Add me!");
+  // const [swipeTextAdded, setSwipeTextAdded] = useState("Remove me");
 
   const isFocused = useIsFocused();
   useEffect(() => {
@@ -91,7 +90,7 @@ function RoutinesScreen({ navigation }) {
     setItems([]);
     setAlreadyAddedItems([]);
     setLockedItems([]);
-    // resetItems;
+
     db.collection("Routines")
       .get()
       .then((docs) => {
@@ -124,7 +123,7 @@ function RoutinesScreen({ navigation }) {
           }
 
           function onResolve() {
-            if (!alreadyAdded && !lock) {
+            if (removed || (!alreadyAdded && !lock)) {
               imageRefRoutines.getDownloadURL().then((urlRoutines) => {
                 imageRefRoutine.getDownloadURL().then((urlRoutine) => {
                   setItems((oldArray1) => [
@@ -140,6 +139,7 @@ function RoutinesScreen({ navigation }) {
                       imageRoutine: urlRoutine,
                       lock: lock,
                       alreadyAdded: alreadyAdded,
+                      removed: removed,
                     },
                   ]);
                 });
@@ -160,11 +160,12 @@ function RoutinesScreen({ navigation }) {
                       imageRoutine: urlRoutine,
                       lock: lock,
                       alreadyAdded: alreadyAdded,
+                      removed: removed,
                     },
                   ]);
                 });
               });
-            } else if (alreadyAdded) {
+            } else if (alreadyAdded && !removed) {
               imageRefRoutines.getDownloadURL().then((urlRoutines) => {
                 imageRefRoutine.getDownloadURL().then((urlRoutine) => {
                   setAlreadyAddedItems((oldArray3) => [
@@ -180,6 +181,7 @@ function RoutinesScreen({ navigation }) {
                       imageRoutine: urlRoutine,
                       lock: lock,
                       alreadyAdded: alreadyAdded,
+                      removed: removed,
                     },
                   ]);
                 });
@@ -189,7 +191,7 @@ function RoutinesScreen({ navigation }) {
           }
           //routines with default images
           function onReject() {
-            if (!alreadyAdded && !lock) {
+            if (removed || (!alreadyAdded && !lock)) {
               setItems((oldArray1) => [
                 ...oldArray1,
                 {
@@ -202,6 +204,7 @@ function RoutinesScreen({ navigation }) {
                   imageDefault: require("../assets/RoutinesPics/default.png"),
                   lock: lock,
                   alreadyAdded: alreadyAdded,
+                  removed: removed,
                 },
               ]);
             } else if (lock) {
@@ -217,9 +220,10 @@ function RoutinesScreen({ navigation }) {
                   imageDefault: require("../assets/RoutinesPics/default.png"),
                   lock: lock,
                   alreadyAdded: alreadyAdded,
+                  removed: removed,
                 },
               ]);
-            } else if (alreadyAdded) {
+            } else if (alreadyAdded && !removed) {
               setAlreadyAddedItems((oldArray3) => [
                 ...oldArray3,
                 {
@@ -232,6 +236,7 @@ function RoutinesScreen({ navigation }) {
                   imageDefault: require("../assets/RoutinesPics/default.png"),
                   lock: lock,
                   alreadyAdded: alreadyAdded,
+                  removed: removed,
                 },
               ]);
             }
@@ -239,14 +244,20 @@ function RoutinesScreen({ navigation }) {
           }
 
           let alreadyAdded = undefined;
+          let removed = undefined;
           dbUser
             .collection("routines")
             .doc(routineName)
             .get()
             .then((documentSnapshot) => {
-              documentSnapshot.exists
-                ? (alreadyAdded = true)
-                : (alreadyAdded = false);
+              if (documentSnapshot.exists) {
+                alreadyAdded = true;
+                documentSnapshot.data().removed
+                  ? (removed = true)
+                  : (removed = false);
+              } else {
+                alreadyAdded = false;
+              }
               imageRefRoutines.getDownloadURL().then(onResolve, onReject);
             });
         });
@@ -269,486 +280,465 @@ function RoutinesScreen({ navigation }) {
   //  Flatlist items pre-render for performance
   let renderItems = ({ item }) => {
     return (
-      <Swipeable
-        onRef={(ref) => setSwipeableRef(ref)}
-        style={{ width: width, paddingLeft: 0 }}
-        bounceOnMount={true}
+      // <Swipeable
+      //   onRef={(ref) => setSwipeableRef(ref)}
+      //   style={{ width: width, paddingLeft: 0 }}
+      //   bounceOnMount={true}
+      //   useNativeDriver={true}
+      //   rightActionActivationDistance={200}
+      //   onSwipeStart={debounce(() => {
+      //     setTimeout(() => {
+      //       swipeableRef.recenter();
+      //     }, 3000);
+      //   }, 500)}
+      //   onRightActionRelease={debounce(() => {
+      //     if (swipeText === "Add me!") {
+      //       setSwipeText("Added!");
+      //       AddRoutine(item.title);
+      //       setTimeout(() => {
+      //         swipeableRef.recenter();
+      //       }, 1000);
+      //       setTimeout(() => {
+      //         setSwipeText("Remove me");
+      //       }, 1000);
+      //     } else if (swipeText === "Remove me") {
+      //       setSwipeText("Removed!");
+      //       setTimeout(() => {
+      //         swipeableRef.recenter();
+      //       }, 1000);
+      //       setTimeout(() => {
+      //         setSwipeText("Add me!");
+      //       }, 1000);
+      //     }
+      //     if (selectedItem.includes(item.title)) {
+      //       setSelectedItem(
+      //         selectedItem.filter((added) => added !== item.title)
+      //       );
+      //     } else {
+      //       setSelectedItem((lastItem) => [...lastItem, item.title]);
+      //     }
+      //   }, 500)}
+      //   rightButtons={[
+      //     <View style={styles.swipeable}>
+      //       <AppText
+      //         style={[
+      //           styles.swipeableText,
+      //           swipeText === "Removed!" || swipeText === "Remove me"
+      //             ? { color: colors.darkmodeErrorColor }
+      //             : { color: colors.pastelGreen },
+      //         ]}
+      //       >
+      //         {swipeText}
+      //       </AppText>
+      //     </View>,
+      //   ]}
+      // >
+      <Animatable.View
+        animation="fadeIn"
+        duration={400}
         useNativeDriver={true}
-        rightActionActivationDistance={200}
-        onSwipeStart={debounce(() => {
-          setTimeout(() => {
-            swipeableRef.recenter();
-          }, 3000);
-        }, 500)}
-        onRightActionRelease={debounce(() => {
-          if (swipeText === "Add me!") {
-            setSwipeText("Added!");
-            AddRoutine(item.title);
-            setTimeout(() => {
-              swipeableRef.recenter();
-            }, 1000);
-            setTimeout(() => {
-              setSwipeText("Remove me");
-            }, 1000);
-          } else if (swipeText === "Remove me") {
-            setSwipeText("Removed!");
-            setTimeout(() => {
-              swipeableRef.recenter();
-            }, 1000);
-            setTimeout(() => {
-              setSwipeText("Add me!");
-            }, 1000);
-          }
-          if (selectedItem.includes(item.title)) {
-            setSelectedItem(
-              selectedItem.filter((added) => added !== item.title)
-            );
-          } else {
-            setSelectedItem((lastItem) => [...lastItem, item.title]);
-          }
-        }, 500)}
-        rightButtons={[
-          <View style={styles.swipeable}>
-            <AppText
-              style={[
-                styles.swipeableText,
-                swipeText === "Removed!" || swipeText === "Remove me"
-                  ? { color: colors.darkmodeErrorColor }
-                  : { color: colors.pastelGreen },
-              ]}
-            >
-              {swipeText}
-            </AppText>
-          </View>,
+        style={[
+          selectedItem.includes(item.title) ? styles.selectedOverlay : null,
+          styles.card,
         ]}
       >
-        <Animatable.View
-          animation="fadeIn"
-          duration={400}
-          useNativeDriver={true}
-          style={[
-            selectedItem.includes(item.title) ? styles.selectedOverlay : null,
-            styles.card,
-          ]}
+        <TouchableHighlight
+          delayLongPress={200}
+          onLongPress={() => {
+            setLongPress(true);
+          }}
+          delayPressIn={200}
+          activeOpacity={0.9}
+          onPressOut={() =>
+            longPress
+              ? setLongPress(false)
+              : navigation.navigate("Routine", { item })
+          }
         >
-          <TouchableHighlight
-            delayLongPress={200}
-            onLongPress={() => {
-              setLongPress(true);
-            }}
-            delayPressIn={200}
-            activeOpacity={0.9}
-            onPressOut={() =>
-              longPress
-                ? setLongPress(false)
-                : navigation.navigate("Routine", { item })
-            }
-          >
-            {/* <SharedElement
+          {/* <SharedElement
             id={`item.${item.id}.color`}
             // style={[
             //   StyleSheet.absoluteFillObject,
             //   { backgroundColor: item.color },
             // ]}
           > */}
-            <LinearGradient
-              colors={[
-                colors.OrchidPink,
-                colors.darkmodeMediumWhite,
-                item.color,
-              ]}
-              style={itemStyles.background}
-              start={{ x: 5, y: 0.01 }}
-              end={{ x: 0.1, y: 0.3 }}
-              // locations={[0.4, 0.1]}
-            >
-              <View style={[itemStyles.container]}>
-                {/* <SharedElement
+          <LinearGradient
+            colors={[colors.OrchidPink, colors.darkmodeMediumWhite, item.color]}
+            style={itemStyles.background}
+            start={{ x: 5, y: 0.01 }}
+            end={{ x: 0.1, y: 0.3 }}
+            // locations={[0.4, 0.1]}
+          >
+            <View style={[itemStyles.container]}>
+              {/* <SharedElement
                   id={`item.${item.id}.image`}
                   style={itemStyles.image}
                 > */}
 
-                {item.image ? (
-                  <Image
-                    style={itemStyles.image}
-                    source={{ uri: item.image }}
-                  />
-                ) : (
-                  <Image
-                    style={itemStyles.imageDefault}
-                    source={item.imageDefault}
-                  />
-                )}
+              {item.image ? (
+                <Image style={itemStyles.image} source={{ uri: item.image }} />
+              ) : (
+                <Image
+                  style={itemStyles.imageDefault}
+                  source={item.imageDefault}
+                />
+              )}
+              {/* </SharedElement> */}
+
+              <View>
+                {/* <SharedElement id={`item.${item.id}.title`}> */}
+                <AppText
+                  style={[
+                    item.image
+                      ? {
+                          marginLeft: -200,
+                        }
+                      : {
+                          marginLeft: -168,
+                        },
+                    itemStyles.title,
+                  ]}
+                >
+                  {item.title}
+                </AppText>
                 {/* </SharedElement> */}
+                <AppText
+                  style={[
+                    item.image
+                      ? {
+                          marginLeft: -200,
+                        }
+                      : {
+                          marginLeft: -168,
+                        },
+                    itemStyles.subtitle,
+                  ]}
+                >
+                  {item.shortDescription}
+                </AppText>
+                <View
+                  style={[
+                    item.image
+                      ? {
+                          left: width * 0.074,
+                        }
+                      : {
+                          left: width * 0.15,
+                        },
 
-                <View>
-                  {/* <SharedElement id={`item.${item.id}.title`}> */}
-                  <AppText
-                    style={[
-                      item.image
-                        ? {
-                            marginLeft: -200,
-                          }
-                        : {
-                            marginLeft: -168,
-                          },
-                      itemStyles.title,
-                    ]}
-                  >
-                    {item.title}
-                  </AppText>
-                  {/* </SharedElement> */}
-                  <AppText
-                    style={[
-                      item.image
-                        ? {
-                            marginLeft: -200,
-                          }
-                        : {
-                            marginLeft: -168,
-                          },
-                      itemStyles.subtitle,
-                    ]}
-                  >
-                    {item.shortDescription}
-                  </AppText>
-                  <View
-                    style={[
-                      item.image
-                        ? {
-                            left: width * 0.074,
-                          }
-                        : {
-                            left: width * 0.15,
-                          },
-
-                      {
-                        flexDirection: "row",
-                        justifyContent: "flex-end",
-                        position: "absolute",
-                        width: 90,
-                        top: 66,
-                      },
-                    ]}
-                  >
-                    <AddAndRemoveButton check={true} />
-                    <Tag difficulty={item.difficulty} />
-                  </View>
+                    {
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                      position: "absolute",
+                      width: 90,
+                      top: 66,
+                    },
+                  ]}
+                >
+                  <AddAndRemoveButton check={true} routine={item.title} />
+                  <Tag difficulty={item.difficulty} />
                 </View>
               </View>
-            </LinearGradient>
-            {/* </SharedElement> */}
-          </TouchableHighlight>
-        </Animatable.View>
-      </Swipeable>
+            </View>
+          </LinearGradient>
+          {/* </SharedElement> */}
+        </TouchableHighlight>
+      </Animatable.View>
+      /* </Swipeable> */
     );
   };
   let renderLockedItems = ({ item }) => {
     return (
-      <Swipeable
-        style={{ width: width, paddingLeft: 0 }}
+      // <Swipeable
+      //   style={{ width: width, paddingLeft: 0 }}
+      //   useNativeDriver={true}
+      //   rightContent={[
+      //     <View style={styles.swipeable}>
+      //       <AppText
+      //         style={[
+      //           styles.swipeableText,
+      //           { color: colors.darkmodeDisabledWhite },
+      //         ]}
+      //       >
+      //         Locked{" "}
+      //         <FontAwesome
+      //           name="lock"
+      //           size={18}
+      //           color={colors.darkmodeDisabledWhite}
+      //         />
+      //       </AppText>
+      //     </View>,
+      //   ]}
+      // >
+      <Animatable.View
+        animation={"fadeIn"}
+        duration={400}
         useNativeDriver={true}
-        rightContent={[
-          <View style={styles.swipeable}>
-            <AppText
-              style={[
-                styles.swipeableText,
-                { color: colors.darkmodeDisabledWhite },
-              ]}
-            >
-              Locked{" "}
-              <FontAwesome
-                name="lock"
-                size={18}
-                color={colors.darkmodeDisabledWhite}
-              />
-            </AppText>
-          </View>,
-        ]}
+        style={{
+          padding: 3,
+          marginBottom: 8,
+          marginHorizontal: 10,
+          width: width * 0.89,
+          borderRadius: 5,
+          elevation: -8,
+        }}
       >
-        <Animatable.View
-          animation={"fadeIn"}
-          duration={400}
-          useNativeDriver={true}
-          style={{
-            padding: 3,
-            marginBottom: 8,
-            marginHorizontal: 10,
-            width: width * 0.89,
-            borderRadius: 5,
-            elevation: -8,
+        <TouchableHighlight
+          delayLongPress={300}
+          onLongPress={() => {
+            setLongPress(true);
           }}
+          delayPressIn={200}
+          activeOpacity={0.9}
+          onPressOut={() =>
+            longPress
+              ? setLongPress(false)
+              : navigation.navigate("Routine", { item })
+          }
         >
-          <TouchableHighlight
-            delayLongPress={300}
-            onLongPress={() => {
-              setLongPress(true);
-            }}
-            delayPressIn={200}
-            activeOpacity={0.9}
-            onPressOut={() =>
-              longPress
-                ? setLongPress(false)
-                : navigation.navigate("Routine", { item })
-            }
-          >
-            {/* <SharedElement
+          {/* <SharedElement
             id={`item.${item.id}.color`}
             // style={[
             //   StyleSheet.absoluteFillObject,
             //   { backgroundColor: item.color },
             // ]}
           > */}
-            <LinearGradient
-              colors={[
-                colors.OrchidPink,
-                colors.darkmodeMediumWhite,
-                item.color,
-              ]}
-              style={itemStyles.background}
-              start={{ x: 5, y: 0.01 }}
-              end={{ x: 0.1, y: 0.3 }}
-              // locations={[0.4, 0.1]}
-            >
-              <View style={itemStyles.container}>
-                {/* <SharedElement
+          <LinearGradient
+            colors={[colors.OrchidPink, colors.darkmodeMediumWhite, item.color]}
+            style={itemStyles.background}
+            start={{ x: 5, y: 0.01 }}
+            end={{ x: 0.1, y: 0.3 }}
+            // locations={[0.4, 0.1]}
+          >
+            <View style={itemStyles.container}>
+              {/* <SharedElement
                   id={`item.${item.id}.image`}
                   style={itemStyles.image}
                 > */}
-                {item.image ? (
-                  <Image
-                    style={itemStyles.image}
-                    source={{ uri: item.image }}
-                  />
-                ) : (
-                  <Image
-                    style={itemStyles.imageDefault}
-                    source={item.imageDefault}
-                  />
-                )}
-                {/* </SharedElement> */}
+              {item.image ? (
+                <Image style={itemStyles.image} source={{ uri: item.image }} />
+              ) : (
+                <Image
+                  style={itemStyles.imageDefault}
+                  source={item.imageDefault}
+                />
+              )}
+              {/* </SharedElement> */}
 
-                <View>
-                  {/* <SharedElement id={`item.${item.id}.title`}> */}
-                  <AppText
-                    style={[
-                      item.image
-                        ? {
-                            marginLeft: -200,
-                          }
-                        : {
-                            marginLeft: -168,
-                          },
-                      itemStyles.title,
-                    ]}
-                  >
-                    {item.title}
-                  </AppText>
-                  {/* </SharedElement> */}
-                  <AppText
-                    style={[
-                      item.image
-                        ? {
-                            marginLeft: -200,
-                          }
-                        : {
-                            marginLeft: -168,
-                          },
-                      itemStyles.subtitle,
-                    ]}
-                  >
-                    {item.shortDescription}
-                  </AppText>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "flex-end",
-                      position: "absolute",
-                      width: 90,
-                      top: 66,
-                      left: width * 0.15,
-                    }}
-                  >
-                    <Tag lock={true} />
-                    <Tag difficulty={item.difficulty} />
-                  </View>
+              <View>
+                {/* <SharedElement id={`item.${item.id}.title`}> */}
+                <AppText
+                  style={[
+                    item.image
+                      ? {
+                          marginLeft: -200,
+                        }
+                      : {
+                          marginLeft: -168,
+                        },
+                    itemStyles.title,
+                  ]}
+                >
+                  {item.title}
+                </AppText>
+                {/* </SharedElement> */}
+                <AppText
+                  style={[
+                    item.image
+                      ? {
+                          marginLeft: -200,
+                        }
+                      : {
+                          marginLeft: -168,
+                        },
+                    itemStyles.subtitle,
+                  ]}
+                >
+                  {item.shortDescription}
+                </AppText>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    position: "absolute",
+                    width: 90,
+                    top: 66,
+                    left: width * 0.15,
+                  }}
+                >
+                  <Tag lock={true} />
+                  <Tag difficulty={item.difficulty} />
                 </View>
               </View>
-            </LinearGradient>
-            {/* </SharedElement> */}
-          </TouchableHighlight>
-        </Animatable.View>
-      </Swipeable>
+            </View>
+          </LinearGradient>
+          {/* </SharedElement> */}
+        </TouchableHighlight>
+      </Animatable.View>
+      /* </Swipeable> */
     );
   };
   let renderAlreadyAddedItems = ({ item }) => {
     return (
-      <Swipeable
-        onRef={(ref) => setSwipeableRefAdded(ref)}
-        style={{ width: width, paddingLeft: 0 }}
+      // <Swipeable
+      //   onRef={(ref) => setSwipeableRefAdded(ref)}
+      //   style={{ width: width, paddingLeft: 0 }}
+      //   useNativeDriver={true}
+      //   rightActionActivationDistance={200}
+      //   onSwipeStart={debounce(() => {
+      //     setTimeout(() => {
+      //       swipeableRefAdded.recenter();
+      //     }, 3000);
+      //   }, 500)}
+      //   onRightActionRelease={debounce(() => {
+      //     if (swipeTextAdded === "Remove me") {
+      //       setSwipeTextAdded("Removed!");
+      //       setTimeout(() => {
+      //         swipeableRefAdded.recenter();
+      //       }, 1000);
+      //       setTimeout(() => {
+      //         setSwipeTextAdded("Add me!");
+      //       }, 1000);
+      //     } else if (swipeTextAdded === "Add me!") {
+      //       setSwipeTextAdded("Added!");
+      //       AddRoutine(item.title);
+      //       setTimeout(() => {
+      //         swipeableRefAdded.recenter();
+      //       }, 1000);
+      //       setTimeout(() => {
+      //         setSwipeTextAdded("Remove me");
+      //       }, 1000);
+      //     }
+      //     if (selectedAddedItem.includes(item.title)) {
+      //       setSelectedAddedItem(
+      //         selectedAddedItem.filter((added) => added !== item.title)
+      //       );
+      //     } else {
+      //       setSelectedAddedItem((lastItem) => [...lastItem, item.title]);
+      //     }
+      //   }, 500)}
+      //   rightButtons={[
+      //     <View style={styles.swipeable}>
+      //       <AppText
+      //         style={[
+      //           styles.swipeableText,
+      //           swipeTextAdded === "Removed!" || swipeTextAdded === "Remove me"
+      //             ? { color: colors.darkmodeErrorColor }
+      //             : { color: colors.pastelGreen },
+      //         ]}
+      //       >
+      //         {swipeTextAdded}
+      //       </AppText>
+      //     </View>,
+      //   ]}
+      // >
+      <Animatable.View
+        animation="fadeIn"
+        duration={400}
         useNativeDriver={true}
-        rightActionActivationDistance={200}
-        onSwipeStart={debounce(() => {
-          setTimeout(() => {
-            swipeableRefAdded.recenter();
-          }, 3000);
-        }, 500)}
-        onRightActionRelease={debounce(() => {
-          if (swipeTextAdded === "Remove me") {
-            setSwipeTextAdded("Removed!");
-            setTimeout(() => {
-              swipeableRefAdded.recenter();
-            }, 1000);
-            setTimeout(() => {
-              setSwipeTextAdded("Add me!");
-            }, 1000);
-          } else if (swipeTextAdded === "Add me!") {
-            setSwipeTextAdded("Added!");
-            AddRoutine(item.title);
-            setTimeout(() => {
-              swipeableRefAdded.recenter();
-            }, 1000);
-            setTimeout(() => {
-              setSwipeTextAdded("Remove me");
-            }, 1000);
-          }
-          if (selectedAddedItem.includes(item.title)) {
-            setSelectedAddedItem(
-              selectedAddedItem.filter((added) => added !== item.title)
-            );
-          } else {
-            setSelectedAddedItem((lastItem) => [...lastItem, item.title]);
-          }
-        }, 500)}
-        rightButtons={[
-          <View style={styles.swipeable}>
-            <AppText
-              style={[
-                styles.swipeableText,
-                swipeTextAdded === "Removed!" || swipeTextAdded === "Remove me"
-                  ? { color: colors.darkmodeErrorColor }
-                  : { color: colors.pastelGreen },
-              ]}
-            >
-              {swipeTextAdded}
-            </AppText>
-          </View>,
+        style={[
+          selectedAddedItem.includes(item.title)
+            ? styles.selectedAddedOverlay
+            : null,
+          styles.card,
         ]}
       >
-        <Animatable.View
-          animation="fadeIn"
-          duration={400}
-          useNativeDriver={true}
-          style={[
-            selectedAddedItem.includes(item.title)
-              ? styles.selectedAddedOverlay
-              : null,
-            styles.card,
-          ]}
+        <TouchableHighlight
+          delayLongPress={300}
+          onLongPress={() => {
+            setLongPress(true);
+          }}
+          delayPressIn={200}
+          activeOpacity={0.9}
+          onPressOut={() =>
+            longPress
+              ? setLongPress(false)
+              : navigation.navigate("Routine", { item })
+          }
         >
-          <TouchableHighlight
-            delayLongPress={300}
-            onLongPress={() => {
-              setLongPress(true);
-            }}
-            delayPressIn={200}
-            activeOpacity={0.9}
-            onPressOut={() =>
-              longPress
-                ? setLongPress(false)
-                : navigation.navigate("Routine", { item })
-            }
-          >
-            {/* <SharedElement
+          {/* <SharedElement
             id={`item.${item.id}.color`}
             // style={[
             //   StyleSheet.absoluteFillObject,
             //   { backgroundColor: item.color },
             // ]}
           > */}
-            <LinearGradient
-              colors={[
-                colors.OrchidPink,
-                colors.darkmodeMediumWhite,
-                item.color,
-              ]}
-              style={itemStyles.background}
-              start={{ x: 5, y: 0.01 }}
-              end={{ x: 0.1, y: 0.3 }}
-              // locations={[0.4, 0.1]}
-            >
-              <View style={itemStyles.container}>
-                {/* <SharedElement
+          <LinearGradient
+            colors={[colors.OrchidPink, colors.darkmodeMediumWhite, item.color]}
+            style={itemStyles.background}
+            start={{ x: 5, y: 0.01 }}
+            end={{ x: 0.1, y: 0.3 }}
+            // locations={[0.4, 0.1]}
+          >
+            <View style={itemStyles.container}>
+              {/* <SharedElement
                   id={`item.${item.id}.image`}
                   style={itemStyles.image}
                 > */}
-                {item.image ? (
-                  <Image
-                    style={itemStyles.image}
-                    source={{ uri: item.image }}
-                  />
-                ) : (
-                  <Image
-                    style={itemStyles.imageDefault}
-                    source={item.imageDefault}
-                  />
-                )}
-                {/* </SharedElement> */}
+              {item.image ? (
+                <Image style={itemStyles.image} source={{ uri: item.image }} />
+              ) : (
+                <Image
+                  style={itemStyles.imageDefault}
+                  source={item.imageDefault}
+                />
+              )}
+              {/* </SharedElement> */}
 
-                <View>
-                  {/* <SharedElement id={`item.${item.id}.title`}> */}
-                  <AppText
-                    style={[
-                      item.image
-                        ? {
-                            marginLeft: -200,
-                          }
-                        : {
-                            marginLeft: -168,
-                          },
-                      itemStyles.title,
-                    ]}
-                  >
-                    {item.title}
-                  </AppText>
-                  {/* </SharedElement> */}
-                  <AppText
-                    style={[
-                      item.image
-                        ? {
-                            marginLeft: -200,
-                          }
-                        : {
-                            marginLeft: -168,
-                          },
-                      itemStyles.subtitle,
-                    ]}
-                  >
-                    {item.shortDescription}
-                  </AppText>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "flex-end",
-                      position: "absolute",
-                      width: 90,
-                      top: 66,
-                      left: width * 0.15,
-                    }}
-                  >
-                    <TouchableOpacity disabled={false}>
-                      <AddAndRemoveButton check={false} />
-                    </TouchableOpacity>
-                    <Tag difficulty={item.difficulty} />
-                  </View>
+              <View>
+                {/* <SharedElement id={`item.${item.id}.title`}> */}
+                <AppText
+                  style={[
+                    item.image
+                      ? {
+                          marginLeft: -200,
+                        }
+                      : {
+                          marginLeft: -168,
+                        },
+                    itemStyles.title,
+                  ]}
+                >
+                  {item.title}
+                </AppText>
+                {/* </SharedElement> */}
+                <AppText
+                  style={[
+                    item.image
+                      ? {
+                          marginLeft: -200,
+                        }
+                      : {
+                          marginLeft: -168,
+                        },
+                    itemStyles.subtitle,
+                  ]}
+                >
+                  {item.shortDescription}
+                </AppText>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    position: "absolute",
+                    width: 90,
+                    top: 66,
+                    left: width * 0.15,
+                  }}
+                >
+                  <TouchableOpacity disabled={false}>
+                    <AddAndRemoveButton check={false} routine={item.title} />
+                  </TouchableOpacity>
+                  <Tag difficulty={item.difficulty} />
                 </View>
               </View>
-            </LinearGradient>
-            {/* </SharedElement> */}
-            {/* </View> */}
-          </TouchableHighlight>
-        </Animatable.View>
-      </Swipeable>
+            </View>
+          </LinearGradient>
+          {/* </SharedElement> */}
+          {/* </View> */}
+        </TouchableHighlight>
+      </Animatable.View>
+      /* </Swipeable> */
     );
   };
 
@@ -933,26 +923,26 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     elevation: -8,
   },
-  swipeable: {
-    flex: 1,
-    marginLeft: -23,
-    marginTop: 3,
-    marginBottom: 10,
-    borderRadius: 4,
-    backgroundColor: colors.darkmodeDisabledBlack,
-  },
-  swipeableText: {
-    flex: 1,
-    transform: [{ rotate: "90deg" }],
-    width: width * 0.3,
-    right: 40,
-    fontWeight: "700",
-    fontSize: 16,
-    marginTop: 14,
-    marginBottom: 10,
-    textAlign: "center",
-    padding: 12,
-  },
+  // swipeable: {
+  //   flex: 1,
+  //   marginLeft: -23,
+  //   marginTop: 3,
+  //   marginBottom: 10,
+  //   borderRadius: 4,
+  //   backgroundColor: colors.darkmodeDisabledBlack,
+  // },
+  // swipeableText: {
+  //   flex: 1,
+  //   transform: [{ rotate: "90deg" }],
+  //   width: width * 0.3,
+  //   right: 40,
+  //   fontWeight: "700",
+  //   fontSize: 16,
+  //   marginTop: 14,
+  //   marginBottom: 10,
+  //   textAlign: "center",
+  //   padding: 12,
+  // },
   separatorText: {
     textAlign: "center",
     paddingBottom: 0,
