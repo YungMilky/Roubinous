@@ -452,7 +452,7 @@ const styles = StyleSheet.create({
 
   buttonContainer: {
     position: "absolute",
-    top: height * 0.26,
+    top: height * 0.86,
     width: width,
   },
   //  Button
