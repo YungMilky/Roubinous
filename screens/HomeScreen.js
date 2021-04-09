@@ -58,7 +58,7 @@ const HomeScreen = ({ navigation }) => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Routines', {screen: 'Routines'})}
+        onPress={() => navigation.navigate('Routines', { screen: 'Routines' })}
       >
         <MaterialCommunityIcons
           name="baseball"
@@ -67,16 +67,18 @@ const HomeScreen = ({ navigation }) => {
         />
         <Text>Routines</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() =>
+          navigation.navigate('Notification Settings', {
+            screen: 'Notification Settings',
+          })
+        }
+      >
         <MaterialCommunityIcons
           name="alarm-light"
           size={100}
           color={colors.samRed}
-          onPress={() =>
-            navigation.navigate('NotificationSetting', {
-              screen: 'NotificationSetting',
-            })
-          }
         />
         <Text>Notification Settings</Text>
       </TouchableOpacity>

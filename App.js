@@ -1,39 +1,39 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet } from "react-native";
-import "react-native-gesture-handler";
-import { NavigationContainer, StackActions } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import { TransitionSpecs } from "@react-navigation/stack";
-import { Constants } from "react-native-unimodules";
-import AppLoading from "expo-app-loading";
-import { LogBox } from "react-native";
-import { enableScreens } from "react-native-screens";
-import { createSharedElementStackNavigator } from "react-navigation-shared-element";
+import React, { useState, useEffect } from 'react';
+import { StyleSheet } from 'react-native';
+import 'react-native-gesture-handler';
+import { NavigationContainer, StackActions } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { TransitionSpecs } from '@react-navigation/stack';
+import { Constants } from 'react-native-unimodules';
+import AppLoading from 'expo-app-loading';
+import { LogBox } from 'react-native';
+import { enableScreens } from 'react-native-screens';
+import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 enableScreens();
 
 import {
   FontAwesome5,
   MaterialCommunityIcons,
   Octicons,
-} from "@expo/vector-icons";
+} from '@expo/vector-icons';
 
-import { db, auth } from "./firebase";
+import { db, auth } from './firebase';
 
-import colors from "./config/colors";
+import colors from './config/colors';
 
-import WelcomeScreen from "./screens/WelcomeScreen";
-import RegisterScreen from "./screens/RegisterScreen";
-import ProfileScreen from "./screens/ProfileScreen";
-import HomeScreen from "./screens/HomeScreen";
-import LoginScreen from "./screens/LoginScreen";
-import RoutinesScreen from "./screens/RoutinesScreen";
-import ResetPasswordScreen from "./screens/ResetPasswordScreen";
-import LoginAsGuestScreen from "./screens/LoginAsGuestScreen";
-import RoutineScreen from "./screens/RoutineScreen";
-import NotificationSettingScreen from "./screens/NotificationSettingScreen";
-import AddRoutineScreen from "./screens/AddRoutineScreen";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import WelcomeScreen from './screens/WelcomeScreen';
+import RegisterScreen from './screens/RegisterScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import HomeScreen from './screens/HomeScreen';
+import LoginScreen from './screens/LoginScreen';
+import RoutinesScreen from './screens/RoutinesScreen';
+import ResetPasswordScreen from './screens/ResetPasswordScreen';
+import LoginAsGuestScreen from './screens/LoginAsGuestScreen';
+import RoutineScreen from './screens/RoutineScreen';
+import NotificationSettingScreen from './screens/NotificationSettingScreen';
+import AddRoutineScreen from './screens/AddRoutineScreen';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 //  TODO:
 //  keep adding nested navigation
@@ -56,15 +56,15 @@ const headerSettingsButton = () => {
   return (
     <TouchableOpacity
       style={{ paddingRight: 10 }}
-      onPress={() => alert("Set navigation to SettingsScreen")}
+      onPress={() => alert('Set navigation to SettingsScreen')}
     >
       <Octicons name="settings" size={26} color={colors.darkmodeHighWhite} />
     </TouchableOpacity>
   );
 };
 
-if (typeof LogBox != "undefined") {
-  LogBox.ignoreLogs(["Warning: ...", "Setting a timer"]);
+if (typeof LogBox != 'undefined') {
+  LogBox.ignoreLogs(['Warning: ...', 'Setting a timer']);
 }
 
 const HomeStackScreen = () => {
@@ -91,7 +91,7 @@ const ProfileStackScreen = () => {
       screenOptions={{
         headerStyle: { backgroundColor: colors.samRed },
         headerTitleStyle: { color: colors.darkmodeHighWhite },
-        tintColor: { color: "rgba(255,255,255,0.60)" },
+        tintColor: { color: 'rgba(255,255,255,0.60)' },
       }}
     >
       <ProfileStack.Screen name="Profile" component={ProfileScreen} />
@@ -139,8 +139,8 @@ const RoutinesStackScreen = () => {
 };
 
 const defaultScreenOptions = {
-  headerTitleStyle: { color: "white" },
-  headerTintColor: "white",
+  headerTitleStyle: { color: 'white' },
+  headerTintColor: 'white',
 };
 
 function TabBar() {
@@ -214,14 +214,14 @@ function TabBar() {
 }
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState('');
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        console.log("logged in ", user.uid);
+        console.log('logged in ', user.uid);
         setIsLoggedIn(true);
       } else {
-        console.log("NOT logged in ", user);
+        console.log('NOT logged in ', user);
         setIsLoggedIn(false);
       }
     });
@@ -252,6 +252,10 @@ export default function App() {
             component={RoutinesStackScreen}
             options={{ headerShown: false }}
           />
+          <RootStack.Screen
+            name="Notification Settings"
+            component={NotificationSettingScreen}
+          />
         </RootStack.Navigator>
       </NavigationContainer>
     );
@@ -281,9 +285,9 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "blue",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: 'blue',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   input: {
     marginTop: 200,

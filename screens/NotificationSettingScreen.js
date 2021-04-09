@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 
 import { db, auth } from '../firebase';
 import AppButton from '../components/AppButton';
-import SendNotification from '../components/notification/SendNotification';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
