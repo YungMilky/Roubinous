@@ -62,7 +62,10 @@ const headerSettingsButton = () => {
     </TouchableOpacity>
   );
 };
-LogBox.ignoreLogs(["Warning: ...", "Setting a timer"]);
+
+if (typeof LogBox != "undefined") {
+  LogBox.ignoreLogs(["Warning: ...", "Setting a timer"]);
+}
 
 const HomeStackScreen = () => {
   return (
