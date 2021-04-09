@@ -1,34 +1,43 @@
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import React from "react";
+import { StyleSheet, Text } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
-import colors from '../config/colors';
+import colors from "../config/colors";
 
-function AppButton({ title, onPress, color = 'samRed' }) {
+function AppButton({
+  title,
+  onPress,
+  color = "samRed",
+  style,
+  textStyle,
+  disabled,
+  activeOpacity,
+}) {
   return (
     <TouchableOpacity
-      style={[styles.button, { backgroundColor: colors[color] }]}
+      style={[style, styles.button]}
       onPress={onPress}
+      disabled={disabled}
+      activeOpacity={activeOpacity}
     >
-      <Text style={styles.text}>{title}</Text>
+      <Text style={[textStyle, styles.text]}>{title}</Text>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 15,
-    width: '77%',
+    width: "100%",
     marginVertical: 10,
     marginHorizontal: 10,
   },
   text: {
-    color: colors.samBlack,
     fontSize: 18,
-    textTransform: 'uppercase',
-    fontWeight: 'bold',
+    textTransform: "uppercase",
+    fontWeight: "bold",
   },
 });
 
