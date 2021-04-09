@@ -8,7 +8,6 @@
     "test": "jest"
   },
   "dependencies": {
-<<<<<<< HEAD
     "@expo-google-fonts/arya": "^0.1.0",
     "@expo-google-fonts/bad-script": "^0.1.0",
     "@expo-google-fonts/courgette": "^0.1.0",
@@ -19,32 +18,24 @@
     "@expo-google-fonts/swanky-and-moo-moo": "^0.1.0",
     "@expo-google-fonts/the-girl-next-door": "^0.1.0",
     "@expo-google-fonts/unna": "^0.1.0",
-=======
     "@react-native-community/datetimepicker": "3.0.4",
->>>>>>> 9b3e4277e95df3df44a99115d79aaa13dfb44263
     "@react-native-community/google-signin": "^5.0.0",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-firebase/app": "^11.2.0",
     "@react-native-firebase/firestore": "^11.1.2",
-<<<<<<< HEAD
     "@react-native-firebase/storage": "^11.2.0",
-=======
     "@react-native-firebase/messaging": "^11.1.2",
->>>>>>> 9b3e4277e95df3df44a99115d79aaa13dfb44263
     "@react-native-google-signin/google-signin": "^6.0.0",
     "@react-navigation/core": "^5.15.2",
     "@react-navigation/material-bottom-tabs": "^5.3.14",
     "@react-navigation/native": "^5.0.9",
     "@react-navigation/stack": "^5.1.1",
     "expo": "^40.0.1",
-<<<<<<< HEAD
     "expo-app-loading": "^1.0.1",
     "expo-av": "~8.7.0",
     "expo-font": "~8.4.0",
     "expo-linear-gradient": "~8.4.0",
-=======
     "expo-notifications": "~0.8.2",
->>>>>>> 9b3e4277e95df3df44a99115d79aaa13dfb44263
     "expo-splash-screen": "~0.8.0",
     "expo-status-bar": "~1.0.3",
     "expo-updates": "~0.4.0",
@@ -67,15 +58,12 @@
     "react-native-reanimated": "~1.13.0",
     "react-native-safe-area-context": "3.1.9",
     "react-native-screens": "~2.15.0",
-<<<<<<< HEAD
     "react-native-shared-element": "^0.7.0",
     "react-native-sound": "^0.11.0",
     "react-native-swipeable-row": "^0.8.1",
     "react-native-unimodules": "~0.12.0",
     "react-native-video": "^5.1.1",
-=======
     "react-native-unimodules": "^0.12.0",
->>>>>>> 9b3e4277e95df3df44a99115d79aaa13dfb44263
     "react-native-web": "~0.13.12",
     "react-navigation-shared-element": "^5.0.0-alpha1",
     "react-navigation-stack": "^2.10.4"
