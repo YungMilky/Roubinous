@@ -5,9 +5,9 @@ import { NavigationContainer, StackActions } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { TransitionSpecs } from "@react-navigation/stack";
-import { Constants } from 'react-native-unimodules';
+import { Constants } from "react-native-unimodules";
 import AppLoading from "expo-app-loading";
-import { LogBox } from 'react-native';
+import { LogBox } from "react-native";
 import { enableScreens } from "react-native-screens";
 import { createSharedElementStackNavigator } from "react-navigation-shared-element";
 enableScreens();
@@ -29,11 +29,10 @@ import HomeScreen from "./screens/HomeScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RoutinesScreen from "./screens/RoutinesScreen";
 import ResetPasswordScreen from "./screens/ResetPasswordScreen";
-import SignedOutScreen from "./screens/SignedOutScreen";
-import LoginAsGuestScreen from './screens/LoginAsGuestScreen';
+import LoginAsGuestScreen from "./screens/LoginAsGuestScreen";
 import RoutineScreen from "./screens/RoutineScreen";
-import NotificationSettingScreen from './screens/NotificationSettingScreen';
-import AddRoutineScreen from './screens/AddRoutineScreen';
+import NotificationSettingScreen from "./screens/NotificationSettingScreen";
+import AddRoutineScreen from "./screens/AddRoutineScreen";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 //  TODO:
@@ -54,14 +53,16 @@ const ProfileStack = createStackNavigator();
 const RootStack = createStackNavigator();
 
 const headerSettingsButton = () => {
-  <TouchableOpacity
-    style={{ paddingRight: 10 }}
-    onPress={() => alert("Set navigation to SettingsScreen")}
-  >
-    <Octicons name="settings" size={26} color={colors.darkmodeHighWhite}/>
-  </TouchableOpacity>
-}
-LogBox.ignoreLogs(['Warning: ...', 'Setting a timer']);
+  return (
+    <TouchableOpacity
+      style={{ paddingRight: 10 }}
+      onPress={() => alert("Set navigation to SettingsScreen")}
+    >
+      <Octicons name="settings" size={26} color={colors.darkmodeHighWhite} />
+    </TouchableOpacity>
+  );
+};
+LogBox.ignoreLogs(["Warning: ...", "Setting a timer"]);
 
 const HomeStackScreen = () => {
   return (
@@ -79,7 +80,7 @@ const HomeStackScreen = () => {
       />
     </HomeStack.Navigator>
   );
-}
+};
 
 const ProfileStackScreen = () => {
   return (
