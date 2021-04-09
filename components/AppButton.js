@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     padding: 15,
     width: "100%",
     marginVertical: 10,
+    marginHorizontal: 10,
   },
   text: {
     fontSize: 18,

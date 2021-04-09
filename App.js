@@ -5,9 +5,9 @@ import { NavigationContainer, StackActions } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { TransitionSpecs } from "@react-navigation/stack";
-
+import { Constants } from 'react-native-unimodules';
 import AppLoading from "expo-app-loading";
-
+import { LogBox } from 'react-native';
 import { enableScreens } from "react-native-screens";
 import { createSharedElementStackNavigator } from "react-navigation-shared-element";
 enableScreens();
@@ -30,7 +30,10 @@ import LoginScreen from "./screens/LoginScreen";
 import RoutinesScreen from "./screens/RoutinesScreen";
 import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 import SignedOutScreen from "./screens/SignedOutScreen";
+import LoginAsGuestScreen from './screens/LoginAsGuestScreen';
 import RoutineScreen from "./screens/RoutineScreen";
+import NotificationSettingScreen from './screens/NotificationSettingScreen';
+import AddRoutineScreen from './screens/AddRoutineScreen';
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 //  TODO:
@@ -51,15 +54,32 @@ const ProfileStack = createStackNavigator();
 const RootStack = createStackNavigator();
 
 const headerSettingsButton = () => {
+  <TouchableOpacity
+    style={{ paddingRight: 10 }}
+    onPress={() => alert("Set navigation to SettingsScreen")}
+  >
+    <Octicons name="settings" size={26} color={colors.darkmodeHighWhite}/>
+  </TouchableOpacity>
+}
+LogBox.ignoreLogs(['Warning: ...', 'Setting a timer']);
+
+const HomeStackScreen = () => {
   return (
-    <TouchableOpacity
-      style={{ paddingRight: 10 }}
-      onPress={() => alert("Set navigation to SettingsScreen")}
-    >
-      <Octicons name="settings" size={26} color={colors.darkmodeHighWhite} />
-    </TouchableOpacity>
+    <HomeStack.Navigator>
+      <HomeStack.Screen name="Home" component={HomeScreen} />
+      <HomeStack.Screen name="Profile" component={ProfileScreen} />
+      <HomeStack.Screen name="Routines" component={RoutinesScreen} />
+      <HomeStack.Screen name="AddRoutine" component={AddRoutineScreen} />
+      <HomeStack.Screen name="Register" component={RegisterScreen} />
+      <HomeStack.Screen name="Login" component={LoginScreen} />
+      <HomeStack.Screen name="Reset Password" component={ResetPasswordScreen} />
+      <HomeStack.Screen
+        name="NotificationSetting"
+        component={NotificationSettingScreen}
+      />
+    </HomeStack.Navigator>
   );
-};
+}
 
 const ProfileStackScreen = () => {
   return (
@@ -73,7 +93,11 @@ const ProfileStackScreen = () => {
       <ProfileStack.Screen name="Profile" component={ProfileScreen} />
       <ProfileStack.Screen name="Register" component={RegisterScreen} />
       <ProfileStack.Screen name="Login" component={LoginScreen} />
-      <ProfileStack.Screen name="SignedOut" component={SignedOutScreen} />
+      <ProfileStack.Screen name="LoginAsGuest" component={LoginAsGuestScreen} />
+      <ProfileStack.Screen
+        name="Reset Password"
+        component={ResetPasswordScreen}
+      />
     </ProfileStack.Navigator>
   );
 };
@@ -235,7 +259,8 @@ export default function App() {
           <Stack.Screen name="Reset Password" component={ResetPasswordScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="SignedOut" component={SignedOutScreen} />
+          <Stack.Screen name="LoginAsGuest" component={LoginAsGuestScreen} />
+          <Stack.Screen name="AddRoutine" component={AddRoutineScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     );

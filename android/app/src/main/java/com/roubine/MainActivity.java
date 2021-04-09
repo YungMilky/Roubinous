@@ -37,5 +37,28 @@ public class MainActivity extends ReactActivity {
                 return new RNGestureHandlerEnabledRootView(MainActivity.this);
             }
         };
+    } 
+
+    public void sendPasswordReset() {
+        // [START send_password_reset]
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String emailAddress = "user@example.com";
+
+        auth.sendPasswordResetEmail(emailAddress)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "Email sent.");
+                        }
+                    }
+                });
+        // [END send_password_reset]
     }
+
+    
+
 }
+
+
+

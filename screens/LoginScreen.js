@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { useState } from 'react';
 import { Button, Input } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 import PropTypes from 'prop-types';
+
+import CreateDailyNotification from '../components/notification/CreateDailyNotification';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -23,12 +24,22 @@ const LoginScreen = ({ navigation }) => {
 
   //FirebaseAuth.getInstance().getCurrentUser().getUid()
   const signInWithEmailAndPassword = () => {
-    console.log(email);
     auth.signOut();
     auth
       .signInWithEmailAndPassword(email, password)
       .then(() => {
-        navigation.navigate('Profile');
+        db.collection('Users')
+          .doc(auth.currentUser.uid)
+          .get()
+          .then((documentSnapshot) => {
+            CreateDailyNotification(
+              documentSnapshot.data().UserAlertHour,
+              documentSnapshot.data().UserAlertMinute
+            );
+          })
+          .catch((err) => {
+            console.log('Cant get user alert time. ' + err);
+          });
       })
       .catch((error) => {
         if (error.code === 'auth/invalid-email') {

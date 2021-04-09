@@ -1,50 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Input, Button } from 'react-native-elements';
-import { StatusBar } from 'expo-status-bar';
-import { db, auth } from '../firebase';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
 import AppButton from '../components/AppButton';
 import colors from '../config/colors';
 import PropTypes from 'prop-types';
 
 const WelcomeScreen = ({ navigation }) => {
-  const [name, setName] = useState('');
-
-  const signInAnonymously = () => {
-    if (!name.trim()) {
-      alert('Please Enter a Name');
-      return;
-    } else {
-      auth.signInAnonymously().then((cred) => {
-        return db.collection('Users').doc(cred.user.uid).set({
-          Name: name,
-          Guest: true,
-          UserRank: 1,
-          Roubies: 50,
-        });
-      });
-    }
-  };
-
   return (
     <View style={styles.container}>
-      <Text styles={styles.container}>My name is Roubine, whats yours?</Text>
-      <View style={styles.input}>
-        <StatusBar style="light" />
-        <Input
-          placeholder="Your name here..."
-          autoFocus
-          type="name"
-          value={name}
-          onChangeText={(text) => setName(text)}
-        />
-      </View>
-
+      <Image style={styles.logo} source={require('../images/ruby.png')} />
       <AppButton
-        style={styles.button}
-        title="Let's go!"
-        onPress={signInAnonymously}
+        title="Continue as Guest"
+        onPress={() =>
+          navigation.navigate('LoginAsGuest', { screen: 'LoginAsGuest' })
+        }
       />
       <AppButton
         title="Go to Login"
@@ -53,7 +22,7 @@ const WelcomeScreen = ({ navigation }) => {
       <TouchableOpacity
         onPress={() => navigation.navigate('Register', { screen: 'Register' })}
       >
-        <Text>Register</Text>
+        <Text style={styles.text}>Register</Text>
       </TouchableOpacity>
     </View>
   );
@@ -76,6 +45,14 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '80%',
+  },
+  logo: {
+    width: 200,
+    height: 200,
+    marginBottom: 50,
+  },
+  text: {
+    color: colors.OrchidPink,
   },
 });
 

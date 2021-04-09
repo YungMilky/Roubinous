@@ -29,11 +29,12 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import co.apptailor.googlesignin.RNGoogleSigninPackage;  
+import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 
 
 public class MainApplication extends Application implements ReactApplication {
   private final ReactModuleRegistryProvider mModuleRegistryProvider = new ReactModuleRegistryProvider(
-    new BasePackageList().getPackageList()
+    new BasePackageList().getPackageList(), null
   );
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
@@ -46,8 +47,15 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       List<ReactPackage> packages = new PackageList(this).getPackages();
       packages.add(new ModuleRegistryAdapter(mModuleRegistryProvider));
+      packages.add(new RNFirebaseMessagingPackage()); 
+      // Add unimodules
+      List<ReactPackage> unimodules = Arrays.<ReactPackage>asList(
+        new ModuleRegistryAdapter(mModuleRegistryProvider)
+      );
+      packages.addAll(unimodules);
       return packages;
     }
+    
 
     @Override
     protected String getJSMainModuleName() {
@@ -82,7 +90,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-          new RNGoogleSigninPackage() // <-- this needs to be in the list
+          new RNGoogleSigninPackage(), // <-- this needs to be in the list
+          new ReactNativeFirebaseAppPackage(),
       );
     }
 

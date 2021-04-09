@@ -1,40 +1,43 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import { useState } from "react";
-import { Button, Input, Text } from "react-native-elements";
-import { StatusBar } from "expo-status-bar";
-import { auth, db } from "../firebase";
-import PropTypes from "prop-types";
-import { KeyboardAvoidingView } from "react-native";
-import { signInWithGoogle } from "../firebase";
-import { signInWithFacebook } from "../firebase";
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { Button, Input, Text } from 'react-native-elements';
+import { StatusBar } from 'expo-status-bar';
+import { auth, db } from '../firebase';
+import PropTypes from 'prop-types';
+import { KeyboardAvoidingView } from 'react-native';
+import { signInWithGoogle } from '../firebase';
+import { signInWithFacebook } from '../firebase';
+import CreateDailyNotification from '../components/notification/CreateDailyNotification';
 
 const RegisterScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
 
   const register = () => {
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((cred) => {
-        return db.collection("Users").doc(cred.user.uid).set({
+        return db.collection('Users').doc(cred.user.uid).set({
           Name: name,
           Guest: false,
           UserRank: 1,
           Roubies: 100,
-          //   .then().navigation.navigate('Profile');
+          UserAlertHour: 10,
+          UserAlertMinute: 30,
         });
       })
       .catch((error) => alert(error.message));
+    CreateDailyNotification(10, 30);
   };
 
   return (
     <KeyboardAvoidingView style={styles.container}>
       <StatusBar style="light" />
       <Text h2 style={{ marginBottom: 20 }}>
-        {" "}
-        Register{" "}
+        {' '}
+        Register{' '}
       </Text>
 
       <View style={styles.inputContainer}>
@@ -82,8 +85,8 @@ const RegisterScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   button: {
