@@ -6,8 +6,8 @@ import { StatusBar } from "expo-status-bar";
 import { auth, db } from "../firebase";
 import PropTypes from "prop-types";
 import { KeyboardAvoidingView } from "react-native";
-import { signInWithGoogle } from "../firebase";
-import { signInWithFacebook } from "../firebase";
+// import { signInWithGoogle } from "../firebase";
+// import { signInWithFacebook } from "../firebase";
 
 const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -61,7 +61,7 @@ const RegisterScreen = ({ navigation }) => {
         />
       </View>
       <Button style={styles.button} onPress={register} title="Register" />
-      <Button
+      {/* <Button
         style={styles.button}
         onPress={signInWithGoogle}
         title="Sign in With Google webb"
@@ -70,7 +70,7 @@ const RegisterScreen = ({ navigation }) => {
         style={styles.button}
         onPress={signInWithFacebook}
         title="Sign in With Facebook webb"
-      />
+      /> */}
       {/* <Button
         title="Register"
         onPress={() => navigation.navigate('Profile'), register}

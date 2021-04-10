@@ -1,23 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { Avatar, Button } from 'react-native-elements';
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { Avatar, Button } from "react-native-elements";
 // import firestore from '@react-native-firebase/firestore';
-import { db, auth } from '../firebase';
-import PropTypes from 'prop-types';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { ScrollView } from 'react-native-gesture-handler';
-
-import Screen from '../components/Screen';
-import colors from '../config/colors';
+import { db, auth } from "../firebase";
+import PropTypes from "prop-types";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { ScrollView } from "react-native-gesture-handler";
+import { FontAwesome } from "@expo/vector-icons";
+import Screen from "../components/Screen";
+import colors from "../config/colors";
 
 const ProfileScreen = ({ navigation }) => {
   const user = auth.currentUser;
 
-  const [name, setName] = useState('');
-  const [roubies, setRoubies] = useState('');
-  const [userRank, setUserRank] = useState('');
-  const [guest, setGuest] = useState('');
-
+  const [name, setName] = useState("");
+  const [roubies, setRoubies] = useState("");
+  const [userRank, setUserRank] = useState("");
+  const [guest, setGuest] = useState("");
 
   const signOutUser = () => {
     auth.signOut();
@@ -25,14 +24,14 @@ const ProfileScreen = ({ navigation }) => {
 
   // kolla om man är inloggad med facebook/gmail
   const getUserInfo = () => {
-    db.collection('Users')
+    db.collection("Users")
       .doc(user.uid)
       .get()
       .then((documentSnapshot) => {
-        setName(documentSnapshot.get('Name'));
-        setRoubies(documentSnapshot.get('Roubies'));
-        setUserRank(documentSnapshot.get('UserRank'));
-        setGuest(documentSnapshot.get('Guest'));
+        setName(documentSnapshot.get("Name"));
+        setRoubies(documentSnapshot.get("Roubies"));
+        setUserRank(documentSnapshot.get("UserRank"));
+        setGuest(documentSnapshot.get("Guest"));
       });
   };
   getUserInfo();
@@ -45,7 +44,7 @@ const ProfileScreen = ({ navigation }) => {
             size="large"
             source={{
               uri:
-                'https://png.pngtree.com/png-vector/20190803/ourlarge/pngtree-avatar-user-basic-abstract-circle-background-flat-color-icon-png-image_1647265.jpg',
+                "https://png.pngtree.com/png-vector/20190803/ourlarge/pngtree-avatar-user-basic-abstract-circle-background-flat-color-icon-png-image_1647265.jpg",
             }}
           />
           <View style={styles.topTextContainer}>
@@ -77,7 +76,7 @@ const ProfileScreen = ({ navigation }) => {
                   <TouchableOpacity
                     style={styles.rowButton}
                     onPress={() =>
-                      navigation.navigate('Register', { screen: 'Register' })
+                      navigation.navigate("Register", { screen: "Register" })
                     }
                   >
                     <MaterialCommunityIcons
@@ -90,7 +89,7 @@ const ProfileScreen = ({ navigation }) => {
                   <TouchableOpacity
                     style={styles.rowButton}
                     onPress={() =>
-                      navigation.navigate('Login', { screen: 'Login' })
+                      navigation.navigate("Login", { screen: "Login" })
                     }
                   >
                     <MaterialCommunityIcons
@@ -103,6 +102,16 @@ const ProfileScreen = ({ navigation }) => {
                 </View>
               </View>
             )}
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.rowMiddle}
+                onPress={() =>
+                  navigation.navigate("Calendar", { screen: "Calendar" })
+                }
+              >
+                <FontAwesome name="calendar-check-o" size={24} color="black" />
+              </TouchableOpacity>
+            </View>
 
             <View style={styles.separator} />
             <View style={styles.buttonContainer}>
@@ -140,68 +149,68 @@ const ProfileScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   bodyContent: {
-    alignItems: 'center',
+    alignItems: "center",
     padding: 30,
   },
   buttonContainer: {
-    width: '80%',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "80%",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonText: {
     fontSize: 16,
     color: colors.samBlack,
   },
   container: {
-    alignItems: 'flex-start',
-    backgroundColor: '#FFE9F3',
+    alignItems: "flex-start",
+    backgroundColor: "#FFE9F3",
     flex: 1,
   },
   description: {
     fontSize: 16,
     color: colors.samBlack,
     marginTop: 10,
-    textAlign: 'center',
+    textAlign: "center",
   },
   info: {
     fontSize: 16,
     color: colors.samBlack,
     marginBottom: 10,
-    textAlign: 'center',
+    textAlign: "center",
   },
   link: {
     fontSize: 16,
     color: colors.blue,
     marginBottom: 10,
-    textAlign: 'center',
-    fontStyle: 'italic',
-    fontWeight: 'bold',
+    textAlign: "center",
+    fontStyle: "italic",
+    fontWeight: "bold",
   },
   name: {
     fontSize: 22,
     color: colors.samBlack,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   rowButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     margin: 20,
   },
   separator: {
-    width: '100%',
+    width: "100%",
     height: 1,
-    backgroundColor: 'lightgrey',
+    backgroundColor: "lightgrey",
     marginTop: 10,
   },
   topContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     marginLeft: 100,
     paddingTop: 20,
   },
   topTextContainer: {
-    justifyContent: 'center',
+    justifyContent: "center",
     marginLeft: 20,
   },
 });

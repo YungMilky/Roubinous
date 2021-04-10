@@ -1,30 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet } from 'react-native';
-import 'react-native-gesture-handler';
-import { NavigationContainer, StackActions } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import { TransitionSpecs } from '@react-navigation/stack';
+import React, { useState } from "react";
+import { StyleSheet, Image } from "react-native";
+import "react-native-gesture-handler";
+import { NavigationContainer, StackActions } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import { TransitionSpecs } from "@react-navigation/stack";
 
 import {
   FontAwesome5,
   MaterialCommunityIcons,
   Octicons,
-} from '@expo/vector-icons';
+} from "@expo/vector-icons";
+import { db, auth } from "./firebase";
+import colors from "./config/colors";
 
-import { db, auth } from './firebase';
-
-import colors from './config/colors';
-
-import WelcomeScreen from './screens/WelcomeScreen';
-import RegisterScreen from './screens/RegisterScreen';
-import ProfileScreen from './screens/ProfileScreen';
-import HomeScreen from './screens/HomeScreen';
-import LoginScreen from './screens/LoginScreen';
-import RoutinesScreen from './screens/RoutinesScreen';
-import ResetPasswordScreen from './screens/ResetPasswordScreen';
-import LoginAsGuestScreen from './screens/LoginAsGuestScreen';
-
+import WelcomeScreen from "./screens/WelcomeScreen";
+import RegisterScreen from "./screens/RegisterScreen";
+import ProfileScreen from "./screens/ProfileScreen";
+import HomeScreen from "./screens/HomeScreen";
+import LoginScreen from "./screens/LoginScreen";
+import RoutinesScreen from "./screens/RoutinesScreen";
+import ResetPasswordScreen from "./screens/ResetPasswordScreen";
+import CalendarScreen from "./screens/CalendarScreen";
+import LoginAsGuestScreen from "./screens/LoginAsGuestScreen";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 //  TODO:
 //  keep adding nested navigation
 //  loop through tab items with array prop?
@@ -44,6 +43,10 @@ const HomeStackScreen = () => {
         headerStyle: { backgroundColor: colors.darkmodeBlack },
         headerTitleStyle: { color: colors.darkmodeHighWhite },
         tintColor: { color: colors.darkmodeMediumWhite },
+        // headerTitle: (Text) => <Text>Roubines</Text>,
+        headerRight: () => (
+          <Image style={styles.logo} source={require("./images/ruby.png")} />
+        ),
       }}
     >
       <HomeStack.Screen name="Home" component={HomeScreen} />
@@ -51,6 +54,7 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name="Routines" component={RoutinesScreen} />
       <HomeStack.Screen name="Register" component={RegisterScreen} />
       <HomeStack.Screen name="Login" component={LoginScreen} />
+      <HomeStack.Screen name="Reset Password" component={ResetPasswordScreen} />
     </HomeStack.Navigator>
   );
 };
@@ -76,14 +80,15 @@ const ProfileStackScreen = () => {
       />
       <ProfileStack.Screen name="Register" component={RegisterScreen} />
       <ProfileStack.Screen name="Login" component={LoginScreen} />
-      <ProfileStack.Screen name="LoginAsGuest" component={LoginAsGuestScreen} />
+      {/* <ProfileStack.Screen name="SignedOut" component={SignedOutScreen} /> */}
+      <ProfileStack.Screen name="Calendar" component={CalendarScreen} />
     </ProfileStack.Navigator>
   );
 };
 
 const defaultScreenOptions = {
-  headerTitleStyle: { color: 'white' },
-  headerTintColor: 'white',
+  headerTitleStyle: { color: "white" },
+  headerTintColor: "white",
 };
 
 function TabBar() {
@@ -153,19 +158,17 @@ function TabBar() {
 }
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState("");
 
-  useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        console.log('logged in ', user.uid);
-        setIsLoggedIn(true);
-      } else {
-        console.log('NOT logged in ', user);
-        setIsLoggedIn(false);
-      }
-    });
-  }, [auth.user]);
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      console.log("logged in ", user.uid);
+      setIsLoggedIn(true);
+    } else {
+      console.log("NOT logged in ", user);
+      setIsLoggedIn(false);
+    }
+  });
 
   let content;
   if (isLoggedIn) {
@@ -195,12 +198,17 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'blue',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "blue",
+    alignItems: "center",
+    justifyContent: "center",
   },
   input: {
     marginTop: 200,
+  },
+  logo: {
+    width: 40,
+    height: 35,
+    margin: 0,
   },
 });
 // import React from 'react';
