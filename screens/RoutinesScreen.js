@@ -124,7 +124,7 @@ function RoutinesScreen({ navigation }) {
           }
 
           function onResolve() {
-            if (!alreadyAdded && !lock) {
+            if (removed || (!alreadyAdded && !lock)) {
               imageRefRoutines.getDownloadURL().then((urlRoutines) => {
                 imageRefRoutine.getDownloadURL().then((urlRoutine) => {
                   setItems((oldArray1) => [
@@ -140,6 +140,7 @@ function RoutinesScreen({ navigation }) {
                       imageRoutine: urlRoutine,
                       lock: lock,
                       alreadyAdded: alreadyAdded,
+                      removed: removed,
                     },
                   ]);
                 });
@@ -160,11 +161,12 @@ function RoutinesScreen({ navigation }) {
                       imageRoutine: urlRoutine,
                       lock: lock,
                       alreadyAdded: alreadyAdded,
+                      removed: false,
                     },
                   ]);
                 });
               });
-            } else if (alreadyAdded) {
+            } else if (alreadyAdded && !removed) {
               imageRefRoutines.getDownloadURL().then((urlRoutines) => {
                 imageRefRoutine.getDownloadURL().then((urlRoutine) => {
                   setAlreadyAddedItems((oldArray3) => [
@@ -180,6 +182,7 @@ function RoutinesScreen({ navigation }) {
                       imageRoutine: urlRoutine,
                       lock: lock,
                       alreadyAdded: alreadyAdded,
+                      removed: false,
                     },
                   ]);
                 });
@@ -189,7 +192,7 @@ function RoutinesScreen({ navigation }) {
           }
           //routines with default images
           function onReject() {
-            if (!alreadyAdded && !lock) {
+            if (removed || (!alreadyAdded && !lock)) {
               setItems((oldArray1) => [
                 ...oldArray1,
                 {
@@ -202,6 +205,7 @@ function RoutinesScreen({ navigation }) {
                   imageDefault: require("../assets/RoutinesPics/default.png"),
                   lock: lock,
                   alreadyAdded: alreadyAdded,
+                  removed: removed,
                 },
               ]);
             } else if (lock) {
@@ -217,9 +221,10 @@ function RoutinesScreen({ navigation }) {
                   imageDefault: require("../assets/RoutinesPics/default.png"),
                   lock: lock,
                   alreadyAdded: alreadyAdded,
+                  removed: false,
                 },
               ]);
-            } else if (alreadyAdded) {
+            } else if (alreadyAdded && !removed) {
               setAlreadyAddedItems((oldArray3) => [
                 ...oldArray3,
                 {
@@ -232,21 +237,29 @@ function RoutinesScreen({ navigation }) {
                   imageDefault: require("../assets/RoutinesPics/default.png"),
                   lock: lock,
                   alreadyAdded: alreadyAdded,
+                  removed: false,
                 },
               ]);
             }
             index++;
           }
 
+          let removed = undefined;
           let alreadyAdded = undefined;
           dbUser
             .collection("routines")
             .doc(routineName)
             .get()
             .then((documentSnapshot) => {
-              documentSnapshot.exists
-                ? (alreadyAdded = true)
-                : (alreadyAdded = false);
+              if (documentSnapshot.exists) {
+                if (documentSnapshot.data().removed) {
+                  removed = true;
+                } else {
+                  alreadyAdded = true;
+                }
+              } else {
+                alreadyAdded = false;
+              }
               imageRefRoutines.getDownloadURL().then(onResolve, onReject);
             });
         });
@@ -431,7 +444,7 @@ function RoutinesScreen({ navigation }) {
                       },
                     ]}
                   >
-                    <AddAndRemoveButton check={true} />
+                    <AddAndRemoveButton check={true} routine={item.title} />
                     <Tag difficulty={item.difficulty} />
                   </View>
                 </View>
@@ -737,7 +750,7 @@ function RoutinesScreen({ navigation }) {
                     }}
                   >
                     <TouchableOpacity disabled={false}>
-                      <AddAndRemoveButton check={false} />
+                      <AddAndRemoveButton check={false} routine={item.title} />
                     </TouchableOpacity>
                     <Tag difficulty={item.difficulty} />
                   </View>

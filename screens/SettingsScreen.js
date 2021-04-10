@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { Input, Button } from "react-native-elements";
 import { db, auth } from "../firebase";
 
-const SettingScreen = ({ navigation }) => {
+const SettingsScreen = ({ navigation }) => {
   const [name, setName] = useState();
   const [newUsername, setNewusername] = useState();
   const user = auth.currentUser;
@@ -72,8 +72,8 @@ const styles = StyleSheet.create({
   },
 });
 
-SettingScreen.propTypes = {
+SettingsScreen.propTypes = {
   navigation: PropTypes.object.isRequired,
 };
 
-export default SettingScreen;
+export default SettingsScreen;

@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet } from "react-native";
 import "react-native-gesture-handler";
-import { NavigationContainer, StackActions } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  StackActions,
+  useNavigation,
+} from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { TransitionSpecs } from "@react-navigation/stack";
@@ -34,14 +38,14 @@ import RoutineScreen from "./screens/RoutineScreen";
 import NotificationSettingScreen from "./screens/NotificationSettingScreen";
 import AddRoutineScreen from "./screens/AddRoutineScreen";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import SettingsScreen from "./screens/SettingsScreen";
 
 //  TODO:
 //  keep adding nested navigation
 //  loop through tab items with array prop?
-//  remove on press highlight on tabbar
-//  fix back button behavior
 //  back button color not applying
 
+//  fix back button behavior
 // Removed header from routinescreen
 // style
 // försökte fixa labels på tab bar
@@ -53,10 +57,12 @@ const ProfileStack = createStackNavigator();
 const RootStack = createStackNavigator();
 
 const headerSettingsButton = () => {
+  const navigation = useNavigation();
+
   return (
     <TouchableOpacity
       style={{ paddingRight: 10 }}
-      onPress={() => alert("Set navigation to SettingsScreen")}
+      onPress={() => navigation.navigate("Settings")}
     >
       <Octicons name="settings" size={26} color={colors.darkmodeHighWhite} />
     </TouchableOpacity>
@@ -98,6 +104,7 @@ const ProfileStackScreen = () => {
       <ProfileStack.Screen name="Register" component={RegisterScreen} />
       <ProfileStack.Screen name="Login" component={LoginScreen} />
       <ProfileStack.Screen name="LoginAsGuest" component={LoginAsGuestScreen} />
+      <ProfileStack.Screen name="Settings" component={SettingsScreen} />
       <ProfileStack.Screen
         name="Reset Password"
         component={ResetPasswordScreen}
@@ -134,6 +141,7 @@ const RoutinesStackScreen = () => {
         component={RoutineScreen}
         options={{ headerShown: false }}
       />
+      <RoutinesStack.Screen name="Settings" component={SettingsScreen} />
     </RoutinesStack.Navigator>
   );
 };

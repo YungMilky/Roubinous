@@ -97,6 +97,7 @@ function AddAndRemoveButton({ style, size, check, routine }) {
                     ? RemoveRoutine(routine)
                     : AddRoutine(routine);
                   // 3. set message to undone
+                  setCheckMessage("");
                   setCheckMessage("Undone!");
                   // set width to adapt to "undone" text
                   setMaxWidth(60);
@@ -114,11 +115,13 @@ function AddAndRemoveButton({ style, size, check, routine }) {
 
                   //  set back to added when out of sight
                   setTimeout(() => {
+                    setCheckMessage("");
                     setCheckMessage("Added!");
                   }, 2600);
                 } else if (addingOrRemoving) {
                   //  IF ADDING
                   // 1. set message to Added!
+                  setCheckMessage("");
                   setCheckMessage("Added!");
 
                   // 2. add routine to db
@@ -133,6 +136,7 @@ function AddAndRemoveButton({ style, size, check, routine }) {
                 } else if (!addingOrRemoving) {
                   //  IF REMOVING
                   // 1. set message to Removed!
+                  setCheckMessage("");
                   setCheckMessage("Removed");
 
                   // 2. remove routine from db

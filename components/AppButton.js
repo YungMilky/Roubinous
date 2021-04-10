@@ -15,12 +15,12 @@ function AppButton({
 }) {
   return (
     <TouchableOpacity
-      style={[style, styles.button]}
+      style={[styles.button, style]}
       onPress={onPress}
       disabled={disabled}
       activeOpacity={activeOpacity}
     >
-      <Text style={[textStyle, styles.text]}>{title}</Text>
+      <Text style={[styles.text, textStyle]}>{title}</Text>
     </TouchableOpacity>
   );
 }
