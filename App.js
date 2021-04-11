@@ -44,6 +44,7 @@ import SettingsScreen from "./screens/SettingsScreen";
 //  keep adding nested navigation
 //  loop through tab items with array prop?
 //  back button color not applying
+//  splash screen
 
 //  fix back button behavior
 // Removed header from routinescreen
