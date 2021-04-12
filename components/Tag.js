@@ -69,11 +69,7 @@ function Tag({ content, difficulty, lock, style }) {
             paddingTop: 2,
           }}
         >
-          <FontAwesome
-            name="lock"
-            size={18}
-            color={colors.darkmodeErrorColor}
-          />
+          <FontAwesome name="lock" size={18} color={colors.darkmodeDragged} />
         </Text>
       )}
     </Animatable.View>

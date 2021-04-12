@@ -9,44 +9,57 @@ import {
 
 import * as Animatable from "react-native-animatable";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 import colors from "../config/colors";
 import AddRoutine from "./AddRoutine";
 import RemoveRoutine from "./RemoveRoutine";
 
+const plusSymbol = () => {
+  return (
+    <MaterialIcons
+      name="playlist-add"
+      size={24}
+      color={colors.darkmodeSuccessColor}
+    />
+  );
+};
+const minusSymbol = () => {
+  return (
+    <MaterialCommunityIcons
+      name="minus"
+      size={20}
+      color={colors.darkmodeErrorColor}
+    />
+  );
+};
+const undoSymbol = () => {
+  return (
+    <MaterialCommunityIcons
+      name="undo"
+      size={18}
+      color={colors.darkmodeHighWhite}
+    />
+  );
+};
+
 //check - if true: show plus, if false: show minus
 //routine - routine name
 //size - plus and minus icon size
 function AddAndRemoveButton({ style, size, check, routine }) {
-  const plus = () => {
-    return (
-      <MaterialCommunityIcons
-        name="plus"
-        size={typeof size != "undefined" ? size : 20}
-        color={colors.darkmodeSuccessColor}
-      />
-    );
-  };
-  const minus = () => {
-    return (
-      <MaterialCommunityIcons
-        name="minus"
-        size={typeof size != "undefined" ? size : 20}
-        color={colors.darkmodeErrorColor}
-      />
-    );
-  };
   const [expanded, setExpanded] = useState(true);
   const animationWidth = useRef(new Animated.Value(2)).current;
 
   const [addingOrRemoving, setAddingOrRemoving] = useState(check);
   const [checkMessage, setCheckMessage] = useState(
-    check ? "Added!" : " Removed"
+    check ? " Added!" : " Removed"
   );
-  const [maxWidth, setMaxWidth] = useState(check ? 70 : 80);
-  const [plusOrMinus, setPlusOrMinus] = useState(check ? plus : minus);
+  const [maxWidth, setMaxWidth] = useState(check ? 70 : 84);
+  const [plusOrMinus, setPlusOrMinus] = useState(
+    check ? plusSymbol : minusSymbol
+  );
   const [undo, toggleUndo] = useState();
+  const [undoRender, setUndoRender] = useState();
   const toggleExpansion = () => {
     setExpanded(!expanded);
   };
@@ -92,34 +105,34 @@ function AddAndRemoveButton({ style, size, check, routine }) {
               onPress={() => {
                 toggleExpansion();
                 if (undo) {
-                  console.log(checkMessage);
-                  checkMessage === "Added!"
+                  checkMessage === " Added!"
                     ? RemoveRoutine(routine)
                     : AddRoutine(routine);
                   // 3. set message to undone
-                  setCheckMessage("Undone!");
+                  setCheckMessage(" Undone!");
                   // set width to adapt to "undone" text
-                  setMaxWidth(60);
+                  setMaxWidth(74);
 
                   setTimeout(() => {
                     // reset width to adapt to "removed"
-                    setMaxWidth(80);
+                    setMaxWidth(84);
                     // 1. toggle undo
                     toggleUndo(false);
+                    setUndoRender(null);
                     // 2. remove plus/minus depending on previous
-                    checkMessage === "Added!"
-                      ? setPlusOrMinus(plus)
-                      : setPlusOrMinus(minus);
+                    checkMessage === " Added!"
+                      ? setPlusOrMinus(plusSymbol)
+                      : setPlusOrMinus(minusSymbol);
                   }, 2000);
 
                   //  set back to added when out of sight
                   setTimeout(() => {
-                    setCheckMessage("Added!");
+                    setCheckMessage(" Added!");
                   }, 2600);
                 } else if (addingOrRemoving) {
                   //  IF ADDING
                   // 1. set message to Added!
-                  setCheckMessage("Added!");
+                  setCheckMessage(" Added!");
 
                   // 2. add routine to db
                   AddRoutine(routine);
@@ -127,13 +140,14 @@ function AddAndRemoveButton({ style, size, check, routine }) {
                   // 2. toggle undo
                   setTimeout(() => {
                     toggleUndo(true);
+                    setUndoRender(undoSymbol);
                     // 3. remove plus/minus
                     setPlusOrMinus(null);
                   }, 2000);
                 } else if (!addingOrRemoving) {
                   //  IF REMOVING
                   // 1. set message to Removed!
-                  setCheckMessage("Removed");
+                  setCheckMessage(" Removed");
 
                   // 2. remove routine from db
                   RemoveRoutine(routine);
@@ -141,6 +155,7 @@ function AddAndRemoveButton({ style, size, check, routine }) {
                   // 2. toggle undo
                   setTimeout(() => {
                     toggleUndo(true);
+                    setUndoRender(undoSymbol);
                     // 3. remove plus/minus
                     setPlusOrMinus(null);
                   }, 2000);
@@ -160,13 +175,13 @@ function AddAndRemoveButton({ style, size, check, routine }) {
                   },
                 ]}
               >
-                {undo && (
+                {/* {undo && (
                   <MaterialCommunityIcons
                     name="undo"
                     size={18}
                     color={colors.darkmodeHighWhite}
                   />
-                )}
+                )} */}
                 <Text
                   style={{
                     color: colors.darkmodeHighWhite,
@@ -176,6 +191,7 @@ function AddAndRemoveButton({ style, size, check, routine }) {
                   multiline={false}
                   ellipsizeMode="clip"
                 >
+                  {undoRender}
                   {plusOrMinus}
                   {checkMessage}
                 </Text>

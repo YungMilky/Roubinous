@@ -160,7 +160,7 @@ const RoutineScreen = ({ navigation, route }) => {
                 backgroundColor: "rgba(0.0.0.0,0)",
                 borderWidth: 0,
               }}
-              size={40}
+              // size={40}
             />
           )}
 
@@ -331,18 +331,25 @@ const RoutineScreen = ({ navigation, route }) => {
 };
 
 //  TODO:
-//  Show previous routine info if removed = true
-//  AddAndRemoveButton on RoutineScreen
-//  pull to refresh
+//  items, alreadyaddeditems, lockeditems.length ? render : null (entire flatlist)
+//  reset appbutton
+//  optimize
+//  better AddAndRemoveButton on RoutineScreen
 //  lock if user is at y level with x amount of routines
+//  pull to refresh
 
 //  ISSUES:
+//  Show previous routine info if removed = true
 //  style tags by default or non default image, not by locked/ongoing/rest
 //  if routine is added in RoutinesScreen, it doesn't update "removed" in routineScreen
 //  peep this https://rnfirebase.io/firestore/usage-with-flatlists
 //  have only one open swipeable at any given point
+//  some RoutinesScreen images are slightly above their touchables
 
 //  DONE:
+//  Thicker plus/minus symbols
+//  Reposition styles
+//  tried: top left bottom right sharp border, rest round
 //  if removed = true, show "give it another shot" on routinescreen
 //  show routines with removed: false on routinesscreen
 //  remove swipeables
