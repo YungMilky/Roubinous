@@ -1,6 +1,6 @@
-import { db, auth, cloud } from "../firebase";
+import { db, auth, cloud } from '../firebase';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -8,37 +8,37 @@ import {
   Dimensions,
   Image,
   FlatList,
-} from "react-native";
+} from 'react-native';
 
-import { debounce } from "lodash";
+import { debounce } from 'lodash';
 
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from '@react-navigation/native';
 
-import { SearchBar } from "react-native-elements";
+import { SearchBar } from 'react-native-elements';
 
-import { ScrollView, TouchableHighlight, TouchableOpacity } from "react-native";
+import { ScrollView, TouchableHighlight, TouchableOpacity } from 'react-native';
 
-import { LinearGradient } from "expo-linear-gradient";
+import { LinearGradient } from 'expo-linear-gradient';
 
-import Swipeable from "react-native-swipeable-row";
+import Swipeable from 'react-native-swipeable-row';
 
-import * as Animatable from "react-native-animatable";
+import * as Animatable from 'react-native-animatable';
 
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { AntDesign, FontAwesome } from '@expo/vector-icons';
 
-import Screen from "../components/Screen";
-import AppText from "../components/AppText";
-import Tag from "../components/Tag";
-import colors from "../config/colors";
+import Screen from '../components/Screen';
+import AppText from '../components/AppText';
+import Tag from '../components/Tag';
+import colors from '../config/colors';
 
 // RN >= 0.63
-import { LogBox } from "react-native";
-import AddRoutine from "../components/AddRoutine";
-import AddAndRemoveButton from "../components/AddAndRemoveButton";
+import { LogBox } from 'react-native';
+import AddRoutine from '../components/AddRoutine';
+import AddAndRemoveButton from '../components/AddAndRemoveButton';
 
-LogBox.ignoreLogs(["Warning: ...", "Setting a timer"]);
+LogBox.ignoreLogs(['Warning: ...', 'Setting a timer']);
 
-const { width, height } = Dimensions.get("screen");
+const { width, height } = Dimensions.get('screen');
 const ITEM_HEIGHT = height * 0.18;
 
 const getItemLayout = (data, index) => ({
@@ -49,12 +49,12 @@ const getItemLayout = (data, index) => ({
 
 function RoutinesScreen({ navigation }) {
   const user = auth.currentUser;
-  const dbUser = db.collection("Users").doc(user.uid);
+  const dbUser = db.collection('Users').doc(user.uid);
   console.log(user.uid);
 
-  const rank1 = "kn00b";
-  const rank2 = "Achiever";
-  const rank3 = "Bambaclat";
+  const rank1 = 'kn00b';
+  const rank2 = 'Achiever';
+  const rank3 = 'Bambaclat';
   const [userRank, setuserRank] = useState(rank1);
 
   //routines, locked routines, ongoing routines
@@ -77,8 +77,8 @@ function RoutinesScreen({ navigation }) {
   const [selectedItem, setSelectedItem] = useState([]);
   const [selectedAddedItem, setSelectedAddedItem] = useState([]);
 
-  const [swipeText, setSwipeText] = useState("Add me!");
-  const [swipeTextAdded, setSwipeTextAdded] = useState("Remove me");
+  const [swipeText, setSwipeText] = useState('Add me!');
+  const [swipeTextAdded, setSwipeTextAdded] = useState('Remove me');
 
   const isFocused = useIsFocused();
   useEffect(() => {
@@ -92,7 +92,7 @@ function RoutinesScreen({ navigation }) {
     setAlreadyAddedItems([]);
     setLockedItems([]);
     // resetItems;
-    db.collection("Routines")
+    db.collection('Routines')
       .get()
       .then((docs) => {
         let index = 0;
@@ -101,15 +101,15 @@ function RoutinesScreen({ navigation }) {
 
           //routine image from storage
           let imageRefRoutines = cloud.ref(
-            "RoutinesScreen/" + routineName + ".png"
+            'RoutinesScreen/' + routineName + '.png'
           );
           let imageRefRoutine = cloud.ref(
-            "RoutineScreen/" + routineName + ".png"
+            'RoutineScreen/' + routineName + '.png'
           );
 
           //set default difficulty to 0
           let diff = doc.data().DifficultyRank;
-          if (typeof diff === "undefined") {
+          if (typeof diff === 'undefined') {
             diff = 0;
           }
 
@@ -199,7 +199,7 @@ function RoutinesScreen({ navigation }) {
                   descriptionArray: doc.data().LongDescription,
                   color: doc.data().Color,
                   difficulty: diff,
-                  imageDefault: require("../assets/RoutinesPics/default.png"),
+                  imageDefault: require('../assets/RoutinesPics/default.png'),
                   lock: lock,
                   alreadyAdded: alreadyAdded,
                 },
@@ -214,7 +214,7 @@ function RoutinesScreen({ navigation }) {
                   descriptionArray: doc.data().LongDescription,
                   color: doc.data().Color,
                   difficulty: diff,
-                  imageDefault: require("../assets/RoutinesPics/default.png"),
+                  imageDefault: require('../assets/RoutinesPics/default.png'),
                   lock: lock,
                   alreadyAdded: alreadyAdded,
                 },
@@ -229,7 +229,7 @@ function RoutinesScreen({ navigation }) {
                   descriptionArray: doc.data().LongDescription,
                   color: doc.data().Color,
                   difficulty: diff,
-                  imageDefault: require("../assets/RoutinesPics/default.png"),
+                  imageDefault: require('../assets/RoutinesPics/default.png'),
                   lock: lock,
                   alreadyAdded: alreadyAdded,
                 },
@@ -240,7 +240,7 @@ function RoutinesScreen({ navigation }) {
 
           let alreadyAdded = undefined;
           dbUser
-            .collection("routines")
+            .collection('routines')
             .doc(routineName)
             .get()
             .then((documentSnapshot) => {
@@ -254,13 +254,13 @@ function RoutinesScreen({ navigation }) {
   }
 
   dbUser.get().then((documentSnapshot) => {
-    let userRank = documentSnapshot.get("UserRank");
-    let translatedUserRank = "Unranked";
-    if (userRank >= "0" && userRank < "10") {
+    let userRank = documentSnapshot.get('UserRank');
+    let translatedUserRank = 'Unranked';
+    if (userRank >= '0' && userRank < '10') {
       translatedUserRank = rank1;
-    } else if (userRank >= "10" && userRank < "20") {
+    } else if (userRank >= '10' && userRank < '20') {
       translatedUserRank = rank2;
-    } else if (userRank >= "20" && userRank <= "30") {
+    } else if (userRank >= '20' && userRank <= '30') {
       translatedUserRank = rank3;
     }
     setuserRank(translatedUserRank);
@@ -281,22 +281,22 @@ function RoutinesScreen({ navigation }) {
           }, 3000);
         }, 500)}
         onRightActionRelease={debounce(() => {
-          if (swipeText === "Add me!") {
-            setSwipeText("Added!");
+          if (swipeText === 'Add me!') {
+            setSwipeText('Added!');
             AddRoutine(item.title);
             setTimeout(() => {
               swipeableRef.recenter();
             }, 1000);
             setTimeout(() => {
-              setSwipeText("Remove me");
+              setSwipeText('Remove me');
             }, 1000);
-          } else if (swipeText === "Remove me") {
-            setSwipeText("Removed!");
+          } else if (swipeText === 'Remove me') {
+            setSwipeText('Removed!');
             setTimeout(() => {
               swipeableRef.recenter();
             }, 1000);
             setTimeout(() => {
-              setSwipeText("Add me!");
+              setSwipeText('Add me!');
             }, 1000);
           }
           if (selectedItem.includes(item.title)) {
@@ -312,7 +312,7 @@ function RoutinesScreen({ navigation }) {
             <AppText
               style={[
                 styles.swipeableText,
-                swipeText === "Removed!" || swipeText === "Remove me"
+                swipeText === 'Removed!' || swipeText === 'Remove me'
                   ? { color: colors.darkmodeErrorColor }
                   : { color: colors.pastelGreen },
               ]}
@@ -341,7 +341,7 @@ function RoutinesScreen({ navigation }) {
             onPressOut={() =>
               longPress
                 ? setLongPress(false)
-                : navigation.navigate("Routine", { item })
+                : navigation.navigate('Routine', { item })
             }
           >
             {/* <SharedElement
@@ -423,9 +423,9 @@ function RoutinesScreen({ navigation }) {
                           },
 
                       {
-                        flexDirection: "row",
-                        justifyContent: "flex-end",
-                        position: "absolute",
+                        flexDirection: 'row',
+                        justifyContent: 'flex-end',
+                        position: 'absolute',
                         width: 90,
                         top: 66,
                       },
@@ -456,7 +456,7 @@ function RoutinesScreen({ navigation }) {
                 { color: colors.darkmodeDisabledWhite },
               ]}
             >
-              Locked{" "}
+              Locked{' '}
               <FontAwesome
                 name="lock"
                 size={18}
@@ -467,7 +467,7 @@ function RoutinesScreen({ navigation }) {
         ]}
       >
         <Animatable.View
-          animation={"fadeIn"}
+          animation={'fadeIn'}
           duration={400}
           useNativeDriver={true}
           style={{
@@ -489,7 +489,7 @@ function RoutinesScreen({ navigation }) {
             onPressOut={() =>
               longPress
                 ? setLongPress(false)
-                : navigation.navigate("Routine", { item })
+                : navigation.navigate('Routine', { item })
             }
           >
             {/* <SharedElement
@@ -561,9 +561,9 @@ function RoutinesScreen({ navigation }) {
                   </AppText>
                   <View
                     style={{
-                      flexDirection: "row",
-                      justifyContent: "flex-end",
-                      position: "absolute",
+                      flexDirection: 'row',
+                      justifyContent: 'flex-end',
+                      position: 'absolute',
                       width: 90,
                       top: 66,
                       left: width * 0.15,
@@ -594,22 +594,22 @@ function RoutinesScreen({ navigation }) {
           }, 3000);
         }, 500)}
         onRightActionRelease={debounce(() => {
-          if (swipeTextAdded === "Remove me") {
-            setSwipeTextAdded("Removed!");
+          if (swipeTextAdded === 'Remove me') {
+            setSwipeTextAdded('Removed!');
             setTimeout(() => {
               swipeableRefAdded.recenter();
             }, 1000);
             setTimeout(() => {
-              setSwipeTextAdded("Add me!");
+              setSwipeTextAdded('Add me!');
             }, 1000);
-          } else if (swipeTextAdded === "Add me!") {
-            setSwipeTextAdded("Added!");
+          } else if (swipeTextAdded === 'Add me!') {
+            setSwipeTextAdded('Added!');
             AddRoutine(item.title);
             setTimeout(() => {
               swipeableRefAdded.recenter();
             }, 1000);
             setTimeout(() => {
-              setSwipeTextAdded("Remove me");
+              setSwipeTextAdded('Remove me');
             }, 1000);
           }
           if (selectedAddedItem.includes(item.title)) {
@@ -625,7 +625,7 @@ function RoutinesScreen({ navigation }) {
             <AppText
               style={[
                 styles.swipeableText,
-                swipeTextAdded === "Removed!" || swipeTextAdded === "Remove me"
+                swipeTextAdded === 'Removed!' || swipeTextAdded === 'Remove me'
                   ? { color: colors.darkmodeErrorColor }
                   : { color: colors.pastelGreen },
               ]}
@@ -656,7 +656,7 @@ function RoutinesScreen({ navigation }) {
             onPressOut={() =>
               longPress
                 ? setLongPress(false)
-                : navigation.navigate("Routine", { item })
+                : navigation.navigate('Routine', { item })
             }
           >
             {/* <SharedElement
@@ -728,9 +728,9 @@ function RoutinesScreen({ navigation }) {
                   </AppText>
                   <View
                     style={{
-                      flexDirection: "row",
-                      justifyContent: "flex-end",
-                      position: "absolute",
+                      flexDirection: 'row',
+                      justifyContent: 'flex-end',
+                      position: 'absolute',
                       width: 90,
                       top: 66,
                       left: width * 0.15,
@@ -756,8 +756,8 @@ function RoutinesScreen({ navigation }) {
     <Screen style={{ backgroundColor: colors.darkmodeBlack, marginTop: -12 }}>
       <View
         style={{
-          justifyContent: "center",
-          alignItems: "center",
+          justifyContent: 'center',
+          alignItems: 'center',
           height: height * 0.81,
         }}
       >
@@ -769,7 +769,7 @@ function RoutinesScreen({ navigation }) {
             height: height * 0.77,
           }}
         >
-          <View style={{ alignItems: "center", paddingTop: 2 }}>
+          <View style={{ alignItems: 'center', paddingTop: 2 }}>
             <SearchBar
               placeholder="Search routines..."
               onChangeText={setSearch}
@@ -777,7 +777,7 @@ function RoutinesScreen({ navigation }) {
               containerStyle={{
                 borderTopLeftRadius: 15,
                 borderTopRightRadius: 15,
-                backgroundColor: "rgba(0,0,0,0.0)",
+                backgroundColor: 'rgba(0,0,0,0.0)',
                 width: width * 0.92,
                 borderTopWidth: 0,
                 borderBottomWidth: 0,
@@ -807,14 +807,14 @@ function RoutinesScreen({ navigation }) {
             <View>
               <View
                 style={{
-                  width: "80%",
-                  display: "flex",
-                  justifyContent: "center",
+                  width: '80%',
+                  display: 'flex',
+                  justifyContent: 'center',
                 }}
               ></View>
               <View
                 style={{
-                  flexDirection: "row",
+                  flexDirection: 'row',
                   paddingBottom: 12,
                   paddingTop: 1,
                 }}
@@ -824,7 +824,7 @@ function RoutinesScreen({ navigation }) {
                     backgroundColor: colors.darkmodeDisabledBlack,
                     height: 2,
                     flex: 1,
-                    alignSelf: "center",
+                    alignSelf: 'center',
                   }}
                 />
                 <Text style={styles.separatorText}>Locked routines</Text>
@@ -833,7 +833,7 @@ function RoutinesScreen({ navigation }) {
                     backgroundColor: colors.darkmodeDisabledBlack,
                     height: 2,
                     flex: 1,
-                    alignSelf: "center",
+                    alignSelf: 'center',
                   }}
                 />
               </View>
@@ -854,14 +854,14 @@ function RoutinesScreen({ navigation }) {
             <View>
               <View
                 style={{
-                  width: "80%",
-                  display: "flex",
-                  justifyContent: "center",
+                  width: '80%',
+                  display: 'flex',
+                  justifyContent: 'center',
                 }}
               ></View>
               <View
                 style={{
-                  flexDirection: "row",
+                  flexDirection: 'row',
                   paddingBottom: 12,
                   paddingTop: 1,
                 }}
@@ -871,7 +871,7 @@ function RoutinesScreen({ navigation }) {
                     backgroundColor: colors.darkmodeDisabledBlack,
                     height: 2,
                     flex: 1,
-                    alignSelf: "center",
+                    alignSelf: 'center',
                   }}
                 />
                 <Text style={styles.separatorText}>Ongoing routines</Text>
@@ -880,7 +880,7 @@ function RoutinesScreen({ navigation }) {
                     backgroundColor: colors.darkmodeDisabledBlack,
                     height: 2,
                     flex: 1,
-                    alignSelf: "center",
+                    alignSelf: 'center',
                   }}
                 />
               </View>
@@ -904,7 +904,9 @@ function RoutinesScreen({ navigation }) {
           <TouchableHighlight
             activeOpacity={0.9}
             underlayColor={colors.white}
-            onPressOut={() => console.log("bla")}
+            onPressOut={() =>
+              navigation.navigate('AddRoutine', { screen: 'AddRoutine' })
+            }
           >
             <View style={itemStyles.makeYourOwnRoutine}>
               <AppText style={itemStyles.makeYourOwnRoutineText}>
@@ -943,32 +945,32 @@ const styles = StyleSheet.create({
   },
   swipeableText: {
     flex: 1,
-    transform: [{ rotate: "90deg" }],
+    transform: [{ rotate: '90deg' }],
     width: width * 0.3,
     right: 40,
-    fontWeight: "700",
+    fontWeight: '700',
     fontSize: 16,
     marginTop: 14,
     marginBottom: 10,
-    textAlign: "center",
+    textAlign: 'center',
     padding: 12,
   },
   separatorText: {
-    textAlign: "center",
+    textAlign: 'center',
     paddingBottom: 0,
     marginBottom: 6,
     paddingTop: 2,
     paddingHorizontal: 10,
     fontSize: 16,
-    fontStyle: "italic",
+    fontStyle: 'italic',
     color: colors.darkmodeDisabledWhite,
   },
   description: {
     fontSize: 11,
   },
   image: {
-    resizeMode: "contain",
-    position: "absolute",
+    resizeMode: 'contain',
+    position: 'absolute',
     bottom: 0,
     right: 20,
   },
@@ -990,19 +992,19 @@ const styles = StyleSheet.create({
 
 const itemStyles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    overflow: "hidden",
+    flexDirection: 'row',
+    overflow: 'hidden',
     padding: 10,
   },
   image: {
-    overflow: "hidden",
+    overflow: 'hidden',
     width: ITEM_HEIGHT * 1.4,
     height: ITEM_HEIGHT * 1.4,
     marginTop: -60,
     left: width * 0.4,
   },
   imageDefault: {
-    overflow: "hidden",
+    overflow: 'hidden',
     width: ITEM_HEIGHT * 1.2,
     height: ITEM_HEIGHT * 1.08,
     marginTop: -55,
@@ -1015,14 +1017,14 @@ const itemStyles = StyleSheet.create({
     width: width * 0.78,
     textShadowOffset: { width: 8, height: 8 },
     textShadowRadius: 8,
-    textShadowColor: "rgba(0,0,0,0.4)",
+    textShadowColor: 'rgba(0,0,0,0.4)',
   },
   subtitle: {
     color: colors.darkmodeMediumWhite,
     fontSize: 15,
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 8,
-    textShadowColor: "rgba(0,0,0,0.4)",
+    textShadowColor: 'rgba(0,0,0,0.4)',
   },
   background: {
     borderRadius: 4,
@@ -1032,14 +1034,14 @@ const itemStyles = StyleSheet.create({
     flex: 1,
     paddingTop: 8,
     paddingBottom: 16,
-    flexDirection: "row",
-    justifyContent: "center",
-    width: "170%",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: '170%',
   },
   makeYourOwnRoutineText: {
     flex: 1,
     color: colors.darkmodeHighWhite,
-    fontWeight: "100",
+    fontWeight: '100',
     paddingLeft: 22,
   },
   makeYourOwnRoutinePlus: {

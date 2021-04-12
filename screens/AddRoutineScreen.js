@@ -6,6 +6,7 @@ import {
   Modal,
   Alert,
   TouchableOpacity,
+  Button,
 } from 'react-native';
 import { Input } from 'react-native-elements';
 import PropTypes from 'prop-types';
@@ -17,6 +18,7 @@ import AppButton from '../components/AppButton';
 const AddRoutineScreen = ({ navigation }) => {
   const user = auth.currentUser;
   const [name, setName] = useState('');
+  const [pressed, setPressed] = useState();
   const [note, setNote] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [days, setDays] = useState({
@@ -53,17 +55,8 @@ const AddRoutineScreen = ({ navigation }) => {
     console.log(days);
   };
 
-  const getSelectedDays = () => {};
-
   return (
     <View style={styles.container}>
-      <WeekdayPicker
-        days={days}
-        onChange={handleChange}
-        style={styles.picker}
-        dayStyle={styles.day}
-      />
-      <Text style={styles.modalText}>{days[0]}</Text>
       <Modal
         animationType="fade"
         transparent={true}
@@ -76,17 +69,29 @@ const AddRoutineScreen = ({ navigation }) => {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>Select days:</Text>
-            <WeekdayPicker
-              days={days}
-              onChange={handleChange}
-              style={styles.picker}
-              dayStyle={styles.day}
-            />
-            <Text>
-              {days[0]} {days[1]} {days[2]} {days[3]} {days[4]} {days[5]}{' '}
-              {days[6]}
-            </Text>
-            <AppButton
+            {pressed ? (
+              <WeekdayPicker
+                days={days}
+                onChange={() => {
+                  handleChange(days);
+                  setPressed(false);
+                }}
+                style={styles.picker}
+                dayStyle={styles.day}
+              />
+            ) : (
+              <WeekdayPicker
+                days={days}
+                onChange={() => {
+                  handleChange(days);
+                  setPressed(true);
+                }}
+                style={styles.picker}
+                dayStyle={styles.day}
+              />
+            )}
+
+            <Button
               style={[styles.button, styles.buttonClose]}
               title="Im done"
               onPress={() => setModalVisible(!modalVisible)}
@@ -153,6 +158,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+  },
+  picker: {
+    marginBottom: 20,
   },
   container: {
     flex: 1,

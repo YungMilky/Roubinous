@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, LogBox } from 'react-native';
 import 'react-native-gesture-handler';
 import { NavigationContainer, StackActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -7,7 +7,6 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import { TransitionSpecs } from '@react-navigation/stack';
 import { Constants } from 'react-native-unimodules';
 import AppLoading from 'expo-app-loading';
-import { LogBox } from 'react-native';
 import { enableScreens } from 'react-native-screens';
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 enableScreens();
@@ -134,6 +133,7 @@ const RoutinesStackScreen = () => {
         component={RoutineScreen}
         options={{ headerShown: false }}
       />
+      <RoutinesStack.Screen name="AddRoutine" component={AddRoutineScreen} />
     </RoutinesStack.Navigator>
   );
 };
