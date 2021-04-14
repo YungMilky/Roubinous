@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 
 import { db, auth } from '../firebase';
 import AppButton from '../components/AppButton';
+import Screen from '../components/Screen';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -90,7 +91,7 @@ const NotificationSettingScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <Screen style={styles.container}>
       {/* <Text>Your expo push token: {expoPushToken}</Text>
       <View style={{ alignItems: 'center', justifyContent: 'center' }}>
         <Text>
@@ -103,12 +104,12 @@ const NotificationSettingScreen = ({ navigation }) => {
         </Text>
       </View> */}
 
-      <AppButton
+      {/* <AppButton
         title="Schedule test notification (5sec interval)"
         onPress={async () => {
           await scheduleTest();
         }}
-      />
+      /> */}
       <AppButton
         title="Turn off all notifications"
         onPress={async () => {
@@ -127,11 +128,11 @@ const NotificationSettingScreen = ({ navigation }) => {
         <AppButton
           style={styles.button}
           onPress={showTimepicker}
-          title="Select time"
+          title="Select new time"
         />
         <AppButton
           style={styles.button}
-          title="Apply new time"
+          title="Apply selected time"
           onPress={async () => {
             await changeNotificationTime();
           }}
@@ -152,7 +153,7 @@ const NotificationSettingScreen = ({ navigation }) => {
         Current Daily Notification time: {userAlertHour}:
         {checkNumber(userAlertMinute)}
       </Text>
-    </View>
+    </Screen>
   );
 
   async function changeNotificationTime() {
@@ -226,7 +227,7 @@ async function cancelAllNotifications() {
     })
     .catch((err) => {
       console.log('Unable to clear local notifications. ' + err);
-      reject(err);
+      //reject(err);
     });
 }
 
@@ -269,14 +270,12 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'space-around',
   },
   selectTime: {
     justifyContent: 'center',
-    alignContent: 'center',
-    flexDirection: 'row',
-    width: '60%',
+    alignItems: 'center',
   },
 });
 

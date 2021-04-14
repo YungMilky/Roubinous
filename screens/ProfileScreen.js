@@ -102,9 +102,9 @@ const ProfileScreen = ({ navigation }) => {
                     <Text style={styles.buttonText}>Log in</Text>
                   </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={signOutUser}>
+                {/* <TouchableOpacity onPress={signOutUser}>
                   <Text style={styles.link}>I want to Logout</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
             )}
 

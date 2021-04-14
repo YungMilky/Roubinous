@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 const WelcomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Image style={styles.logo} source={require('../images/ruby.png')} />
+      <Image style={styles.logo} source={require('../assets/icons/ruby.png')} />
       <AppButton
         title="Continue as Guest"
         onPress={() =>

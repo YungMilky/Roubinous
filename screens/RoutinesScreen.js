@@ -472,7 +472,7 @@ function RoutinesScreen({ navigation }) {
                     justifyContent: 'flex-end',
                     position: 'absolute',
                     width:
-                      typeof item.imageDefault != 'undefined'
+                      item.imageDefault != 'undefined'
                         ? width * 0.37
                         : width * 0.295,
                     top: 66,
@@ -877,7 +877,9 @@ function RoutinesScreen({ navigation }) {
             activeOpacity={0.9}
             underlayColor={colors.white}
             onPressOut={() =>
-              navigation.navigate('AddRoutine', { screen: 'AddRoutine' })
+              navigation.navigate('Add Custom Routine', {
+                screen: 'AddRoutine',
+              })
             }
           >
             <View style={itemStyles.makeYourOwnRoutine}>

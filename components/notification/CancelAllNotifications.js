@@ -15,7 +15,7 @@ async function CancelAllNotifications() {
     })
     .catch((err) => {
       console.log('Unable to clear local notifications. ' + err);
-      reject(err);
+      //reject(err);
     });
   return 'Notification sent';
 }

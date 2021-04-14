@@ -37,25 +37,17 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <Screen style={styles.container}>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('Profile', { screen: 'Profile' })}
       >
-        <Text
-          style={styles.text}
-          onPress={() =>
-            navigation.navigate('AddRoutine', { screen: 'AddRoutine' })
-          }
-        >
-          Add a custom routine
-        </Text>
         <MaterialCommunityIcons
           name="account"
           size={100}
           color={colors.samRed}
         />
         <Text>Profile Page</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('Routines', { screen: 'Routines' })}
@@ -67,7 +59,7 @@ const HomeScreen = ({ navigation }) => {
         />
         <Text>Routines</Text>
       </TouchableOpacity>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.button}
         onPress={() =>
           navigation.navigate('Notification Settings', {
@@ -81,7 +73,7 @@ const HomeScreen = ({ navigation }) => {
           color={colors.samRed}
         />
         <Text>Notification Settings</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </Screen>
   );
 };
