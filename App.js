@@ -303,7 +303,6 @@ export default function App() {
             component={ProfileStackScreen}
             options={{ title: "Profile" }}
           />
-          <RootStack.Screen name="Settings" component={SettingsScreen} />
           <RootStack.Screen name="Register" component={RegisterScreen} />
           <RootStack.Screen name="Login" component={LoginScreen} />
           <RootStack.Screen
