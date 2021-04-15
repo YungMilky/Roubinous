@@ -1,6 +1,6 @@
-import { db, auth, cloud } from '../firebase';
+import { db, auth, cloud } from "../firebase";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -8,33 +8,33 @@ import {
   Dimensions,
   Image,
   FlatList,
-} from 'react-native';
+} from "react-native";
 
 // used to optimize swipeable
 // import { debounce } from "lodash";
 
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from "@react-navigation/native";
 
-import { SearchBar } from 'react-native-elements';
+import { SearchBar } from "react-native-elements";
 
-import { ScrollView, TouchableHighlight, TouchableOpacity } from 'react-native';
+import { ScrollView, TouchableHighlight, TouchableOpacity } from "react-native";
 
-import { LinearGradient } from 'expo-linear-gradient';
+import { LinearGradient } from "expo-linear-gradient";
 
 // import Swipeable from "react-native-swipeable-row";
 
-import * as Animatable from 'react-native-animatable';
+import * as Animatable from "react-native-animatable";
 
-import { AntDesign, FontAwesome } from '@expo/vector-icons';
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
 
-import Screen from '../components/Screen';
-import AppText from '../components/AppText';
-import Tag from '../components/Tag';
-import colors from '../config/colors';
+import Screen from "../components/Screen";
+import AppText from "../components/AppText";
+import Tag from "../components/Tag";
+import colors from "../config/colors";
 
-import AddAndRemoveButton from '../components/AddAndRemoveButton';
+import AddAndRemoveButton from "../components/AddAndRemoveButton";
 
-const { width, height } = Dimensions.get('screen');
+const { width, height } = Dimensions.get("screen");
 const ITEM_HEIGHT = height * 0.18;
 
 const getItemLayout = (data, index) => ({
@@ -48,14 +48,14 @@ const separator = (text) => {
     <View>
       <View
         style={{
-          width: '80%',
-          display: 'flex',
-          justifyContent: 'center',
+          width: "80%",
+          display: "flex",
+          justifyContent: "center",
         }}
       ></View>
       <View
         style={{
-          flexDirection: 'row',
+          flexDirection: "row",
           paddingBottom: 12,
           paddingTop: 1,
         }}
@@ -65,18 +65,18 @@ const separator = (text) => {
             backgroundColor: colors.darkmodeDisabledBlack,
             height: 2,
             flex: 1,
-            alignSelf: 'center',
+            alignSelf: "center",
           }}
         />
         <Text
           style={{
-            textAlign: 'center',
+            textAlign: "center",
             paddingBottom: 0,
             marginBottom: 6,
             paddingTop: 2,
             paddingHorizontal: 10,
             fontSize: 16,
-            fontStyle: 'italic',
+            fontStyle: "italic",
             color: colors.darkmodeDisabledWhite,
           }}
         >
@@ -87,7 +87,7 @@ const separator = (text) => {
             backgroundColor: colors.darkmodeDisabledBlack,
             height: 2,
             flex: 1,
-            alignSelf: 'center',
+            alignSelf: "center",
           }}
         />
       </View>
@@ -97,12 +97,12 @@ const separator = (text) => {
 
 function RoutinesScreen({ navigation }) {
   const user = auth.currentUser;
-  const dbUser = db.collection('Users').doc(user.uid);
+  const dbUser = db.collection("Users").doc(user.uid);
   console.log(user.uid);
 
-  const rank1 = 'kn00b';
-  const rank2 = 'Achiever';
-  const rank3 = 'Bambaclat';
+  const rank1 = "kn00b";
+  const rank2 = "Achiever";
+  const rank3 = "Bambaclat";
   const [userRank, setuserRank] = useState(rank1);
 
   //routines, locked routines, ongoing routines
@@ -125,8 +125,8 @@ function RoutinesScreen({ navigation }) {
   const [selectedItem, setSelectedItem] = useState([]);
   const [selectedAddedItem, setSelectedAddedItem] = useState([]);
 
-  const [swipeText, setSwipeText] = useState('Add me!');
-  const [swipeTextAdded, setSwipeTextAdded] = useState('Remove me');
+  const [swipeText, setSwipeText] = useState("Add me!");
+  const [swipeTextAdded, setSwipeTextAdded] = useState("Remove me");
 
   const isFocused = useIsFocused();
   useEffect(() => {
@@ -140,7 +140,7 @@ function RoutinesScreen({ navigation }) {
     setAlreadyAddedItems([]);
     setLockedItems([]);
     // resetItems;
-    db.collection('Routines')
+    db.collection("Routines")
       .get()
       .then((docs) => {
         let index = 0;
@@ -149,15 +149,15 @@ function RoutinesScreen({ navigation }) {
 
           //routine image from storage
           let imageRefRoutines = cloud.ref(
-            'RoutinesScreen/' + routineName + '.png'
+            "RoutinesScreen/" + routineName + ".png"
           );
           let imageRefRoutine = cloud.ref(
-            'RoutineScreen/' + routineName + '.png'
+            "RoutineScreen/" + routineName + ".png"
           );
 
           //set default difficulty to 0
           let diff = doc.data().DifficultyRank;
-          if (typeof diff === 'undefined') {
+          if (typeof diff === "undefined") {
             diff = 0;
           }
 
@@ -250,7 +250,7 @@ function RoutinesScreen({ navigation }) {
                   descriptionArray: doc.data().LongDescription,
                   color: doc.data().Color,
                   difficulty: diff,
-                  imageDefault: require('../assets/RoutinesPics/default.png'),
+                  imageDefault: require("../assets/RoutinesPics/default.png"),
                   lock: lock,
                   alreadyAdded: alreadyAdded,
                   removed: removed,
@@ -266,7 +266,7 @@ function RoutinesScreen({ navigation }) {
                   descriptionArray: doc.data().LongDescription,
                   color: doc.data().Color,
                   difficulty: diff,
-                  imageDefault: require('../assets/RoutinesPics/default.png'),
+                  imageDefault: require("../assets/RoutinesPics/default.png"),
                   lock: lock,
                   alreadyAdded: alreadyAdded,
                   removed: false,
@@ -282,7 +282,7 @@ function RoutinesScreen({ navigation }) {
                   descriptionArray: doc.data().LongDescription,
                   color: doc.data().Color,
                   difficulty: diff,
-                  imageDefault: require('../assets/RoutinesPics/default.png'),
+                  imageDefault: require("../assets/RoutinesPics/default.png"),
                   lock: lock,
                   alreadyAdded: alreadyAdded,
                   removed: false,
@@ -295,7 +295,7 @@ function RoutinesScreen({ navigation }) {
           let removed = undefined;
           let alreadyAdded = undefined;
           dbUser
-            .collection('routines')
+            .collection("routines")
             .doc(routineName)
             .get()
             .then((documentSnapshot) => {
@@ -315,13 +315,13 @@ function RoutinesScreen({ navigation }) {
   }
 
   dbUser.get().then((documentSnapshot) => {
-    let userRank = documentSnapshot.get('UserRank');
-    let translatedUserRank = 'Unranked';
-    if (userRank >= '0' && userRank < '10') {
+    let userRank = documentSnapshot.get("UserRank");
+    let translatedUserRank = "Unranked";
+    if (userRank >= "0" && userRank < "10") {
       translatedUserRank = rank1;
-    } else if (userRank >= '10' && userRank < '20') {
+    } else if (userRank >= "10" && userRank < "20") {
       translatedUserRank = rank2;
-    } else if (userRank >= '20' && userRank <= '30') {
+    } else if (userRank >= "20" && userRank <= "30") {
       translatedUserRank = rank3;
     }
     setuserRank(translatedUserRank);
@@ -402,7 +402,7 @@ function RoutinesScreen({ navigation }) {
           onPressOut={() =>
             longPress
               ? setLongPress(false)
-              : navigation.navigate('Routine', { item })
+              : navigation.navigate("Routine", { item })
           }
         >
           {/* <SharedElement
@@ -468,11 +468,11 @@ function RoutinesScreen({ navigation }) {
                 </AppText>
                 <View
                   style={{
-                    flexDirection: 'row',
-                    justifyContent: 'flex-end',
-                    position: 'absolute',
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    position: "absolute",
                     width:
-                      typeof item.imageDefault != 'undefined'
+                      typeof item.imageDefault != "undefined"
                         ? width * 0.37
                         : width * 0.295,
                     top: 66,
@@ -514,7 +514,7 @@ function RoutinesScreen({ navigation }) {
       //   ]}
       // >
       <Animatable.View
-        animation={'zoomIn'}
+        animation={"zoomIn"}
         duration={200}
         useNativeDriver={true}
         style={{
@@ -536,7 +536,7 @@ function RoutinesScreen({ navigation }) {
           onPressOut={() =>
             longPress
               ? setLongPress(false)
-              : navigation.navigate('Routine', { item })
+              : navigation.navigate("Routine", { item })
           }
         >
           {/* <SharedElement
@@ -601,11 +601,11 @@ function RoutinesScreen({ navigation }) {
                 </AppText>
                 <View
                   style={{
-                    flexDirection: 'row',
-                    justifyContent: 'flex-end',
-                    position: 'absolute',
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    position: "absolute",
                     width:
-                      typeof item.imageDefault != 'undefined'
+                      typeof item.imageDefault != "undefined"
                         ? width * 0.37
                         : width * 0.295,
                     top: 66,
@@ -698,7 +698,7 @@ function RoutinesScreen({ navigation }) {
           onPressOut={() =>
             longPress
               ? setLongPress(false)
-              : navigation.navigate('Routine', { item })
+              : navigation.navigate("Routine", { item })
           }
         >
           {/* <SharedElement
@@ -763,11 +763,11 @@ function RoutinesScreen({ navigation }) {
                 </AppText>
                 <View
                   style={{
-                    flexDirection: 'row',
-                    justifyContent: 'flex-end',
-                    position: 'absolute',
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    position: "absolute",
                     width:
-                      typeof item.imageDefault != 'undefined'
+                      typeof item.imageDefault != "undefined"
                         ? width * 0.37
                         : width * 0.295,
                     top: 66,
@@ -793,8 +793,8 @@ function RoutinesScreen({ navigation }) {
     <Screen style={{ backgroundColor: colors.darkmodeBlack, marginTop: -12 }}>
       <View
         style={{
-          justifyContent: 'center',
-          alignItems: 'center',
+          justifyContent: "center",
+          alignItems: "center",
           height: height * 0.81,
         }}
       >
@@ -806,7 +806,7 @@ function RoutinesScreen({ navigation }) {
             height: height * 0.77,
           }}
         >
-          <View style={{ alignItems: 'center', paddingTop: 2 }}>
+          <View style={{ alignItems: "center", paddingTop: 2 }}>
             <SearchBar
               placeholder="Search routines..."
               onChangeText={setSearch}
@@ -814,7 +814,7 @@ function RoutinesScreen({ navigation }) {
               containerStyle={{
                 borderTopLeftRadius: 15,
                 borderTopRightRadius: 15,
-                backgroundColor: 'rgba(0,0,0,0.0)',
+                backgroundColor: "rgba(0,0,0,0.0)",
                 width: width * 0.92,
                 borderTopWidth: 0,
                 borderBottomWidth: 0,
@@ -842,7 +842,7 @@ function RoutinesScreen({ navigation }) {
             windowSize={5}
           />
 
-          {lockedItems.length ? separator('Locked routines') : null}
+          {lockedItems.length ? separator("Locked routines") : null}
 
           <FlatList
             getItemLayout={getItemLayout}
@@ -856,7 +856,7 @@ function RoutinesScreen({ navigation }) {
             windowSize={5}
           />
 
-          {alreadyAddeditems.length ? separator('Ongoing routines') : null}
+          {alreadyAddeditems.length ? separator("Ongoing routines") : null}
 
           <FlatList
             getItemLayout={getItemLayout}
@@ -877,7 +877,7 @@ function RoutinesScreen({ navigation }) {
             activeOpacity={0.9}
             underlayColor={colors.white}
             onPressOut={() =>
-              navigation.navigate('AddRoutine', { screen: 'AddRoutine' })
+              navigation.navigate("AddRoutine", { screen: "AddRoutine" })
             }
           >
             <View style={itemStyles.makeYourOwnRoutine}>
@@ -931,8 +931,8 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
   image: {
-    resizeMode: 'contain',
-    position: 'absolute',
+    resizeMode: "contain",
+    position: "absolute",
     bottom: 0,
     right: 20,
   },
@@ -954,22 +954,22 @@ const styles = StyleSheet.create({
 
 const itemStyles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    overflow: 'hidden',
+    flexDirection: "row",
+    overflow: "hidden",
     padding: 10,
     borderRadius: 16,
     height: ITEM_HEIGHT * 0.78,
   },
   image: {
-    overflow: 'hidden',
-    resizeMode: 'contain',
+    overflow: "hidden",
+    resizeMode: "contain",
     width: ITEM_HEIGHT * 1.4,
     height: ITEM_HEIGHT * 1.4,
     marginTop: -60,
     left: width * 0.4,
   },
   imageDefault: {
-    overflow: 'hidden',
+    overflow: "hidden",
     width: ITEM_HEIGHT * 1.2,
     height: ITEM_HEIGHT * 1.08,
     marginTop: -55,
@@ -982,14 +982,14 @@ const itemStyles = StyleSheet.create({
     width: width * 0.78,
     textShadowOffset: { width: 8, height: 8 },
     textShadowRadius: 8,
-    textShadowColor: 'rgba(0,0,0,0.4)',
+    textShadowColor: "rgba(0,0,0,0.4)",
   },
   subtitle: {
     color: colors.darkmodeMediumWhite,
     fontSize: 15,
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 8,
-    textShadowColor: 'rgba(0,0,0,0.4)',
+    textShadowColor: "rgba(0,0,0,0.4)",
   },
   background: {
     borderRadius: 16,
@@ -999,14 +999,14 @@ const itemStyles = StyleSheet.create({
     flex: 1,
     paddingTop: 8,
     paddingBottom: 16,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    width: '170%',
+    flexDirection: "row",
+    justifyContent: "center",
+    width: "170%",
   },
   makeYourOwnRoutineText: {
     flex: 1,
     color: colors.darkmodeHighWhite,
-    fontWeight: '100',
+    fontWeight: "100",
     paddingLeft: 22,
   },
   makeYourOwnRoutinePlus: {

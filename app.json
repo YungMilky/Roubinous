@@ -2,11 +2,9 @@
   "name": "Roubine",
   "displayName": "Roubine",
   "expo": {
-
     "android": {
       "useNextNotificationsApi": true
     },
-
     "name": "Roubine",
     "slug": "Roubine",
     "version": "1.0.0",

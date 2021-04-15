@@ -17,6 +17,7 @@ function AppText({
       minimumFontScale={minimumFontScale}
       numberOfLines={numberOfLines}
       animation="fadeIn"
+      duration={100}
       useNativeDriver={true}
       duration={duration}
       style={[styles.text, style]}
