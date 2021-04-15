@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useState } from 'react';
-import { Button, Input, Text } from 'react-native-elements';
+import { Input, Text } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 import { auth, db } from '../firebase';
 import PropTypes from 'prop-types';
@@ -9,11 +9,14 @@ import { KeyboardAvoidingView } from 'react-native';
 import { signInWithGoogle } from '../firebase';
 import { signInWithFacebook } from '../firebase';
 import CreateDailyNotification from '../components/notification/CreateDailyNotification';
+import { useNavigation } from '@react-navigation/native';
+import AppButton from '../components/AppButton';
 
 const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const navigationn = useNavigation();
 
   const register = () => {
     auth
@@ -30,6 +33,13 @@ const RegisterScreen = ({ navigation }) => {
       })
       .catch((error) => alert(error.message));
     CreateDailyNotification(10, 30);
+    setTimeout(
+      () =>
+        navigationn.navigate('Home', {
+          screen: 'Home',
+        }),
+      1000
+    );
   };
 
   return (
@@ -63,8 +73,8 @@ const RegisterScreen = ({ navigation }) => {
           onSubmitEditing={register}
         />
       </View>
-      <Button style={styles.button} onPress={register} title="Register" />
-      <Button
+      <AppButton style={styles.button} onPress={register} title="Register" />
+      {/* <Button
         style={styles.button}
         onPress={signInWithGoogle}
         title="Sign in With Google webb"
@@ -73,7 +83,7 @@ const RegisterScreen = ({ navigation }) => {
         style={styles.button}
         onPress={signInWithFacebook}
         title="Sign in With Facebook webb"
-      />
+      /> */}
       {/* <Button
         title="Register"
         onPress={() => navigation.navigate('Profile'), register}

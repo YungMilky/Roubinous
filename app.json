@@ -1,6 +1,7 @@
 {
   "name": "Roubine",
   "displayName": "Roubine",
+  "icon": "./images/ruby.png",
   "expo": {
     "android": {
       "useNextNotificationsApi": true
@@ -9,7 +10,9 @@
     "slug": "Roubine",
     "version": "1.0.0",
     "assetBundlePatterns": [
-      "**/*"
+      "images/*",
+      "assets/RoutinesPics/*",
+      "assets/*"
     ],
     "description": ""
   }

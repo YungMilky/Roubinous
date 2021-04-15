@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Image } from "react-native";
 import "react-native-gesture-handler";
 import {
   NavigationContainer,
@@ -39,6 +39,7 @@ import NotificationSettingScreen from "./screens/NotificationSettingScreen";
 import AddRoutineScreen from "./screens/AddRoutineScreen";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import SettingsScreen from "./screens/SettingsScreen";
+import JourneyScreen from "./screens/JourneyScreen";
 
 //  TODO:
 //  keep adding nested navigation
@@ -56,6 +57,7 @@ const Stack = createStackNavigator();
 const RoutinesStack = createSharedElementStackNavigator();
 const ProfileStack = createStackNavigator();
 const RootStack = createStackNavigator();
+const JourneyStack = createStackNavigator();
 
 const headerSettingsButton = () => {
   const navigation = useNavigation();
@@ -65,43 +67,48 @@ const headerSettingsButton = () => {
       style={{ paddingRight: 10 }}
       onPress={() => navigation.navigate("Settings")}
     >
-      <Octicons name="Settings" size={26} color={colors.darkmodeHighWhite} />
+      {/* <Image
+        style={{ width: 26, height: 26 }}
+        source={require('./assets/icons/tune-vertical.png')}
+      /> */}
+      <Octicons name="settings" size={26} color={colors.darkmodeHighWhite} />
     </TouchableOpacity>
   );
 };
 
+// function cacheFonts(fonts) {
+//   return fonts.map((font) => Font.loadAsync(font));
+// }
+
+// _loadAssetsAsync = async () => {
+//   const fontAssets = cacheFonts([MaterialCommunityIcons.font]);
+
+//   await Promise.all([...fontAssets]);
+// };
+
 if (typeof LogBox != "undefined") {
   LogBox.ignoreLogs(["Warning: ...", "Setting a timer"]);
 }
-
-const HomeStackScreen = () => {
-  return (
-    <HomeStack.Navigator>
-      <HomeStack.Screen name="Home" component={HomeScreen} />
-      <HomeStack.Screen name="Profile" component={ProfileScreen} />
-      <HomeStack.Screen name="Routines" component={RoutinesScreen} />
-      <HomeStack.Screen name="AddRoutine" component={AddRoutineScreen} />
-      <HomeStack.Screen name="Register" component={RegisterScreen} />
-      <HomeStack.Screen name="Login" component={LoginScreen} />
-      <HomeStack.Screen name="Reset Password" component={ResetPasswordScreen} />
-      <HomeStack.Screen
-        name="NotificationSetting"
-        component={NotificationSettingScreen}
-      />
-    </HomeStack.Navigator>
-  );
-};
 
 const ProfileStackScreen = () => {
   return (
     <ProfileStack.Navigator
       screenOptions={{
         headerStyle: { backgroundColor: colors.samRed },
-        headerTitleStyle: { color: colors.darkmodeHighWhite },
-        tintColor: { color: "rgba(255,255,255,0.60)" },
+        headerTitleStyle: { color: colors.samRed },
       }}
+      // screenOptions={{
+      //   headerStyle: { backgroundColor: colors.samRed },
+      //   headerTitleStyle: { color: colors.darkmodeHighWhite },
+      //   headerShown: true,
+      //   tintColor: { color: 'rgba(255,255,255,0.60)' },
+      // }}
     >
-      <ProfileStack.Screen name="Profile" component={ProfileScreen} />
+      <ProfileStack.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ headerShown: false }}
+      />
       <ProfileStack.Screen name="Register" component={RegisterScreen} />
       <ProfileStack.Screen name="Login" component={LoginScreen} />
       <ProfileStack.Screen name="LoginAsGuest" component={LoginAsGuestScreen} />
@@ -122,7 +129,7 @@ const RoutinesStackScreen = () => {
   return (
     <RoutinesStack.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: colors.darkmodeBlack },
+        headerStyle: { backgroundColor: colors.samRed },
         headerTitleStyle: { color: colors.darkmodeHighWhite },
       }}
     >
@@ -142,9 +149,29 @@ const RoutinesStackScreen = () => {
         component={RoutineScreen}
         options={{ headerShown: false }}
       />
-      <RoutinesStack.Screen name="AddRoutine" component={AddRoutineScreen} />
+      <RoutinesStack.Screen
+        name="Add Custom Routine"
+        component={AddRoutineScreen}
+      />
       <RoutinesStack.Screen name="Settings" component={SettingsScreen} />
     </RoutinesStack.Navigator>
+  );
+};
+
+const JourneyStackScreen = () => {
+  return (
+    <JourneyStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: colors.samRed },
+        headerTitleStyle: { color: colors.samRed },
+      }}
+    >
+      <JourneyStack.Screen
+        name="Journey"
+        component={JourneyScreen}
+        options={{ title: "Journey" }}
+      />
+    </JourneyStack.Navigator>
   );
 };
 
@@ -159,6 +186,7 @@ function TabBar() {
       initialRouteName="Home"
       backBehavior="history"
       shifting={true}
+      barStyle={{ backgroundColor: colors.pastelRed }}
       // shifting={false} lägger till labels men förstör activecolor
       activeColor={colors.darkmodeHighWhite}
       inactiveColor={colors.darkmodeMediumWhite}
@@ -170,10 +198,13 @@ function TabBar() {
         component={HomeScreen}
         tabBarAccessibilityLabel="Home"
         options={{
-          tabBarColor: colors.darkmodeBlack,
+          title: "Home",
+          tabBarColor: colors.samRed,
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
-              name="flower-tulip-outline"
+              // style={{ width: 22, height: 22 }}
+              // source={require('./assets/icons/home-outline.png')}
+              name="home"
               color={color}
               size={22}
             />
@@ -182,16 +213,21 @@ function TabBar() {
       />
       <Tab.Screen
         name="Journey"
-        component={LoginScreen}
+        component={JourneyScreen}
         tabBarAccessibilityLabel="Journey"
         options={{
-          tabBarColor: colors.samGreen,
+          title: "Journey",
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: colors.samRed,
+          },
+          tabBarColor: colors.samRed,
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              name="crystal-ball"
-              color={color}
-              size={22}
-            />
+            // <Image
+            //   style={{ width: 22, height: 22 }}
+            //   source={require('./assets/icons/run.png')}
+            // />
+            <MaterialCommunityIcons name="run" color={color} size={22} />
           ),
         }}
       />
@@ -200,9 +236,14 @@ function TabBar() {
         name="Profile"
         component={ProfileScreen}
         options={{
+          title: "Profile",
           headerRight: () => headerSettingsButton(),
           tabBarColor: colors.samRed,
           tabBarIcon: ({ color }) => (
+            // <Image
+            //   style={{ width: 22, height: 22 }}
+            //   source={require('./assets/icons/account-outline.png')}
+            // />
             <FontAwesome5 name="user-astronaut" color={color} size={18} />
           ),
         }}
@@ -214,6 +255,7 @@ function TabBar() {
         options={{
           tabBarColor: colors.lindaPurple,
           tabBarIcon: ({ color }) => (
+            
             <Octicons name="settings" color={color} size={20} />
           ),
           headerShown: false,
@@ -243,7 +285,7 @@ export default function App() {
       <NavigationContainer>
         <RootStack.Navigator
           screenOptions={{
-            headerStyle: { backgroundColor: colors.darkmodeBlack },
+            headerStyle: { backgroundColor: colors.samRed },
             headerTitleStyle: { color: colors.darkmodeHighWhite },
             tintColor: { color: colors.darkmodeMediumWhite },
           }}
@@ -256,7 +298,14 @@ export default function App() {
               headerShown: true,
             }}
           />
-          <RootStack.Screen name="Profile" component={ProfileStackScreen} />
+          <RootStack.Screen
+            name="Profile"
+            component={ProfileStackScreen}
+            options={{ title: "Profile" }}
+          />
+          <RootStack.Screen name="Settings" component={SettingsScreen} />
+          <RootStack.Screen name="Register" component={RegisterScreen} />
+          <RootStack.Screen name="Login" component={LoginScreen} />
           <RootStack.Screen
             name="Routines"
             component={RoutinesStackScreen}

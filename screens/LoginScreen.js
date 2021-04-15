@@ -4,12 +4,15 @@ import { Button, Input } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 import { auth, db } from '../firebase';
 import PropTypes from 'prop-types';
+import { useNavigation } from '@react-navigation/native';
 
 import CreateDailyNotification from '../components/notification/CreateDailyNotification';
+import AppButton from '../components/AppButton';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigationn = useNavigation();
 
   // shoooooo
 
@@ -40,6 +43,13 @@ const LoginScreen = ({ navigation }) => {
           .catch((err) => {
             console.log('Cant get user alert time. ' + err);
           });
+        setTimeout(
+          () =>
+            navigationn.navigate('Profile', {
+              screen: 'Profile',
+            }),
+          1000
+        );
       })
       .catch((error) => {
         if (error.code === 'auth/invalid-email') {
@@ -81,7 +91,7 @@ const LoginScreen = ({ navigation }) => {
         </Text>
       </TouchableOpacity>
 
-      <Button
+      <AppButton
         style={styles.button}
         title="Login"
         onPress={signInWithEmailAndPassword}
