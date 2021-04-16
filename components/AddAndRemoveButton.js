@@ -19,7 +19,7 @@ const plusSymbol = () => {
   return (
     <MaterialIcons
       name="playlist-add"
-      size={24}
+      size={20}
       color={colors.darkmodeSuccessColor}
     />
   );
@@ -99,7 +99,7 @@ function AddAndRemoveButton({ style, size, check, routine }) {
       ]}
     >
       {typeof check != "undefined" && (
-        <Animated.View style={{ width: animationWidth }}>
+        <Animated.View style={{ width: animationWidth }} useNativeDriver={true}>
           <View style={{ position: "absolute" }}>
             <TouchableWithoutFeedback
               onPress={() => {
@@ -174,6 +174,7 @@ function AddAndRemoveButton({ style, size, check, routine }) {
                     marginTop: -2,
                   },
                 ]}
+                useNativeDriver={true}
               >
                 {/* {undo && (
                   <MaterialCommunityIcons

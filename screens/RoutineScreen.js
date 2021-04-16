@@ -331,6 +331,9 @@ const RoutineScreen = ({ navigation, route }) => {
 };
 
 //  TODO:
+//  settings button on notification screen
+//  settings nested navigation
+//  weird positioning on iOS? or differently sized screens
 //  items, alreadyaddeditems, lockeditems.length ? render : null (entire flatlist)
 //  reset appbutton
 //  optimize
