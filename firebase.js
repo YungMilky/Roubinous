@@ -1,17 +1,17 @@
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/auth';
-import 'firebase/storage';
+import firebase from "firebase/app";
+import "firebase/firestore";
+import "firebase/auth";
+import "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyBnyQjm-yBdKJgjsgV87U_yPtb3_SPJ1Uc',
-  authDomain: 'roubine-effd8.firebaseapp.com',
-  projectId: 'roubine-effd8',
-  storageBucket: 'roubine-effd8.appspot.com',
-  messagingSenderId: '76622542301',
-  appId: '1:76622542301:android:a0b152d6a310393dcd3234',
-  measurementId: 'G-Y45R3FEY4Y',
+  apiKey: "AIzaSyBnyQjm-yBdKJgjsgV87U_yPtb3_SPJ1Uc",
+  authDomain: "roubine-effd8.firebaseapp.com",
+  projectId: "roubine-effd8",
+  storageBucket: "roubine-effd8.appspot.com",
+  messagingSenderId: "76622542301",
+  appId: "1:76622542301:android:a0b152d6a310393dcd3234",
+  measurementId: "G-Y45R3FEY4Y",
 };
 
 let app;
@@ -31,7 +31,10 @@ const auth = firebase.auth();
 //storage variable
 const cloud = firebase.storage();
 
-export { db, auth, cloud };
+//FieldValue
+const fv = firebase.firestore;
+
+export { db, auth, cloud, fv };
 
 // const googleProvider = new firebase.auth.GoogleAuthProvider();
 // export const signInWithGoogle = () => {

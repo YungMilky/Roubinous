@@ -6,14 +6,16 @@ import {
   StackActions,
   useNavigation,
 } from "@react-navigation/native";
+import CheckBox from "@react-native-community/checkbox";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { TransitionSpecs } from "@react-navigation/stack";
 import { Constants } from "react-native-unimodules";
 import AppLoading from "expo-app-loading";
 import { LogBox } from "react-native";
-import { enableScreens } from "react-native-screens";
+import AppIntroSlider from "react-native-app-intro-slider";
 import { createSharedElementStackNavigator } from "react-navigation-shared-element";
+import { enableScreens } from "react-native-screens";
 enableScreens();
 
 import {
@@ -22,7 +24,7 @@ import {
   Octicons,
 } from "@expo/vector-icons";
 
-import { db, auth } from "./firebase";
+import { db, auth, fv } from "./firebase";
 
 import colors from "./config/colors";
 
@@ -40,8 +42,13 @@ import AddRoutineScreen from "./screens/AddRoutineScreen";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import SettingsScreen from "./screens/SettingsScreen";
 import JourneyScreen from "./screens/JourneyScreen";
+import { View } from "react-native";
+import { Text } from "react-native";
+import Screen from "./components/Screen";
 
 //  TODO:
+//  useEffect running too many times
+//  roubies+exp när användaren lägger till en rutin
 //  keep adding nested navigation
 //  loop through tab items with array prop?
 //  back button color not applying
@@ -51,6 +58,15 @@ import JourneyScreen from "./screens/JourneyScreen";
 // Removed header from routinescreen
 // style
 // försökte fixa labels på tab bar
+
+//  ROUBIES AND EXP
+const rewardForAddingRoutine = 30;
+//  lägga till roubies när dokument/kollektioner ändras:
+//    - när användaren lägger till en rutin
+//    - när användaren bockar av en rutin
+//      - när användaren bockar av med kombo
+//    - när användaren levlar upp
+//    -
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -75,16 +91,6 @@ const headerSettingsButton = () => {
     </TouchableOpacity>
   );
 };
-
-// function cacheFonts(fonts) {
-//   return fonts.map((font) => Font.loadAsync(font));
-// }
-
-// _loadAssetsAsync = async () => {
-//   const fontAssets = cacheFonts([MaterialCommunityIcons.font]);
-
-//   await Promise.all([...fontAssets]);
-// };
 
 if (typeof LogBox != "undefined") {
   LogBox.ignoreLogs(["Warning: ...", "Setting a timer"]);
@@ -248,24 +254,69 @@ function TabBar() {
           ),
         }}
       />
-      {/* <Tab.Screen
-        name="Settings"
-        tabBarAccessibilityLabel="Settings"
-        component={RoutineScreen}
-        options={{
-          tabBarColor: colors.lindaPurple,
-          tabBarIcon: ({ color }) => (
-            
-            <Octicons name="settings" color={color} size={20} />
-          ),
-          headerShown: false,
-        }}
-      /> */}
     </Tab.Navigator>
   );
 }
 
 export default function App() {
+  const [showIntro, setShowIntro] = useState(true);
+  const [toggleCheckBox, setToggleCheckBox] = useState(false);
+
+  const introSlides = [
+    {
+      key: "one",
+      title: "Title 1",
+      text: "intro text",
+      // image: require('./assets/1.jpg'),
+      backgroundColor: "#59b2ab",
+    },
+    {
+      key: "one",
+      title: "Title 1",
+      text: "Description.\nSay something cool",
+      // image: require('./assets/1.jpg'),
+      backgroundColor: "#59b2ab",
+    },
+  ];
+  const introDoneButton = () => {
+    return (
+      <View style={styles.introDoneButtonContainer}>
+        <Text style={styles.introDoneButtonText}>less gooo</Text>
+      </View>
+    );
+  };
+  // const introNextButton = () => {
+  //   return (
+  //     <View>
+  //       <Text>nex</Text>
+  //     </View>
+  //   );
+  // };
+  const introSkipButton = () => {
+    return (
+      <View style={styles.introSkipButtonContainer}>
+        <Text style={styles.introSkipButtonText}>skip</Text>
+      </View>
+    );
+  };
+  const renderIntroSlides = ({ item }) => {
+    return (
+      <Screen style={styles.introScreen}>
+        <View style={styles.introContainer}>
+          <Text style={styles.introTitle}>{item.title}</Text>
+          <CheckBox
+            style={styles.introCheckBox}
+            disabled={false}
+            value={toggleCheckBox}
+            onValueChange={(newValue) => setToggleCheckBox(newValue)}
+          />
+          {/* <Image source={item.image} /> */}
+          <Text style={styles.introText}>{item.text}</Text>
+        </View>
+      </Screen>
+    );
+  };
+
   const [isLoggedIn, setIsLoggedIn] = useState("");
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
@@ -278,6 +329,46 @@ export default function App() {
       }
     });
   }, [auth.user]);
+
+  //use as conditional to prevent
+  //onsnapshot to use initial state
+  //(otherwise it runs every time you start the app
+  // giving the user free rewards)
+  var initState = true;
+  useEffect(() => {
+    if (isLoggedIn) {
+      const subscriber = db
+        .collection("Users")
+        .doc(auth.currentUser.uid)
+        .collection("routines")
+        .onSnapshot((documentSnapshot) => {
+          try {
+            // console.log(documentSnapshot.docChanges());
+            if (initState) {
+              initState = false;
+            } else {
+              documentSnapshot.docChanges().forEach((change) => {
+                if (change.type === "added") {
+                  db.collection("Users")
+                    .doc(auth.currentUser.uid)
+                    .update({
+                      Roubies: fv.FieldValue.increment(rewardForAddingRoutine),
+                      exp: fv.FieldValue.increment(rewardForAddingRoutine),
+                    });
+                }
+                if (change.type === "modified") {
+                  console.log("modified");
+                  // reward on combo
+                }
+              });
+            }
+          } catch (e) {
+            console.log(e);
+          }
+        });
+      return () => subscriber();
+    }
+  }, []);
 
   let content;
   if (isLoggedIn) {
@@ -337,54 +428,75 @@ export default function App() {
   // if (!isLoggedIn) { skapar white screen om man inte e inloggad :/
   //   return <AppLoading />;
   // } else {
-  return content;
-  // }
+  if (!showIntro) {
+    return content;
+  } else {
+    return (
+      <AppIntroSlider
+        renderItem={renderIntroSlides}
+        data={introSlides}
+        onDone={() => setShowIntro(false)}
+        renderDoneButton={introDoneButton}
+        // renderNextButton={introNextButton}
+        renderSkipButton={introSkipButton}
+        showNextButton={false}
+        showSkipButton={true}
+        // onSkip
+        bottomButton={true}
+
+        // dotStyle
+        // activeDotStyle
+
+        // onSlideChange
+        // renderPagination
+      />
+    );
+  }
 }
 
 // eslint-disable-next-line no-unused-vars
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "blue",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   input: {
     marginTop: 200,
   },
+  introScreen: {
+    backgroundColor: colors.darkmodeLightBlack,
+  },
+  introContainer: {
+    flexDirection: "column",
+    justifyContent: "center",
+  },
+  introTitle: {
+    fontSize: 36,
+    color: colors.darkmodeHighWhite,
+    textAlign: "center",
+  },
+  introText: {
+    fontSize: 20,
+    color: colors.darkmodeHighWhite,
+    textAlign: "center",
+  },
+  introCheckBox: {},
+  introSkipButtonContainer: {
+    justifyContent: "center",
+    backgroundColor: colors.darkmodeFocused,
+    padding: 16,
+    borderRadius: 15,
+  },
+  introSkipButtonText: {
+    fontSize: 26,
+    color: colors.darkmodeDisabledWhite,
+    textAlign: "center",
+  },
+  introDoneButtonContainer: {
+    justifyContent: "center",
+    backgroundColor: colors.darkmodeFocused,
+    padding: 16,
+    borderRadius: 15,
+  },
+  introDoneButtonText: {
+    fontSize: 26,
+    color: colors.darkmodeDisabledWhite,
+    textAlign: "center",
+  },
 });
-// import React from 'react';
-// import { StyleSheet } from 'react-native';
-
-// import { NavigationContainer } from '@react-navigation/native';
-// import { createStackNavigator } from '@react-navigation/stack';
-
-// import LoginScreen from './screens/LoginScreen';
-// import WelcomeScreen from './screens/WelcomeScreen';
-// import RegisterScreen from './screens/RegisterScreen';
-// import ProfileScreen from './screens/ProfileScreen';
-// import colors from './config/colors';
-
-// // ska denna behållas?
-// // const globalScreenOptions = {
-// //   headerStyle: { backgroundColor: '#121212' },
-// //   headerTitleStyle: { color: 'white' },
-// //   headerTintColor: 'white',
-// // };
-
-// export default function App() {
-//   return <WelcomeScreen/>
-// }
-
-// // eslint-disable-next-line no-unused-vars
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: 'blue',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   input: {
-//     marginTop: 200,
-//   },
-// });
