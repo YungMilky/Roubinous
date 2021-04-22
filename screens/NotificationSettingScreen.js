@@ -1,13 +1,17 @@
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, Platform, StyleSheet } from 'react-native';
+import { Text, View, Platform, StyleSheet, Switch } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import PropTypes from 'prop-types';
 
 import { db, auth } from '../firebase';
 import AppButton from '../components/AppButton';
 import Screen from '../components/Screen';
+import Separator from '../components/Separator';
+import colors from '../config/colors';
+import CreateDailyNotification from '../components/notification/CreateDailyNotification';
+import CancelAllNotifications from '../components/notification/CancelAllNotifications';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -18,6 +22,7 @@ Notifications.setNotificationHandler({
 });
 
 const NotificationSettingScreen = ({ navigation }) => {
+  const user = auth.currentUser;
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
@@ -27,6 +32,51 @@ const NotificationSettingScreen = ({ navigation }) => {
   const [show, setShow] = useState(false);
   const [userAlertHour, setUserAlertHour] = useState('');
   const [userAlertMinute, setUserAlertMinute] = useState('');
+  const [isEnabled, setIsEnabled] = useState();
+
+  const checkNotificationField = () => {
+    db.collection('Users')
+      .doc(user.uid)
+      .get()
+      .then((documentSnapshot) => {
+        setIsEnabled(documentSnapshot.data().Notifications);
+      });
+  };
+
+  useEffect(() => {
+    checkNotificationField();
+  }, []);
+
+  const toggleSwitch = () => {
+    if (!isEnabled) {
+      CreateDailyNotification(userAlertHour, userAlertMinute);
+      db.collection('Users')
+        .doc(user.uid)
+        .update({
+          Notifications: true,
+        })
+        .then(() => {
+          console.log('Notifications true');
+        })
+        .catch((error) => {
+          console.error('Catch: Error writing document: ', error);
+        });
+    } else {
+      CancelAllNotifications();
+      db.collection('Users')
+        .doc(user.uid)
+        .update({
+          Notifications: false,
+        })
+        .then(() => {
+          console.log('Notifications true');
+        })
+        .catch((error) => {
+          console.error('Catch: Error writing document: ', error);
+        });
+    }
+    setIsEnabled((previousState) => !previousState);
+  };
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -110,49 +160,54 @@ const NotificationSettingScreen = ({ navigation }) => {
           await scheduleTest();
         }}
       /> */}
-      <AppButton
-        title="Turn off all notifications"
-        onPress={async () => {
-          await cancelAllNotifications();
-        }}
-      />
+      <View style={styles.innerContainer}>
+        <View style={styles.switchContainer}>
+          <Text style={styles.text}>Turn on/off notifications:</Text>
+          <Switch
+            trackColor={{
+              false: colors.darkmodeDisabledWhite,
+              true: colors.samRed,
+            }}
+            thumbColor={isEnabled ? colors.OrchidPink : colors.floralWhite}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={toggleSwitch}
+            value={isEnabled}
+          />
+        </View>
 
-      {/* <AppButton
-        title="Schedule component"
-        onPress={async () => {
-          await SendNotification(time);
-        }}
-      /> */}
-      <Text>Change daily notification time:</Text>
-      <View style={styles.selectTime}>
-        <AppButton
-          style={styles.button}
-          onPress={showTimepicker}
-          title="Select new time"
-        />
-        <AppButton
-          style={styles.button}
-          title="Apply selected time"
-          onPress={async () => {
-            await changeNotificationTime();
-          }}
-        />
+        {isEnabled && (
+          <View style={styles.innerContainer2}>
+            <Separator />
+            <Text style={styles.innerText}>
+              Current Daily Notification time:
+            </Text>
+            <Text style={styles.timeText}>
+              {userAlertHour}:{checkNumber(userAlertMinute)}
+            </Text>
+            {/* <Text style={styles.innerText}>
+              Change daily notification time:{' '}
+            </Text> */}
+            <AppButton onPress={showTimepicker} title="Select new time" />
+            <AppButton
+              title="Apply selected time"
+              onPress={async () => {
+                await changeNotificationTime();
+              }}
+            />
+
+            {show && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode="time"
+                is24Hour={true}
+                display="spinner"
+                onChange={onChange}
+              />
+            )}
+          </View>
+        )}
       </View>
-
-      {show && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode="time"
-          is24Hour={true}
-          display="spinner"
-          onChange={onChange}
-        />
-      )}
-      <Text style={{ fontSize: 20 }}>
-        Current Daily Notification time: {userAlertHour}:
-        {checkNumber(userAlertMinute)}
-      </Text>
     </Screen>
   );
 
@@ -171,7 +226,7 @@ const NotificationSettingScreen = ({ navigation }) => {
       .then(() => {
         console.log('UserAlertTime updated!');
       });
-    await cancelAllNotifications();
+    await CancelAllNotifications();
     await Notifications.scheduleNotificationAsync({
       content: {
         title: 'This is a daily notification',
@@ -189,7 +244,7 @@ const NotificationSettingScreen = ({ navigation }) => {
         repeats: true,
       },
     });
-    console.log({ hour } + ':' + { minute });
+    // console.log({ userAlertHour } + ':' + { userAlertMinute });
   }
 };
 
@@ -209,27 +264,16 @@ const NotificationSettingScreen = ({ navigation }) => {
 //   });
 // }
 
-async function scheduleTest() {
-  const identifier = await Notifications.scheduleNotificationAsync({
-    content: {
-      title: 'Notification with 5sec interval',
-    },
-    trigger: { seconds: 5, repeats: true },
-  });
-  // setNotificationID(identifier);
-  console.log(identifier);
-}
-
-async function cancelAllNotifications() {
-  await Notifications.cancelAllScheduledNotificationsAsync()
-    .then(() => {
-      console.log('Cleared all local notifications.');
-    })
-    .catch((err) => {
-      console.log('Unable to clear local notifications. ' + err);
-      //reject(err);
-    });
-}
+// async function scheduleTest() {
+//   const identifier = await Notifications.scheduleNotificationAsync({
+//     content: {
+//       title: 'Notification with 5sec interval',
+//     },
+//     trigger: { seconds: 5, repeats: true },
+//   });
+//   // setNotificationID(identifier);
+//   console.log(identifier);
+// }
 
 async function registerForPushNotificationsAsync() {
   let token;
@@ -265,17 +309,43 @@ async function registerForPushNotificationsAsync() {
 }
 
 const styles = StyleSheet.create({
-  button: {
-    margin: 5,
-  },
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    flexGrow: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    alignContent: 'space-around',
+    backgroundColor: colors.darkmodeLightBlack,
+  },
+  innerContainer: {
+    flexGrow: 0.4,
+    width: 300,
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
-  selectTime: {
-    justifyContent: 'center',
+  innerContainer2: {
+    flexGrow: 0.4,
+    width: 300,
+    justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  innerText: {
+    color: colors.darkmodeMediumWhite,
+    fontSize: 18,
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  timeText: {
+    color: colors.darkmodeMediumWhite,
+    fontSize: 40,
+  },
+  text: {
+    color: colors.darkmodeMediumWhite,
+    fontSize: 20,
+    marginTop: -2,
+    marginRight: 80,
   },
 });
 

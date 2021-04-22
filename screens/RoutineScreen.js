@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Animated,
   View,
@@ -10,28 +10,28 @@ import {
   ScrollView,
   FlatList,
   Modal,
-} from "react-native";
+} from 'react-native';
 
-import AppLoading from "expo-app-loading";
+import AppLoading from 'expo-app-loading';
 
-import { LinearGradient } from "expo-linear-gradient";
-import { useFonts, BadScript_400Regular } from "@expo-google-fonts/bad-script";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import * as Animatable from "react-native-animatable";
+import { LinearGradient } from 'expo-linear-gradient';
+import { useFonts, BadScript_400Regular } from '@expo-google-fonts/bad-script';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import * as Animatable from 'react-native-animatable';
 
 // import { SharedElement } from "react-navigation-shared-element";
 
-import Screen from "../components/Screen";
-import AppButton from "../components/AppButton";
-import colors from "../config/colors";
-import RoutineDetails from "../components/RoutineDetails";
-import AppText from "../components/AppText";
+import Screen from '../components/Screen';
+import AppButton from '../components/AppButton';
+import colors from '../config/colors';
+import RoutineDetails from '../components/RoutineDetails';
+import AppText from '../components/AppText';
 
-import { Audio } from "expo-av";
-import AddRoutine from "../components/AddRoutine";
-import AddAndRemoveButton from "../components/AddAndRemoveButton";
+import { Audio } from 'expo-av';
+import AddRoutine from '../components/AddRoutine';
+import AddAndRemoveButton from '../components/AddAndRemoveButton';
 
-const { width, height } = Dimensions.get("screen");
+const { width, height } = Dimensions.get('screen');
 const ITEM_HEIGHT = height * 0.18;
 const ITEM_SIZE = width * 0.9;
 
@@ -43,16 +43,16 @@ const RoutineScreen = ({ navigation, route }) => {
   });
 
   const difficulty = item.difficulty;
-  const [stars, setStars] = useState("Unrated");
+  const [stars, setStars] = useState('Unrated');
   useEffect(() => {
     if (difficulty == 0) {
-      setStars("Unrated");
+      setStars('Unrated');
     } else if (difficulty == 1) {
-      setStars("★☆☆");
+      setStars('★☆☆');
     } else if (difficulty == 2) {
-      setStars("★★☆");
+      setStars('★★☆');
     } else if (difficulty == 3) {
-      setStars("★★★");
+      setStars('★★★');
     }
   }, []);
 
@@ -60,33 +60,33 @@ const RoutineScreen = ({ navigation, route }) => {
   const [currentIndex, setCurrentIndex] = useState();
   const [refFlatList, setrefFlatList] = useState();
 
-  const [animation, setAnimation] = useState("fadeIn");
+  const [animation, setAnimation] = useState('fadeIn');
   const [duration, setDuration] = useState(1800);
 
   const [showSwiper, setShowSwiper] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
-  const [buttonTitle, setButtonTitle] = useState("I got this!");
+  const [buttonTitle, setButtonTitle] = useState('I got this!');
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
   const [sound, setSound] = React.useState();
 
   async function playSound() {
-    console.log("Loading Sound");
+    console.log('Loading Sound');
     const { sound } = await Audio.Sound.createAsync(
-      require("../assets/sounds/yeahhoe.mp3")
+      require('../assets/sounds/yeahhoe.mp3')
     );
     sound.setVolumeAsync(0.2);
     setSound(sound);
 
-    console.log("Playing Sound");
+    console.log('Playing Sound');
     await sound.playAsync();
   }
 
   React.useEffect(() => {
     return sound
       ? () => {
-          console.log("Unloading Sound");
+          console.log('Unloading Sound');
           sound.unloadAsync();
         }
       : undefined;
@@ -94,14 +94,14 @@ const RoutineScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     if (item.lock) {
-      setButtonTitle("Locked");
+      setButtonTitle('Locked');
       setButtonDisabled(true);
     }
     if (!item.removed && item.alreadyAdded) {
-      setButtonTitle("Ongoing routine");
+      setButtonTitle('Ongoing routine');
       setButtonDisabled(true);
     } else if (item.removed) {
-      setButtonTitle("Give it another shot");
+      setButtonTitle('Give it another shot');
       setButtonDisabled(false);
     }
   }, []);
@@ -157,7 +157,7 @@ const RoutineScreen = ({ navigation, route }) => {
               check={false}
               routine={item.title}
               style={{
-                backgroundColor: "rgba(0.0.0.0,0)",
+                backgroundColor: 'rgba(0.0.0.0,0)',
                 borderWidth: 0,
               }}
               // size={40}
@@ -175,7 +175,7 @@ const RoutineScreen = ({ navigation, route }) => {
               ) : (
                 <Image
                   style={styles.imageDefault}
-                  source={require("../assets/RoutinesPics/defaultbig.png")}
+                  source={require('../assets/RoutinesPics/defaultbig.png')}
                 />
               )}
               {/* </SharedElement> */}
@@ -194,7 +194,7 @@ const RoutineScreen = ({ navigation, route }) => {
             {/* </SharedElement> */}
           </View>
           <Text style={styles.difficultyRating}>
-            {"   "}difficulty: {stars}
+            {'   '}difficulty: {stars}
           </Text>
 
           <FlatList
@@ -214,7 +214,7 @@ const RoutineScreen = ({ navigation, route }) => {
             scrollEventThrottle={16}
             snapToInterval={ITEM_SIZE}
             decelerationRate={0}
-            snapToAlignment={"center"}
+            snapToAlignment={'center'}
             bounces={false}
             horizontal
             onScrollBeginDrag={() => {
@@ -226,17 +226,17 @@ const RoutineScreen = ({ navigation, route }) => {
             bounces={true}
           />
           {showSwiper &&
-            typeof item.descriptionArray != "undefined" &&
+            typeof item.descriptionArray != 'undefined' &&
             item.descriptionArray.length >= 1 && (
               <Animatable.Image
-                source={require("../assets/RoutinesPics/swipe-left.gif")}
+                source={require('../assets/RoutinesPics/swipe-left.gif')}
                 delay={2100}
                 animation={animation}
                 useNativeDriver={true}
                 onAnimationEnd={() => {
                   setDuration(500);
                   setTimeout(() => {
-                    setAnimation("fadeOut");
+                    setAnimation('fadeOut');
                   }, 2900);
                 }}
                 duration={duration}
@@ -248,7 +248,7 @@ const RoutineScreen = ({ navigation, route }) => {
           {showModal && (
             <Modal
               style={{ margin: 0 }}
-              animationType={"fade"}
+              animationType={'fade'}
               transparent={true}
               statusBarTranslucent={true}
               onShow={() => {
@@ -264,23 +264,23 @@ const RoutineScreen = ({ navigation, route }) => {
                 style={{
                   backgroundColor: colors.darkmodePressed,
                   flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
+                  justifyContent: 'center',
+                  alignItems: 'center',
                   marginTop: 0,
                 }}
               >
                 <View
                   style={{
                     backgroundColor: colors.darkOpacity,
-                    justifyContent: "center",
-                    alignItems: "center",
+                    justifyContent: 'center',
+                    alignItems: 'center',
                     height: height,
                     width: width,
                   }}
                 >
                   <Animatable.Image
-                    source={require("../assets/RoutinesPics/anxious-mountain.png")}
-                    animation={"bounceIn"}
+                    source={require('../assets/RoutinesPics/anxious-mountain.png')}
+                    animation={'bounceIn'}
                     useNativeDriver={true}
                     duration={1000}
                     style={styles.successModalImage}
@@ -301,7 +301,7 @@ const RoutineScreen = ({ navigation, route }) => {
                       borderTopWidth: 1,
                     }
                   : {
-                      color: "rgba(0,0,0,0.64)",
+                      color: 'rgba(0,0,0,0.64)',
                       height: 55,
                       backgroundColor: colors.darkmodeHighWhite,
                     }
@@ -312,7 +312,7 @@ const RoutineScreen = ({ navigation, route }) => {
                       color: colors.darkmodeDisabledText,
                     }
                   : {
-                      color: "rgba(0,0,0,0.64)",
+                      color: 'rgba(0,0,0,0.64)',
                     }
               }
               title={buttonTitle}
@@ -424,7 +424,7 @@ const styles = StyleSheet.create({
   // Close button
   one: {
     top: height * 0.06,
-    position: "absolute",
+    position: 'absolute',
     zIndex: 1,
     paddingLeft: 20,
   },
@@ -440,18 +440,18 @@ const styles = StyleSheet.create({
     paddingTop: 38,
     paddingBottom: 28,
     paddingLeft: 28,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   title: {
-    fontFamily: "BadScript_400Regular",
-    alignItems: "center",
+    fontFamily: 'BadScript_400Regular',
+    alignItems: 'center',
     fontSize: 38,
     color: colors.darkmodeHighWhite,
   },
 
   swiper: {
-    position: "absolute",
+    position: 'absolute',
     width: 55,
     height: 55,
     top: height * 0.732,
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
   flatlist: {},
 
   buttonContainer: {
-    position: "absolute",
+    position: 'absolute',
     top: height * 0.86,
     width: width,
   },
@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
   five: {
     width: width,
     height: height,
-    position: "absolute",
+    position: 'absolute',
     height: 55,
     backgroundColor: colors.darkmodeHighWhite,
   },
@@ -483,9 +483,9 @@ const styles = StyleSheet.create({
 
   screen: {
     // flex: 1,
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   background: {
     height: height,
@@ -496,8 +496,8 @@ const styles = StyleSheet.create({
   },
 
   imgcontainer: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingTop: height * 0.032,
   },
   image: {
@@ -515,7 +515,7 @@ const styles = StyleSheet.create({
     left: 28,
     bottom: 10,
     paddingBottom: 6,
-    alignItems: "center",
+    alignItems: 'center',
     fontSize: 15,
     color: colors.darkmodeMediumWhite,
   },

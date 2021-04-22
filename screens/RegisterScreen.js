@@ -3,55 +3,65 @@ import { View, StyleSheet } from 'react-native';
 import { useState } from 'react';
 import { Input, Text } from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
-import { auth, db } from '../firebase';
 import PropTypes from 'prop-types';
 import { KeyboardAvoidingView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
+import { auth, db } from '../firebase';
 import { signInWithGoogle } from '../firebase';
 import { signInWithFacebook } from '../firebase';
 import CreateDailyNotification from '../components/notification/CreateDailyNotification';
-import { useNavigation } from '@react-navigation/native';
 import AppButton from '../components/AppButton';
+import colors from '../config/colors';
+import Screen from '../components/Screen';
 
 const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const navigationn = useNavigation();
+  const [inputError, setInputError] = useState('');
 
   const register = () => {
-    auth
-      .createUserWithEmailAndPassword(email, password)
-      .then((cred) => {
-        return db.collection('Users').doc(cred.user.uid).set({
-          Name: name,
-          Guest: false,
-          UserRank: 1,
-          Roubies: 100,
-          UserAlertHour: 10,
-          UserAlertMinute: 30,
+    if (!email.trim()) {
+      alert('Please write an email');
+      return;
+    } else {
+      auth
+        .createUserWithEmailAndPassword(email, password)
+        .then((cred) => {
+          db.collection('Users').doc(cred.user.uid).set({
+            Name: name,
+            Guest: false,
+            UserRank: 1,
+            Roubies: 100,
+            UserAlertHour: 10,
+            UserAlertMinute: 30,
+          });
+          setTimeout(() => navigation.navigate('Home'), 500);
+        })
+        .catch((err) => {
+          if (err.code === 'auth/invalid-email') {
+            console.log('That email address is invalid!');
+            setInputError('Check your email');
+          }
+          if (err.code === 'auth/weak-password') {
+            console.log('The password is too weak');
+            setInputError('The password is too weak');
+          }
+          console.error(err.code);
         });
-      })
-      .catch((error) => alert(error.message));
-    CreateDailyNotification(10, 30);
-    setTimeout(
-      () =>
-        navigationn.navigate('Home', {
-          screen: 'Home',
-        }),
-      1000
-    );
+      CreateDailyNotification(10, 30);
+    }
   };
 
   return (
-    <KeyboardAvoidingView style={styles.container}>
+    <Screen style={styles.container}>
       <StatusBar style="light" />
-      <Text h2 style={{ marginBottom: 20 }}>
-        {' '}
-        Register{' '}
-      </Text>
+      <Text style={styles.header}> Register </Text>
 
       <View style={styles.inputContainer}>
         <Input
+          style={styles.input}
           placeholder="Name"
           type="name"
           value={name}
@@ -59,12 +69,14 @@ const RegisterScreen = ({ navigation }) => {
         />
 
         <Input
+          style={styles.input}
           placeholder="Email"
           type="email"
           value={email}
           onChangeText={(text) => setEmail(text)}
         />
         <Input
+          style={styles.input}
           placeholder="Password"
           type="password"
           secureTextEntry
@@ -72,8 +84,9 @@ const RegisterScreen = ({ navigation }) => {
           onChangeText={(text) => setPassword(text)}
           onSubmitEditing={register}
         />
+        <Text style={styles.errorText}>{inputError}</Text>
       </View>
-      <AppButton style={styles.button} onPress={register} title="Register" />
+      <AppButton onPress={register} title="Register" />
       {/* <Button
         style={styles.button}
         onPress={signInWithGoogle}
@@ -88,22 +101,31 @@ const RegisterScreen = ({ navigation }) => {
         title="Register"
         onPress={() => navigation.navigate('Profile'), register}
       /> */}
-    </KeyboardAvoidingView>
+    </Screen>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    flexGrow: 1,
+    width: '100%',
   },
-
-  button: {
-    width: 200,
-    marginTop: 20,
+  errorText: {
+    color: colors.samRed,
+    textAlign: 'center',
+    marginBottom: 20,
   },
-
+  header: {
+    color: colors.darkmodeMediumWhite,
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  input: {
+    color: colors.darkmodeHighWhite,
+  },
   inputContainer: {
     width: 300,
   },

@@ -4,18 +4,21 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import AppButton from '../components/AppButton';
 import colors from '../config/colors';
 import PropTypes from 'prop-types';
+import Screen from '../components/Screen';
 
 const WelcomeScreen = ({ navigation }) => {
   return (
-    <View style={styles.container}>
+    <Screen style={styles.container}>
       <Image style={styles.logo} source={require('../assets/icons/ruby.png')} />
       <AppButton
+        style={styles.button}
         title="Continue as Guest"
         onPress={() =>
           navigation.navigate('LoginAsGuest', { screen: 'LoginAsGuest' })
         }
       />
       <AppButton
+        style={styles.button}
         title="Go to Login"
         onPress={() => navigation.navigate('Login', { screen: 'Login' })}
       />
@@ -24,27 +27,19 @@ const WelcomeScreen = ({ navigation }) => {
       >
         <Text style={styles.text}>Register</Text>
       </TouchableOpacity>
-    </View>
+    </Screen>
   );
 };
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: colors.samBlack,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 15,
-    marginVertical: 10,
+    marginBottom: 100,
   },
   container: {
-    backgroundColor: colors.samBlack,
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1,
-  },
-  input: {
-    width: '80%',
+    flexGrow: 1,
+    width: '100%',
   },
   logo: {
     width: 200,
@@ -52,7 +47,8 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   text: {
-    color: colors.OrchidPink,
+    fontSize: 16,
+    color: colors.darkmodeMediumWhite,
   },
 });
 
