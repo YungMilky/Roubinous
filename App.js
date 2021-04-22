@@ -15,9 +15,7 @@ import { LogBox } from "react-native";
 import { enableScreens } from "react-native-screens";
 import { createSharedElementStackNavigator } from "react-navigation-shared-element";
 enableScreens();
-
-
-
+import headerRoubinesButton from "./components/HeaderRoubinesButton";
 
 import {
   FontAwesome5,
@@ -61,23 +59,6 @@ const RoutinesStack = createSharedElementStackNavigator();
 const ProfileStack = createStackNavigator();
 const RootStack = createStackNavigator();
 const JourneyStack = createStackNavigator();
-
-const headerSettingsButton = () => {
-  const navigation = useNavigation();
-
-  return (
-    <TouchableOpacity
-      style={{ paddingRight: 10 }}
-      onPress={() => navigation.navigate("Settings")}
-    >
-      {/* <Image
-        style={{ width: 26, height: 26 }}
-        source={require('./assets/icons/tune-vertical.png')}
-      /> */}
-      <Octicons name="settings" size={26} color={colors.darkmodeHighWhite} />
-    </TouchableOpacity>
-  );
-};
 
 // function cacheFonts(fonts) {
 //   return fonts.map((font) => Font.loadAsync(font));
@@ -142,7 +123,7 @@ const RoutinesStackScreen = () => {
         component={RoutinesScreen}
         options={{
           headerShown: true,
-          headerRight: () => headerSettingsButton(),
+          headerRight: () => headerRoubinesButton(),
           headerTintColor: { color: colors.darkmodeMediumWhite },
           tintColor: { color: colors.darkmodeMediumWhite },
         }}
@@ -240,7 +221,7 @@ function TabBar() {
         component={ProfileScreen}
         options={{
           title: "Profile",
-          headerRight: () => headerSettingsButton(),
+          headerRight: () => headerRoubinesButton(),
           tabBarColor: colors.samRed,
           tabBarIcon: ({ color }) => (
             // <Image
@@ -297,7 +278,7 @@ export default function App() {
             name="Home"
             component={TabBar}
             options={{
-              headerRight: () => headerSettingsButton(),
+              headerRight: () => headerRoubinesButton(),
               headerShown: true,
             }}
           />
@@ -316,7 +297,7 @@ export default function App() {
           <RootStack.Screen
             name="Notification Settings"
             component={NotificationSettingScreen}
-            options={{ headerRight: () => headerSettingsButton() }}
+            options={{ headerRight: () => headerRoubinesButton() }}
           />
           <RootStack.Screen name="Settings" component={SettingsScreen} />
         </RootStack.Navigator>
