@@ -130,7 +130,6 @@ const ProfileStackScreen = () => {
       //   headerStyle: { backgroundColor: colors.samRed },
       //   headerTitleStyle: { color: colors.darkmodeHighWhite },
       //   headerShown: true,
-      //   tintColor: { color: 'rgba(255,255,255,0.60)' },
       // }}
     >
       <ProfileStack.Screen
@@ -178,7 +177,6 @@ const RoutinesStackScreen = () => {
           headerShown: true,
           headerRight: () => headerSettingsButton(),
           headerTintColor: { color: colors.darkmodeMediumWhite },
-          tintColor: { color: colors.darkmodeMediumWhite },
         }}
       />
       <RoutinesStack.Screen

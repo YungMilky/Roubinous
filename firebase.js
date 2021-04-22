@@ -25,6 +25,10 @@ if (firebase.apps.length === 0) {
 //database access variable
 const db = app.firestore();
 
+
+// const db1 = firebase.firestore;
+
+
 //authentication variable
 const auth = firebase.auth();
 
