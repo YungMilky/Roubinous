@@ -21,10 +21,11 @@ const ProfileScreen = ({ navigation }) => {
 
   const signOutUser = () => {
     CancelAllNotifications();
-    auth.signOut();
+    auth.signOut().then(() => {
+      setTimeout(() => navigation.navigate('Welcome'), 0);
+    });
   };
 
-  // kolla om man är inloggad med facebook/gmail
   const getUserInfo = () => {
     db.collection('Users')
       .doc(user.uid)
@@ -155,22 +156,21 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
-    color: colors.samBlack,
+    color: colors.darkmodeMediumWhite,
   },
   container: {
     alignItems: 'flex-start',
-    backgroundColor: '#FFE9F3',
     flex: 1,
   },
   description: {
     fontSize: 16,
-    color: colors.samBlack,
+    color: colors.darkmodeMediumWhite,
     marginTop: 10,
     textAlign: 'center',
   },
   info: {
     fontSize: 16,
-    color: colors.samBlack,
+    color: colors.darkmodeMediumWhite,
     marginBottom: 10,
     textAlign: 'center',
   },
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 22,
-    color: colors.samBlack,
+    color: colors.darkmodeMediumWhite,
     fontWeight: '600',
   },
   rowButton: {

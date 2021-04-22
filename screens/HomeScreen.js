@@ -50,14 +50,24 @@ const HomeScreen = ({ navigation }) => {
       </TouchableOpacity> */}
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Routines', { screen: 'Routines' })}
+        onPress={() =>
+          navigation.navigate('Browse Routines', { screen: 'Browse Routines' })
+        }
       >
         <MaterialCommunityIcons
           name="baseball"
-          size={100}
+          size={70}
           color={colors.samRed}
         />
-        <Text>Routines</Text>
+        <Text style={styles.buttonText}>Browse Routines</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button}>
+        <MaterialCommunityIcons
+          name="clock-time-eight"
+          size={70}
+          color={colors.samRed}
+        />
+        <Text style={styles.buttonText}>My Routines</Text>
       </TouchableOpacity>
       {/* <TouchableOpacity
         style={styles.button}
@@ -89,6 +99,15 @@ const styles = StyleSheet.create({
     margin: 20,
     width: 120,
     height: 120,
+  },
+  buttonText: {
+    fontSize: 16,
+    color: colors.darkmodeMediumWhite,
+  },
+  rowButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 20,
   },
 });
 

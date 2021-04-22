@@ -31,11 +31,11 @@ import {
   FontAwesome,
   MaterialCommunityIcons,
   Octicons,
-} from "@expo/vector-icons";
+} from '@expo/vector-icons';
 
 import { db, auth, fv } from "./firebase";
 
-import colors from "./config/colors";
+import colors from './config/colors';
 
 import WelcomeScreen from "./screens/WelcomeScreen";
 import RegisterScreen from "./screens/RegisterScreen";
@@ -172,11 +172,11 @@ const RoutinesStackScreen = () => {
     >
       <RoutinesStack.Screen name="TabBar" component={TabBar} />
       <RoutinesStack.Screen
-        name="Routines"
+        name="Browse Routines"
         component={RoutinesScreen}
         options={{
           headerShown: true,
-          headerRight: () => headerSettingsButton(),
+          headerRight: () => headerRoubinesButton(),
           headerTintColor: { color: colors.darkmodeMediumWhite },
         }}
       />
@@ -213,15 +213,16 @@ const JourneyStackScreen = () => {
       <JourneyStack.Screen
         name="Journey"
         component={JourneyScreen}
-        options={{ title: "Journey" }}
+        options={{ title: 'Journey' }}
       />
     </JourneyStack.Navigator>
   );
 };
 
 const defaultScreenOptions = {
-  headerTitleStyle: { color: "white" },
-  headerTintColor: "white",
+  headerTitleStyle: { color: 'white' },
+  headerTintColor: 'white',
+  headerShown: false,
 };
 
 function TabBar() {
@@ -242,7 +243,7 @@ function TabBar() {
         component={HomeScreen}
         tabBarAccessibilityLabel="Home"
         options={{
-          title: "Home",
+          title: 'Home',
           tabBarColor: colors.samRed,
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
@@ -260,7 +261,7 @@ function TabBar() {
         component={JourneyScreen}
         tabBarAccessibilityLabel="Journey"
         options={{
-          title: "Journey",
+          title: 'Journey',
           headerShown: true,
           headerStyle: {
             backgroundColor: colors.samRed,
@@ -280,7 +281,7 @@ function TabBar() {
         name="Profile"
         component={ProfileScreen}
         options={{
-          title: "Profile",
+          title: 'Profile',
           headerRight: () => headerSettingsButton(),
           tabBarColor: colors.samRed,
           tabBarIcon: ({ color }) => (
@@ -597,10 +598,10 @@ export default function App() {
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        console.log("logged in ", user.uid);
+        console.log('logged in ', user.uid);
         setIsLoggedIn(true);
       } else {
-        console.log("NOT logged in ", user);
+        console.log('NOT logged in ', user);
         setIsLoggedIn(false);
       }
     });
@@ -700,26 +701,31 @@ export default function App() {
             name="Home"
             component={TabBar}
             options={{
-              headerRight: () => headerSettingsButton(),
+              headerRight: () => headerRoubinesButton(),
               headerShown: true,
+              headerLeft: () => null,
             }}
           />
           <RootStack.Screen
             name="Profile"
             component={ProfileStackScreen}
-            options={{ title: "Profile" }}
+            options={{ title: 'Profile' }}
           />
           <RootStack.Screen name="Register" component={RegisterScreen} />
           <RootStack.Screen name="Login" component={LoginScreen} />
           <RootStack.Screen
-            name="Routines"
+            name="Reset Password"
+            component={ResetPasswordScreen}
+          />
+          <RootStack.Screen
+            name="Browse Routines"
             component={RoutinesStackScreen}
             options={{ headerShown: false }}
           />
           <RootStack.Screen
             name="Notification Settings"
             component={NotificationSettingScreen}
-            options={{ headerRight: () => headerSettingsButton() }}
+            options={{ headerRight: () => headerRoubinesButton() }}
           />
           <RootStack.Screen name="Settings" component={SettingsScreen} />
         </RootStack.Navigator>
@@ -729,7 +735,13 @@ export default function App() {
     content = (
       <NavigationContainer>
         <Stack.Navigator screenOptions={defaultScreenOptions}>
-          <Stack.Screen name="Welcome" component={WelcomeScreen} />
+          <Stack.Screen
+            name="Welcome"
+            component={WelcomeScreen}
+            options={{
+              animationEnabled: false,
+            }}
+          />
           <Stack.Screen name="Reset Password" component={ResetPasswordScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />

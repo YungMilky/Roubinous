@@ -10,8 +10,6 @@ Notifications.setNotificationHandler({
 });
 
 async function CreateDailyNotification(hour, minute) {
-  console.log('inne i metoden' + ' ' + hour + ' ' + minute);
-
   CancelAllNotifications();
 
   await Notifications.scheduleNotificationAsync({
@@ -31,7 +29,9 @@ async function CreateDailyNotification(hour, minute) {
       repeats: true,
     },
   });
-
+  console.log(
+    'Created daily notification for time: ' + ' ' + hour + ' ' + minute
+  );
   return 'Notification sent';
 }
 

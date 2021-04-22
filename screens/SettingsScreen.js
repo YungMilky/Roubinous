@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Image, View, Text } from 'react-native';
+import { StyleSheet, Image, View, Text, Modal } from 'react-native';
 import PropTypes from 'prop-types';
-import { Input, Button } from 'react-native-elements';
+import { Input } from 'react-native-elements';
 import { db, auth } from '../firebase';
 
 import Screen from '../components/Screen';
 import AppButton from '../components/AppButton';
+import colors from '../config/colors';
 
 const SettingsScreen = ({ navigation }) => {
   const [name, setName] = useState();
   const [newUsername, setNewusername] = useState('');
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [nameModalVisible, setNameModalVisible] = useState(false);
+  const [inputError, setInputError] = useState('');
   const user = auth.currentUser;
 
   useEffect(() => {
@@ -32,7 +36,6 @@ const SettingsScreen = ({ navigation }) => {
       alert('Success! Changed name to: ' + newUsername);
     }
   }
-
   function deleteAccount() {
     db.collection('Users').doc(user.uid).delete();
     setTimeout(() => {
@@ -42,24 +45,75 @@ const SettingsScreen = ({ navigation }) => {
   }
 
   return (
-    <Screen>
-      <Text style={styles.text}>Change Username:</Text>
-      <Input
-        style={styles.input}
-        placeholder={name}
-        onChangeText={(text) => setNewusername(text)}
-      />
+    <Screen style={styles.container}>
       <View style={styles.container}>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={nameModalVisible}
+          onRequestClose={() => {
+            setNameModalVisible(!nameModalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>Change Username:</Text>
+              <Input
+                style={styles.input}
+                placeholder={name}
+                onChangeText={(text) => setNewusername(text)}
+              />
+              <Text style={styles.errorText}>{inputError}</Text>
+              <AppButton
+                style={styles.button}
+                title="Change username"
+                onPress={changeUsername}
+              />
+              <AppButton
+                style={[styles.button, styles.buttonClose]}
+                title={'Cancel'}
+                onPress={() => setNameModalVisible(!nameModalVisible)}
+              ></AppButton>
+            </View>
+          </View>
+        </Modal>
         <AppButton
           style={styles.button}
           title="Change username"
-          onPress={changeUsername}
+          onPress={() => setNameModalVisible(true)}
         />
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={deleteModalVisible}
+          onRequestClose={() => {
+            setDeleteModalVisible(!deleteModalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>
+                Are you sure you want to delete your account?
+              </Text>
+              <AppButton
+                style={styles.button}
+                title={'Delete'}
+                onPress={deleteAccount}
+              />
+              <AppButton
+                style={[styles.button, styles.buttonClose]}
+                title={'Cancel'}
+                onPress={() => setDeleteModalVisible(!deleteModalVisible)}
+              ></AppButton>
+            </View>
+          </View>
+        </Modal>
         <AppButton
-          style={styles.button}
+          style={[styles.button, styles.buttonOpen]}
           title={'Delete my account'}
-          onPress={deleteAccount}
-        />
+          onPress={() => setDeleteModalVisible(true)}
+        ></AppButton>
+
         <AppButton
           style={styles.button}
           title={'Notification Settings'}
@@ -84,7 +138,9 @@ const styles = StyleSheet.create({
   },
   container: {
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
+    alignContent: 'center',
+    width: '100%',
   },
   input: {
     width: '60%',
@@ -92,6 +148,47 @@ const styles = StyleSheet.create({
   text: {
     textAlign: 'center',
     fontSize: 14,
+    paddingBottom: 20,
+  },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    width: '90%',
+    margin: 20,
+    backgroundColor: colors.darkmodeDisabledBlack,
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+    fontSize: 16,
+    color: colors.darkmodeMediumWhite,
   },
 });
 

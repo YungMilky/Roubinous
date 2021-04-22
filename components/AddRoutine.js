@@ -1,20 +1,14 @@
-import { auth, db, db1 } from "../firebase";
+import { auth, db, db1 } from '../firebase';
 import firebase from 'firebase/app';
-
 
 //  Just add routine fields as props when
 //  we've decided on the logic for them
 
-
 // const db1 = firebase.firestore();
-
 
 // Update read count
 
-
-
 export default (title) => {
-
   const increment = firebase.firestore.FieldValue.increment(50);
   // const increment = db.FieldValue.increment(50);
   // // Document reference
@@ -23,9 +17,9 @@ export default (title) => {
   const roubineRef = db.collection('Users').doc(userID);
 
   const userRoutines = db
-    .collection("Users")
+    .collection('Users')
     .doc(userID)
-    .collection("Routines");
+    .collection('routines');
 
   userRoutines
     .doc(title)
@@ -41,11 +35,11 @@ export default (title) => {
         roubineRef.update({ Roubies: increment });
         userRoutines.doc(title).set(
           {
-            ComboFrequency: "2",
+            ComboFrequency: '2',
             DaysInCombo: 2,
             StartDate: new Date(),
             UserAlertTime: 7,
-            UserRoutineRank: "Rookie",
+            UserRoutineRank: 'Rookie',
             removed: false,
           },
           { merge: true }
