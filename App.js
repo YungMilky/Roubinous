@@ -1,13 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, Image } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { StyleSheet, Easing } from "react-native";
+import { Input } from "react-native-elements";
 import "react-native-gesture-handler";
 import {
   NavigationContainer,
   StackActions,
   useNavigation,
 } from "@react-navigation/native";
+import Svg, { Defs, Pattern, Rect, Circle } from "react-native-svg";
+import * as Animatable from "react-native-animatable";
+import { FloatingLabelInput } from "react-native-floating-label-input";
 import CheckBox from "@react-native-community/checkbox";
-import { createStackNavigator } from "@react-navigation/stack";
+import {
+  createStackNavigator,
+  TransitionPresets,
+  CardStyleInterpolators,
+} from "@react-navigation/stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { TransitionSpecs } from "@react-navigation/stack";
 import { Constants } from "react-native-unimodules";
@@ -20,6 +28,7 @@ enableScreens();
 
 import {
   FontAwesome5,
+  FontAwesome,
   MaterialCommunityIcons,
   Octicons,
 } from "@expo/vector-icons";
@@ -45,10 +54,10 @@ import JourneyScreen from "./screens/JourneyScreen";
 import { View } from "react-native";
 import { Text } from "react-native";
 import Screen from "./components/Screen";
+import { ImageBackground } from "react-native";
+import AppButton from "./components/AppButton";
 
 //  TODO:
-//  useEffect running too many times
-//  roubies+exp när användaren lägger till en rutin
 //  keep adding nested navigation
 //  loop through tab items with array prop?
 //  back button color not applying
@@ -59,21 +68,27 @@ import Screen from "./components/Screen";
 // style
 // försökte fixa labels på tab bar
 
-//  ROUBIES AND EXP
-const rewardForAddingRoutine = 30;
-//  lägga till roubies när dokument/kollektioner ändras:
-//    - när användaren lägger till en rutin
-//    - när användaren bockar av en rutin
-//      - när användaren bockar av med kombo
-//    - när användaren levlar upp
-//    -
-
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
-const RoutinesStack = createSharedElementStackNavigator();
+const RoutinesStack = createStackNavigator();
 const ProfileStack = createStackNavigator();
 const RootStack = createStackNavigator();
 const JourneyStack = createStackNavigator();
+
+const config = {
+  änimation: "spring",
+  config: {
+    duration: 150,
+    easing: Easing.linear,
+
+    // stiffness: 5000,
+    // damping: 100,
+    // mass: 1,
+    overshootClamping: false,
+    // restDisplacementThreshold: 0.01,
+    // restSpeedThreshold: 0.01,
+  },
+};
 
 const headerSettingsButton = () => {
   const navigation = useNavigation();
@@ -102,7 +117,15 @@ const ProfileStackScreen = () => {
       screenOptions={{
         headerStyle: { backgroundColor: colors.samRed },
         headerTitleStyle: { color: colors.samRed },
+        gestureEnabled: true,
+        gestureDirection: "horizontal",
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        transitionSpec: {
+          open: config,
+          close: config,
+        },
       }}
+      headerMode="float"
       // screenOptions={{
       //   headerStyle: { backgroundColor: colors.samRed },
       //   headerTitleStyle: { color: colors.darkmodeHighWhite },
@@ -137,7 +160,15 @@ const RoutinesStackScreen = () => {
       screenOptions={{
         headerStyle: { backgroundColor: colors.samRed },
         headerTitleStyle: { color: colors.darkmodeHighWhite },
+        gestureEnabled: true,
+        gestureDirection: "horizontal",
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        transitionSpec: {
+          open: config,
+          close: config,
+        },
       }}
+      headerMode="float"
     >
       <RoutinesStack.Screen name="TabBar" component={TabBar} />
       <RoutinesStack.Screen
@@ -170,7 +201,15 @@ const JourneyStackScreen = () => {
       screenOptions={{
         headerStyle: { backgroundColor: colors.samRed },
         headerTitleStyle: { color: colors.samRed },
+        gestureEnabled: true,
+        gestureDirection: "horizontal",
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        transitionSpec: {
+          open: config,
+          close: config,
+        },
       }}
+      headerMode="float"
     >
       <JourneyStack.Screen
         name="Journey"
@@ -259,16 +298,30 @@ function TabBar() {
 }
 
 export default function App() {
+  //  ROUBIES AND EXP
+  const rewardForAddingRoutine = 30;
+  //  lägga till roubies när dokument/kollektioner ändras:
+  //    - när användaren lägger till en rutin
+  //    - när användaren bockar av en rutin
+  //      - när användaren bockar av med kombo
+  //    - när användaren levlar upp
+  //    -
+
+  const introSlider = useRef(null);
   const [showIntro, setShowIntro] = useState(true);
+  const [showSkipButton, setShowSkipButton] = useState(false);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  const [isNameFocused, setIsNameFocused] = useState(false);
+  const [scrollEnabled, setScrollEnabled] = useState(false);
 
   const introSlides = [
     {
       key: "one",
-      title: "Title 1",
-      text: "intro text",
+      title: "Hey!",
+      text: "I'm Roubine, what's your name?",
       // image: require('./assets/1.jpg'),
-      backgroundColor: "#59b2ab",
+      backgroundColor: colors.pastelRed,
+      nameForm: true,
     },
     {
       key: "one",
@@ -285,13 +338,6 @@ export default function App() {
       </View>
     );
   };
-  // const introNextButton = () => {
-  //   return (
-  //     <View>
-  //       <Text>nex</Text>
-  //     </View>
-  //   );
-  // };
   const introSkipButton = () => {
     return (
       <View style={styles.introSkipButtonContainer}>
@@ -299,19 +345,165 @@ export default function App() {
       </View>
     );
   };
+  const LoginAsGuestComponent = () => {
+    const [name, setName] = useState("");
+
+    const signInAnonymously = () => {
+      if (!name.trim()) {
+      } else {
+        auth.signInAnonymously().then((cred) => {
+          return db.collection("Users").doc(cred.user.uid).set({
+            Name: name,
+            Guest: true,
+            UserRank: 1,
+            Roubies: 50,
+            UserAlertHour: 10,
+            UserAlertMinute: 30,
+          });
+        });
+        CreateDailyNotification(10, 30);
+      }
+    };
+
+    return (
+      <Screen style={styles.container}>
+        <View style={styles.introInputContainer}>
+          <View
+            style={[
+              isNameFocused
+                ? {
+                    borderTopLeftRadius: 4,
+                    borderTopRightRadius: 4,
+                    borderBottomWidth: 1,
+                    borderBottomColor: colors.darkmodeMediumWhite,
+                    marginBottom: 12,
+                  }
+                : {
+                    borderBottomWidth: 1,
+                    borderBottomColor: colors.darkmodeDisabledWhite,
+                    marginBottom: 12,
+                  },
+            ]}
+          >
+            <FloatingLabelInput
+              isFocused={isNameFocused}
+              hint="eg. pussyslayer69"
+              hintTextColor={colors.darkmodeMediumWhite}
+              inputStyles={styles.introInputStyles}
+              customLabelStyles={{
+                colorFocused: colors.darkmodeHighWhite,
+                colorBlurred: colors.darkmodeMediumWhite,
+                fontSizeBlurred: 16,
+              }}
+              containerStyles={styles.introInputInternalContainer}
+              onFocus={() => {
+                setIsNameFocused(true);
+              }}
+              onBlur={() => {
+                setIsNameFocused(false);
+              }}
+              label="Your name"
+              rightComponent={
+                name != "" ? (
+                  <View style={{ padding: 12 }}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setName("");
+                        setIsNameFocused(false);
+                        setScrollEnabled(true);
+                      }}
+                    >
+                      <MaterialCommunityIcons
+                        name="close"
+                        size={20}
+                        color={colors.darkmodeMediumWhite}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                ) : null
+              }
+              type="name"
+              value={name}
+              onChangeText={(text) => setName(text)}
+            />
+          </View>
+          <TouchableOpacity
+            style={styles.introContinueButton}
+            onPress={() => {
+              if (!name.trim()) {
+                alert("Please enter a name");
+                return;
+              } else {
+                introSlider.current.goToSlide(1);
+                setShowSkipButton(true);
+                signInAnonymously;
+                setScrollEnabled(true);
+              }
+            }}
+          >
+            {name && (
+              <Animatable.Text
+                animation="fadeIn"
+                style={styles.introContinueButtonText}
+              >
+                continue
+              </Animatable.Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      </Screen>
+    );
+  };
   const renderIntroSlides = ({ item }) => {
     return (
-      <Screen style={styles.introScreen}>
+      <Screen
+        style={[{ backgroundColor: item.backgroundColor }, styles.introScreen]}
+      >
+        <Svg
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
+        >
+          <Defs>
+            <Pattern
+              id="prefix__a"
+              width={10}
+              height={10}
+              viewBox="0 0 40 40"
+              patternUnits="userSpaceOnUse"
+              patternTransform="rotate(135)"
+            >
+              <Rect width="400%" height="400%" fill="rgba(42, 67, 101,0)" />
+              <Circle fill="rgba(0, 0, 0,0.6)" cx={20} cy={20} r={4} />
+              <Circle fill="rgba(46, 46, 46,0.6)" cy={40} r={3} />
+              <Circle fill="rgba(46, 46, 46,0.6)" cx={40} r={3} />
+              <Circle fill="rgba(46, 46, 46,0.6)" r={3} />
+              <Circle fill="rgba(46, 46, 46,0.6)" cx={40} cy={40} r={3} />
+            </Pattern>
+          </Defs>
+          <Rect fill="url(#prefix__a)" height="100%" width="100%" />
+        </Svg>
+        {/* <ImageBackground
+          source={require("./assets/dots.png")}
+          imageStyle={{ resizeMode: "repeat" }}
+          style={{ width: "100%", height: "100%" }}
+        /> */}
         <View style={styles.introContainer}>
           <Text style={styles.introTitle}>{item.title}</Text>
-          <CheckBox
-            style={styles.introCheckBox}
-            disabled={false}
-            value={toggleCheckBox}
-            onValueChange={(newValue) => setToggleCheckBox(newValue)}
-          />
-          {/* <Image source={item.image} /> */}
+          {item.questions && (
+            <CheckBox
+              style={styles.introCheckBox}
+              disabled={false}
+              value={toggleCheckBox}
+              onValueChange={(newValue) => setToggleCheckBox(newValue)}
+            />
+          )}
           <Text style={styles.introText}>{item.text}</Text>
+          {item.nameForm && <LoginAsGuestComponent />}
         </View>
       </Screen>
     );
@@ -330,45 +522,77 @@ export default function App() {
     });
   }, [auth.user]);
 
-  //use as conditional to prevent
-  //onsnapshot to use initial state
-  //(otherwise it runs every time you start the app
-  // giving the user free rewards)
+  const updateRank = () => {
+    db.collection("Users")
+      .doc(auth.currentUser.uid)
+      .get()
+      .then((doc) => {
+        //get user exp
+        let experience = doc.data().exp;
+        console.log("setting exp: ", doc.data().exp);
+        console.log("exp: ", experience);
+
+        //decide rank by exp
+        let newRank = 0;
+        if (experience > 80) {
+          newRank = 3;
+        } else if (experience > 60) {
+          newRank = 2;
+        } else if (experience < 38) {
+          newRank = 1;
+        }
+        console.log("new rank:", newRank);
+
+        //set rank
+        db.collection("Users").doc(auth.currentUser.uid).update({
+          UserRank: newRank,
+        });
+      });
+  };
+
+  const rewardAddedRoutine = () => {
+    let newerExp = 0;
+    db.collection("Users")
+      .doc(auth.currentUser.uid)
+      .get()
+      .then((doc) => {
+        const routineRef = db.collection("Users").doc(auth.currentUser.uid);
+
+        routineRef.update({
+          Roubies: doc.data().Roubies + rewardForAddingRoutine,
+          exp: doc.data().exp + rewardForAddingRoutine,
+        });
+      });
+  };
+
   var initState = true;
   useEffect(() => {
     if (isLoggedIn) {
+      //use as conditional to prevent
+      //onsnapshot to use initial state
+      //(otherwise it runs every time you start the app
+      // giving the user free rewards)
+      // if (isLoggedIn) {
       const subscriber = db
         .collection("Users")
         .doc(auth.currentUser.uid)
         .collection("routines")
         .onSnapshot((documentSnapshot) => {
-          try {
-            // console.log(documentSnapshot.docChanges());
-            if (initState) {
-              initState = false;
-            } else {
-              documentSnapshot.docChanges().forEach((change) => {
-                if (change.type === "added") {
-                  db.collection("Users")
-                    .doc(auth.currentUser.uid)
-                    .update({
-                      Roubies: fv.FieldValue.increment(rewardForAddingRoutine),
-                      exp: fv.FieldValue.increment(rewardForAddingRoutine),
-                    });
-                }
-                if (change.type === "modified") {
-                  console.log("modified");
-                  // reward on combo
-                }
-              });
-            }
-          } catch (e) {
-            console.log(e);
+          if (initState) {
+            initState = false;
+            updateRank();
+          } else {
+            documentSnapshot.docChanges().forEach((change) => {
+              if (change.type === "added") {
+                rewardAddedRoutine();
+              }
+            });
+            subscriber();
           }
         });
-      return () => subscriber();
+      // }
     }
-  }, []);
+  }, [rewardForAddingRoutine]);
 
   let content;
   if (isLoggedIn) {
@@ -378,8 +602,15 @@ export default function App() {
           screenOptions={{
             headerStyle: { backgroundColor: colors.samRed },
             headerTitleStyle: { color: colors.darkmodeHighWhite },
-            tintColor: { color: colors.darkmodeMediumWhite },
+            gestureEnabled: true,
+            gestureDirection: "horizontal",
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            transitionSpec: {
+              open: config,
+              close: config,
+            },
           }}
+          headerMode="float"
         >
           <RootStack.Screen
             name="Home"
@@ -431,8 +662,10 @@ export default function App() {
   if (!showIntro) {
     return content;
   } else {
-    return (
+    console.log(scrollEnabled);
+    return scrollEnabled ? (
       <AppIntroSlider
+        ref={introSlider}
         renderItem={renderIntroSlides}
         data={introSlides}
         onDone={() => setShowIntro(false)}
@@ -440,9 +673,35 @@ export default function App() {
         // renderNextButton={introNextButton}
         renderSkipButton={introSkipButton}
         showNextButton={false}
-        showSkipButton={true}
+        showSkipButton={showSkipButton}
         // onSkip
         bottomButton={true}
+        scrollEnabled={true}
+
+        // want to hide pagination on first page but cant
+        // renderPagination={!showSkipButton ? 0 : null}
+
+        // dotStyle
+        // activeDotStyle
+
+        // onSlideChange
+        // renderPagination
+      />
+    ) : (
+      <AppIntroSlider
+        onDone={() => setShowIntro(false)}
+        ref={introSlider}
+        renderItem={renderIntroSlides}
+        data={introSlides}
+        // renderNextButton={introNextButton}
+        showNextButton={false}
+        showSkipButton={showSkipButton}
+        // onSkip
+        bottomButton={false}
+        scrollEnabled={false}
+
+        // want to hide pagination on first page but cant
+        // renderPagination={!showSkipButton ? 0 : null}
 
         // dotStyle
         // activeDotStyle
@@ -456,15 +715,18 @@ export default function App() {
 
 // eslint-disable-next-line no-unused-vars
 const styles = StyleSheet.create({
-  input: {
-    marginTop: 200,
+  container: {
+    // justifyContent: "center",
+    alignItems: "center",
   },
+
   introScreen: {
-    backgroundColor: colors.darkmodeLightBlack,
+    width: "100%",
+    height: "100%",
   },
   introContainer: {
     flexDirection: "column",
-    justifyContent: "center",
+    flex: 1,
   },
   introTitle: {
     fontSize: 36,
@@ -476,9 +738,17 @@ const styles = StyleSheet.create({
     color: colors.darkmodeHighWhite,
     textAlign: "center",
   },
+  introInputContainer: {
+    width: 300,
+  },
+  introInputInternalContainer: { height: 55 },
+  introInput: {},
   introCheckBox: {},
+  introInputStyles: {
+    color: colors.darkmodeHighWhite,
+    fontSize: 17,
+  },
   introSkipButtonContainer: {
-    justifyContent: "center",
     backgroundColor: colors.darkmodeFocused,
     padding: 16,
     borderRadius: 15,
@@ -498,5 +768,11 @@ const styles = StyleSheet.create({
     fontSize: 26,
     color: colors.darkmodeDisabledWhite,
     textAlign: "center",
+  },
+  introContinueButton: {},
+  introContinueButtonText: {
+    fontSize: 16,
+    color: colors.darkmodeMediumWhite,
+    textAlign: "right",
   },
 });
