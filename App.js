@@ -56,6 +56,7 @@ import { Text } from "react-native";
 import Screen from "./components/Screen";
 import { ImageBackground } from "react-native";
 import AppButton from "./components/AppButton";
+import { Image } from "react-native";
 
 //  TODO:
 //  keep adding nested navigation
@@ -311,18 +312,20 @@ export default function App() {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [isNameFocused, setIsNameFocused] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(false);
+  const [disableKeyboard, setDisableKeyboard] = useState(false);
 
   const introSlides = [
     {
-      key: "one",
-      title: "Hey!",
-      text: "I'm Roubine, what's your name?",
-      // image: require('./assets/1.jpg'),
+      key: 1,
+      title: "Hello!",
+      text: "I'm Roubine.",
+      nextText: "...what's your name?",
+      image: require("./assets/icons/Group.png"),
       backgroundColor: colors.pastelRed,
       nameForm: true,
     },
     {
-      key: "one",
+      key: 2,
       title: "Title 1",
       text: "Description.\nSay something cool",
       // image: require('./assets/1.jpg'),
@@ -343,8 +346,10 @@ export default function App() {
       </View>
     );
   };
+
   const LoginAsGuestComponent = () => {
     const [name, setName] = useState("");
+    setDisableKeyboard(true);
 
     const signInAnonymously = () => {
       if (!name.trim()) {
@@ -364,92 +369,100 @@ export default function App() {
     };
 
     return (
-      <Screen style={styles.container}>
-        <View style={styles.introInputContainer}>
-          <View
-            style={[
-              isNameFocused
-                ? {
-                    borderTopLeftRadius: 4,
-                    borderTopRightRadius: 4,
-                    borderBottomWidth: 1,
-                    borderBottomColor: colors.darkmodeMediumWhite,
-                    marginBottom: 12,
-                  }
-                : {
-                    borderBottomWidth: 1,
-                    borderBottomColor: colors.darkmodeDisabledWhite,
-                    marginBottom: 12,
-                  },
-            ]}
-          >
-            <FloatingLabelInput
-              isFocused={isNameFocused}
-              hint="eg. pussyslayer69"
-              hintTextColor={colors.darkmodeMediumWhite}
-              inputStyles={styles.introInputStyles}
-              customLabelStyles={{
-                colorFocused: colors.darkmodeHighWhite,
-                colorBlurred: colors.darkmodeMediumWhite,
-                fontSizeBlurred: 16,
-              }}
-              containerStyles={styles.introInputInternalContainer}
-              onFocus={() => {
-                setIsNameFocused(true);
-              }}
-              onBlur={() => {
-                setIsNameFocused(false);
-              }}
-              label="Your name"
-              rightComponent={
-                name != "" ? (
-                  <View style={{ padding: 12 }}>
-                    <TouchableOpacity
-                      onPress={() => {
-                        setName("");
-                        setIsNameFocused(false);
-                        setScrollEnabled(true);
-                      }}
-                    >
-                      <MaterialCommunityIcons
-                        name="close"
-                        size={20}
-                        color={colors.darkmodeMediumWhite}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                ) : null
-              }
-              type="name"
-              value={name}
-              onChangeText={(text) => setName(text)}
-            />
-          </View>
-          <TouchableOpacity
-            style={styles.introContinueButton}
-            onPress={() => {
-              if (!name.trim()) {
-                alert("Please enter a name");
-                return;
-              } else {
-                introSlider.current.goToSlide(1);
-                setShowSkipButton(true);
-                signInAnonymously;
-                setScrollEnabled(true);
-              }
+      <View style={styles.introInputContainer}>
+        <View
+          style={[
+            isNameFocused
+              ? {
+                  borderBottomColor: colors.darkmodeMediumWhite,
+                }
+              : {
+                  borderBottomWidth: 1,
+                  borderBottomColor: colors.darkmodeDisabledWhite,
+                },
+          ]}
+        >
+          <FloatingLabelInput
+            showSoftInputOnFocus={disableKeyboard}
+            isFocused={isNameFocused}
+            hint="..."
+            hintTextColor={colors.darkmodeMediumWhite}
+            inputStyles={styles.introInputStyles}
+            customLabelStyles={{
+              colorFocused: colors.darkmodeHighWhite,
+              colorBlurred: colors.darkmodeHighWhite,
+              fontSizeBlurred: 22,
+              fontSizeFocused: 12,
             }}
-          >
-            {name && (
-              <Animatable.Text
-                animation="fadeIn"
-                style={styles.introContinueButtonText}
+            containerStyles={styles.introInputInternalContainer}
+            onFocus={() => {
+              setIsNameFocused(true);
+            }}
+            onBlur={() => {
+              setIsNameFocused(false);
+            }}
+            staticLabel="your name"
+            rightComponent={
+              name != "" ? (
+                <View style={{ padding: 12 }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setName("");
+                      setIsNameFocused(false);
+                      setScrollEnabled(true);
+                    }}
+                  >
+                    <MaterialCommunityIcons
+                      name="close"
+                      size={20}
+                      color={colors.darkmodeMediumWhite}
+                    />
+                  </TouchableOpacity>
+                </View>
+              ) : null
+            }
+            leftComponent={
+              <Text
+                style={[
+                  { paddingRight: 4 },
+                  styles.introText,
+                  isNameFocused
+                    ? { color: colors.darkmodeMediumWhite }
+                    : { color: colors.darkmodeHighWhite },
+                ]}
               >
-                continue
-              </Animatable.Text>
-            )}
-          </TouchableOpacity>
+                Hey, I'm{" "}
+              </Text>
+            }
+            type="name"
+            value={name}
+            onChangeText={(text) => setName(text)}
+          />
         </View>
-      </Screen>
+        <TouchableOpacity
+          style={styles.introContinueButton}
+          onPress={() => {
+            if (!name.trim()) {
+              alert("Please enter a name");
+              return;
+            } else {
+              introSlider.current.goToSlide(1);
+              setShowSkipButton(true);
+              signInAnonymously;
+              setScrollEnabled(true);
+            }
+          }}
+        >
+          {name && (
+            <Animatable.Text
+              animation="fadeIn"
+              style={styles.introContinueButtonText}
+            >
+              continue
+            </Animatable.Text>
+          )}
+        </TouchableOpacity>
+      </View>
     );
   };
   const renderIntroSlides = ({ item }) => {
@@ -458,6 +471,40 @@ export default function App() {
         style={[{ backgroundColor: item.backgroundColor }, styles.introScreen]}
       >
         <Svg
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
+        >
+          <Defs>
+            <Pattern
+              id="prefix__a"
+              width={100}
+              height={100}
+              viewBox="0 0 40 40"
+              patternUnits="userSpaceOnUse"
+              patternTransform="rotate(135)"
+            >
+              <Rect width="400%" height="400%" fill="rgba(42, 67, 101,0)" />
+              <Circle
+                fill={
+                  item.key == 1
+                    ? colors.darkmodeLightBlack
+                    : colors.pastelYellow
+                }
+                cx={20}
+                cy={20}
+                r={20}
+              />
+              <Circle fill="#ecc94b" cx={-20} cy={20} r={20} />
+            </Pattern>
+          </Defs>
+          <Rect fill="url(#prefix__a)" height="100%" width="100%" />
+        </Svg>
+        {/* <Svg
           style={{
             position: "absolute",
             top: 0,
@@ -484,24 +531,63 @@ export default function App() {
             </Pattern>
           </Defs>
           <Rect fill="url(#prefix__a)" height="100%" width="100%" />
-        </Svg>
+        </Svg> */}
         {/* <ImageBackground
           source={require("./assets/dots.png")}
           imageStyle={{ resizeMode: "repeat" }}
           style={{ width: "100%", height: "100%" }}
         /> */}
         <View style={styles.introContainer}>
-          <Text style={styles.introTitle}>{item.title}</Text>
-          {item.questions && (
-            <CheckBox
-              style={styles.introCheckBox}
-              disabled={false}
-              value={toggleCheckBox}
-              onValueChange={(newValue) => setToggleCheckBox(newValue)}
-            />
+          <Animatable.View animation="fadeIn">
+            <Animatable.Text
+              animation={item.key == 1 ? "fadeOut" : "fadeIn"}
+              delay={3200}
+              duration={1900}
+              style={styles.introTitle}
+            >
+              {item.title}
+            </Animatable.Text>
+            {item.image && (
+              <Image source={item.image} style={{ width: 120, height: 120 }} />
+            )}
+            {item.questions && (
+              <CheckBox
+                style={styles.introCheckBox}
+                disabled={false}
+                value={toggleCheckBox}
+                onValueChange={(newValue) => setToggleCheckBox(newValue)}
+              />
+            )}
+
+            <Animatable.Text
+              animation={item.key == 1 ? "fadeOut" : "fadeIn"}
+              delay={3000}
+              style={styles.introText}
+            >
+              {item.text}
+            </Animatable.Text>
+            <Animatable.Text
+              animation="fadeIn"
+              delay={3000}
+              style={[
+                styles.introText,
+                item.key == 1 && {
+                  top: 330,
+                  textAlign: "right",
+                  paddingRight: 28,
+                },
+              ]}
+            >
+              {item.nextText}
+            </Animatable.Text>
+          </Animatable.View>
+          {item.nameForm && (
+            <Screen style={styles.container}>
+              <Animatable.View animation="fadeIn" delay={3000}>
+                <LoginAsGuestComponent />
+              </Animatable.View>
+            </Screen>
           )}
-          <Text style={styles.introText}>{item.text}</Text>
-          {item.nameForm && <LoginAsGuestComponent />}
         </View>
       </Screen>
     );
@@ -660,7 +746,6 @@ export default function App() {
   if (!showIntro) {
     return content;
   } else {
-    console.log(scrollEnabled);
     return scrollEnabled ? (
       <AppIntroSlider
         ref={introSlider}
@@ -714,8 +799,9 @@ export default function App() {
 // eslint-disable-next-line no-unused-vars
 const styles = StyleSheet.create({
   container: {
-    // justifyContent: "center",
+    justifyContent: "flex-end",
     alignItems: "center",
+    bottom: 40,
   },
 
   introScreen: {
@@ -724,16 +810,17 @@ const styles = StyleSheet.create({
   },
   introContainer: {
     flexDirection: "column",
+
     flex: 1,
   },
   introTitle: {
-    fontSize: 36,
+    fontSize: 56,
     color: colors.darkmodeHighWhite,
     textAlign: "center",
   },
   introText: {
-    fontSize: 20,
     color: colors.darkmodeHighWhite,
+    fontSize: 26,
     textAlign: "center",
   },
   introInputContainer: {
@@ -744,7 +831,7 @@ const styles = StyleSheet.create({
   introCheckBox: {},
   introInputStyles: {
     color: colors.darkmodeHighWhite,
-    fontSize: 17,
+    fontSize: 26,
   },
   introSkipButtonContainer: {
     backgroundColor: colors.darkmodeFocused,
