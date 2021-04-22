@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, Easing } from "react-native";
+import { StyleSheet, Easing, Image } from "react-native";
 import { Input } from "react-native-elements";
 import "react-native-gesture-handler";
 import {
@@ -10,7 +10,7 @@ import {
 import Svg, { Defs, Pattern, Rect, Circle } from "react-native-svg";
 import * as Animatable from "react-native-animatable";
 import { FloatingLabelInput } from "react-native-floating-label-input";
-import CheckBox from "@react-native-community/checkbox";
+// import CheckBox from "@react-native-community/checkbox";
 import {
   createStackNavigator,
   TransitionPresets,
@@ -31,11 +31,11 @@ import {
   FontAwesome,
   MaterialCommunityIcons,
   Octicons,
-} from '@expo/vector-icons';
+} from "@expo/vector-icons";
 
 import { db, auth, fv } from "./firebase";
 
-import colors from './config/colors';
+import colors from "./config/colors";
 
 import WelcomeScreen from "./screens/WelcomeScreen";
 import RegisterScreen from "./screens/RegisterScreen";
@@ -56,7 +56,7 @@ import { Text } from "react-native";
 import Screen from "./components/Screen";
 import { ImageBackground } from "react-native";
 import AppButton from "./components/AppButton";
-import { Image } from "react-native";
+import headerRoubinesButton from "./components/HeaderRoubinesButton";
 
 //  TODO:
 //  keep adding nested navigation
@@ -213,15 +213,15 @@ const JourneyStackScreen = () => {
       <JourneyStack.Screen
         name="Journey"
         component={JourneyScreen}
-        options={{ title: 'Journey' }}
+        options={{ title: "Journey" }}
       />
     </JourneyStack.Navigator>
   );
 };
 
 const defaultScreenOptions = {
-  headerTitleStyle: { color: 'white' },
-  headerTintColor: 'white',
+  headerTitleStyle: { color: "white" },
+  headerTintColor: "white",
   headerShown: false,
 };
 
@@ -243,7 +243,7 @@ function TabBar() {
         component={HomeScreen}
         tabBarAccessibilityLabel="Home"
         options={{
-          title: 'Home',
+          title: "Home",
           tabBarColor: colors.samRed,
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
@@ -261,7 +261,7 @@ function TabBar() {
         component={JourneyScreen}
         tabBarAccessibilityLabel="Journey"
         options={{
-          title: 'Journey',
+          title: "Journey",
           headerShown: true,
           headerStyle: {
             backgroundColor: colors.samRed,
@@ -281,7 +281,7 @@ function TabBar() {
         name="Profile"
         component={ProfileScreen}
         options={{
-          title: 'Profile',
+          title: "Profile",
           headerRight: () => headerSettingsButton(),
           tabBarColor: colors.samRed,
           tabBarIcon: ({ color }) => (
@@ -551,14 +551,14 @@ export default function App() {
             {item.image && (
               <Image source={item.image} style={{ width: 120, height: 120 }} />
             )}
-            {item.questions && (
+            {/* {item.questions && (
               <CheckBox
                 style={styles.introCheckBox}
                 disabled={false}
                 value={toggleCheckBox}
                 onValueChange={(newValue) => setToggleCheckBox(newValue)}
               />
-            )}
+            )} */}
 
             <Animatable.Text
               animation={item.key == 1 ? "fadeOut" : "fadeIn"}
@@ -598,10 +598,10 @@ export default function App() {
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        console.log('logged in ', user.uid);
+        console.log("logged in ", user.uid);
         setIsLoggedIn(true);
       } else {
-        console.log('NOT logged in ', user);
+        console.log("NOT logged in ", user);
         setIsLoggedIn(false);
       }
     });
@@ -709,7 +709,7 @@ export default function App() {
           <RootStack.Screen
             name="Profile"
             component={ProfileStackScreen}
-            options={{ title: 'Profile' }}
+            options={{ title: "Profile" }}
           />
           <RootStack.Screen name="Register" component={RegisterScreen} />
           <RootStack.Screen name="Login" component={LoginScreen} />

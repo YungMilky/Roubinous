@@ -18,12 +18,7 @@
     "@expo-google-fonts/swanky-and-moo-moo": "^0.1.0",
     "@expo-google-fonts/the-girl-next-door": "^0.1.0",
     "@expo-google-fonts/unna": "^0.1.0",
-<<<<<<< HEAD
-    "@react-native-community/checkbox": "^0.5.7",
-    "@react-native-community/datetimepicker": "3.0.4",
-=======
     "@react-native-community/datetimepicker": "3.2.0",
->>>>>>> 3b7799c5dc90e1aac15830facf923729b7eea3bf
     "@react-native-community/google-signin": "^5.0.0",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-firebase/app": "^11.2.0",
