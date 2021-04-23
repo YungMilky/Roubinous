@@ -7,7 +7,7 @@ export default (title) => {
     .collection("Users")
     .doc(userID)
     .collection("routines");
-  console.log(title);
+
   userRoutines
     .doc(title)
     .get()
@@ -17,6 +17,7 @@ export default (title) => {
         userRoutines.doc(title).update({
           removed: true,
         });
+        // console.log("yooooooooooooooooo");
       }
     });
 };
