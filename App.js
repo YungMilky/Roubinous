@@ -57,6 +57,7 @@ import Screen from "./components/Screen";
 import { ImageBackground } from "react-native";
 import AppButton from "./components/AppButton";
 import headerRoubinesButton from "./components/HeaderRoubinesButton";
+import CalendarScreen from "./screens/CalendarScreen";
 
 //  TODO:
 //  keep adding nested navigation
@@ -720,6 +721,11 @@ export default function App() {
           <RootStack.Screen
             name="Browse Routines"
             component={RoutinesStackScreen}
+            options={{ headerShown: false }}
+          />
+          <RootStack.Screen
+            name="Calendars"
+            component={CalendarScreen}
             options={{ headerShown: false }}
           />
           <RootStack.Screen
