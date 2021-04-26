@@ -1,29 +1,29 @@
-import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, Easing, Image } from "react-native";
-import { Input } from "react-native-elements";
-import "react-native-gesture-handler";
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, Easing, Image } from 'react-native';
+import { Input } from 'react-native-elements';
+import 'react-native-gesture-handler';
 import {
   NavigationContainer,
   StackActions,
   useNavigation,
-} from "@react-navigation/native";
-import Svg, { Defs, Pattern, Rect, Circle } from "react-native-svg";
-import * as Animatable from "react-native-animatable";
-import { FloatingLabelInput } from "react-native-floating-label-input";
+} from '@react-navigation/native';
+import Svg, { Defs, Pattern, Rect, Circle } from 'react-native-svg';
+import * as Animatable from 'react-native-animatable';
+import { FloatingLabelInput } from 'react-native-floating-label-input';
 // import CheckBox from "@react-native-community/checkbox";
 import {
   createStackNavigator,
   TransitionPresets,
   CardStyleInterpolators,
-} from "@react-navigation/stack";
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import { TransitionSpecs } from "@react-navigation/stack";
-import { Constants } from "react-native-unimodules";
-import AppLoading from "expo-app-loading";
-import { LogBox } from "react-native";
-import AppIntroSlider from "react-native-app-intro-slider";
-import { createSharedElementStackNavigator } from "react-navigation-shared-element";
-import { enableScreens } from "react-native-screens";
+} from '@react-navigation/stack';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { TransitionSpecs } from '@react-navigation/stack';
+import { Constants } from 'react-native-unimodules';
+import AppLoading from 'expo-app-loading';
+import { LogBox } from 'react-native';
+import AppIntroSlider from 'react-native-app-intro-slider';
+import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
+import { enableScreens } from 'react-native-screens';
 enableScreens();
 
 import {
@@ -31,32 +31,32 @@ import {
   FontAwesome,
   MaterialCommunityIcons,
   Octicons,
-} from "@expo/vector-icons";
+} from '@expo/vector-icons';
 
-import { db, auth, fv } from "./firebase";
+import { db, auth, fv } from './firebase';
 
-import colors from "./config/colors";
+import colors from './config/colors';
 
-import WelcomeScreen from "./screens/WelcomeScreen";
-import RegisterScreen from "./screens/RegisterScreen";
-import ProfileScreen from "./screens/ProfileScreen";
-import HomeScreen from "./screens/HomeScreen";
-import LoginScreen from "./screens/LoginScreen";
-import RoutinesScreen from "./screens/RoutinesScreen";
-import ResetPasswordScreen from "./screens/ResetPasswordScreen";
-import LoginAsGuestScreen from "./screens/LoginAsGuestScreen";
-import RoutineScreen from "./screens/RoutineScreen";
-import NotificationSettingScreen from "./screens/NotificationSettingScreen";
-import AddRoutineScreen from "./screens/AddRoutineScreen";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import SettingsScreen from "./screens/SettingsScreen";
-import JourneyScreen from "./screens/JourneyScreen";
-import { View } from "react-native";
-import { Text } from "react-native";
-import Screen from "./components/Screen";
-import { ImageBackground } from "react-native";
-import AppButton from "./components/AppButton";
-import headerRoubinesButton from "./components/HeaderRoubinesButton";
+import WelcomeScreen from './screens/WelcomeScreen';
+import RegisterScreen from './screens/RegisterScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import HomeScreen from './screens/HomeScreen';
+import LoginScreen from './screens/LoginScreen';
+import RoutinesScreen from './screens/RoutinesScreen';
+import ResetPasswordScreen from './screens/ResetPasswordScreen';
+import LoginAsGuestScreen from './screens/LoginAsGuestScreen';
+import RoutineScreen from './screens/RoutineScreen';
+import NotificationSettingScreen from './screens/NotificationSettingScreen';
+import AddRoutineScreen from './screens/AddRoutineScreen';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import SettingsScreen from './screens/SettingsScreen';
+import JourneyScreen from './screens/JourneyScreen';
+import { View } from 'react-native';
+import { Text } from 'react-native';
+import Screen from './components/Screen';
+import { ImageBackground } from 'react-native';
+import AppButton from './components/AppButton';
+import headerRoubinesButton from './components/HeaderRoubinesButton';
 
 //  TODO:
 //  keep adding nested navigation
@@ -77,7 +77,7 @@ const RootStack = createStackNavigator();
 const JourneyStack = createStackNavigator();
 
 const config = {
-  änimation: "spring",
+  änimation: 'spring',
   config: {
     duration: 150,
     easing: Easing.linear,
@@ -97,7 +97,7 @@ const headerSettingsButton = () => {
   return (
     <TouchableOpacity
       style={{ paddingRight: 10 }}
-      onPress={() => navigation.navigate("Settings")}
+      onPress={() => navigation.navigate('Settings')}
     >
       {/* <Image
         style={{ width: 26, height: 26 }}
@@ -108,8 +108,8 @@ const headerSettingsButton = () => {
   );
 };
 
-if (typeof LogBox != "undefined") {
-  LogBox.ignoreLogs(["Warning: ...", "Setting a timer"]);
+if (typeof LogBox != 'undefined') {
+  LogBox.ignoreLogs(['Warning: ...', 'Setting a timer']);
 }
 
 const ProfileStackScreen = () => {
@@ -119,7 +119,7 @@ const ProfileStackScreen = () => {
         headerStyle: { backgroundColor: colors.samRed },
         headerTitleStyle: { color: colors.samRed },
         gestureEnabled: true,
-        gestureDirection: "horizontal",
+        gestureDirection: 'horizontal',
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         transitionSpec: {
           open: config,
@@ -161,7 +161,7 @@ const RoutinesStackScreen = () => {
         headerStyle: { backgroundColor: colors.samRed },
         headerTitleStyle: { color: colors.darkmodeHighWhite },
         gestureEnabled: true,
-        gestureDirection: "horizontal",
+        gestureDirection: 'horizontal',
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         transitionSpec: {
           open: config,
@@ -201,7 +201,7 @@ const JourneyStackScreen = () => {
         headerStyle: { backgroundColor: colors.samRed },
         headerTitleStyle: { color: colors.samRed },
         gestureEnabled: true,
-        gestureDirection: "horizontal",
+        gestureDirection: 'horizontal',
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         transitionSpec: {
           open: config,
@@ -213,15 +213,15 @@ const JourneyStackScreen = () => {
       <JourneyStack.Screen
         name="Journey"
         component={JourneyScreen}
-        options={{ title: "Journey" }}
+        options={{ title: 'Journey' }}
       />
     </JourneyStack.Navigator>
   );
 };
 
 const defaultScreenOptions = {
-  headerTitleStyle: { color: "white" },
-  headerTintColor: "white",
+  headerTitleStyle: { color: 'white' },
+  headerTintColor: 'white',
   headerShown: false,
 };
 
@@ -243,7 +243,7 @@ function TabBar() {
         component={HomeScreen}
         tabBarAccessibilityLabel="Home"
         options={{
-          title: "Home",
+          title: 'Home',
           tabBarColor: colors.samRed,
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
@@ -261,7 +261,7 @@ function TabBar() {
         component={JourneyScreen}
         tabBarAccessibilityLabel="Journey"
         options={{
-          title: "Journey",
+          title: 'Journey',
           headerShown: true,
           headerStyle: {
             backgroundColor: colors.samRed,
@@ -281,7 +281,7 @@ function TabBar() {
         name="Profile"
         component={ProfileScreen}
         options={{
-          title: "Profile",
+          title: 'Profile',
           headerRight: () => headerSettingsButton(),
           tabBarColor: colors.samRed,
           tabBarIcon: ({ color }) => (
@@ -308,7 +308,7 @@ export default function App() {
   //    -
 
   const introSlider = useRef(null);
-  const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(false);
   const [showSkipButton, setShowSkipButton] = useState(false);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [isNameFocused, setIsNameFocused] = useState(false);
@@ -318,19 +318,19 @@ export default function App() {
   const introSlides = [
     {
       key: 1,
-      title: "Hello!",
+      title: 'Hello!',
       text: "I'm Roubine.",
       nextText: "...what's your name?",
-      image: require("./assets/icons/Group.png"),
+      image: require('./assets/icons/Group.png'),
       backgroundColor: colors.pastelRed,
       nameForm: true,
     },
     {
       key: 2,
-      title: "Title 1",
-      text: "Description.\nSay something cool",
+      title: 'Title 1',
+      text: 'Description.\nSay something cool',
       // image: require('./assets/1.jpg'),
-      backgroundColor: "#59b2ab",
+      backgroundColor: '#59b2ab',
     },
   ];
   const introDoneButton = () => {
@@ -349,14 +349,14 @@ export default function App() {
   };
 
   const LoginAsGuestComponent = () => {
-    const [name, setName] = useState("");
+    const [name, setName] = useState('');
     setDisableKeyboard(true);
 
     const signInAnonymously = () => {
       if (!name.trim()) {
       } else {
         auth.signInAnonymously().then((cred) => {
-          return db.collection("Users").doc(cred.user.uid).set({
+          return db.collection('Users').doc(cred.user.uid).set({
             Name: name,
             Guest: true,
             UserRank: 1,
@@ -404,11 +404,11 @@ export default function App() {
             }}
             staticLabel="your name"
             rightComponent={
-              name != "" ? (
+              name != '' ? (
                 <View style={{ padding: 12 }}>
                   <TouchableOpacity
                     onPress={() => {
-                      setName("");
+                      setName('');
                       setIsNameFocused(false);
                       setScrollEnabled(true);
                     }}
@@ -432,7 +432,7 @@ export default function App() {
                     : { color: colors.darkmodeHighWhite },
                 ]}
               >
-                Hey, I'm{" "}
+                Hey, I'm{' '}
               </Text>
             }
             type="name"
@@ -444,7 +444,7 @@ export default function App() {
           style={styles.introContinueButton}
           onPress={() => {
             if (!name.trim()) {
-              alert("Please enter a name");
+              alert('Please enter a name');
               return;
             } else {
               introSlider.current.goToSlide(1);
@@ -473,7 +473,7 @@ export default function App() {
       >
         <Svg
           style={{
-            position: "absolute",
+            position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
@@ -541,7 +541,7 @@ export default function App() {
         <View style={styles.introContainer}>
           <Animatable.View animation="fadeIn">
             <Animatable.Text
-              animation={item.key == 1 ? "fadeOut" : "fadeIn"}
+              animation={item.key == 1 ? 'fadeOut' : 'fadeIn'}
               delay={3200}
               duration={1900}
               style={styles.introTitle}
@@ -561,7 +561,7 @@ export default function App() {
             )} */}
 
             <Animatable.Text
-              animation={item.key == 1 ? "fadeOut" : "fadeIn"}
+              animation={item.key == 1 ? 'fadeOut' : 'fadeIn'}
               delay={3000}
               style={styles.introText}
             >
@@ -574,7 +574,7 @@ export default function App() {
                 styles.introText,
                 item.key == 1 && {
                   top: 330,
-                  textAlign: "right",
+                  textAlign: 'right',
                   paddingRight: 28,
                 },
               ]}
@@ -594,28 +594,28 @@ export default function App() {
     );
   };
 
-  const [isLoggedIn, setIsLoggedIn] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState('');
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        console.log("logged in ", user.uid);
+        console.log('logged in ');
         setIsLoggedIn(true);
       } else {
-        console.log("NOT logged in ", user);
+        console.log('NOT logged in ');
         setIsLoggedIn(false);
       }
     });
   }, [auth.user]);
 
   const updateRank = () => {
-    db.collection("Users")
+    db.collection('Users')
       .doc(auth.currentUser.uid)
       .get()
       .then((doc) => {
         //get user exp
         let experience = doc.data().exp;
-        console.log("setting exp: ", doc.data().exp);
-        console.log("exp: ", experience);
+        console.log('setting exp: ', doc.data().exp);
+        console.log('exp: ', experience);
 
         //decide rank by exp
         let newRank = 0;
@@ -626,10 +626,10 @@ export default function App() {
         } else if (experience < 38) {
           newRank = 1;
         }
-        console.log("new rank:", newRank);
+        console.log('new rank:', newRank);
 
         //set rank
-        db.collection("Users").doc(auth.currentUser.uid).update({
+        db.collection('Users').doc(auth.currentUser.uid).update({
           UserRank: newRank,
         });
       });
@@ -637,15 +637,15 @@ export default function App() {
 
   const rewardAddedRoutine = () => {
     let newerExp = 0;
-    db.collection("Users")
+    db.collection('Users')
       .doc(auth.currentUser.uid)
       .get()
       .then((doc) => {
-        const routineRef = db.collection("Users").doc(auth.currentUser.uid);
+        const routineRef = db.collection('Users').doc(auth.currentUser.uid);
 
         routineRef.update({
           Roubies: doc.data().Roubies + rewardForAddingRoutine,
-          exp: doc.data().exp + rewardForAddingRoutine,
+          Exp: doc.data().exp + rewardForAddingRoutine,
         });
       });
   };
@@ -659,16 +659,16 @@ export default function App() {
       // giving the user free rewards)
       // if (isLoggedIn) {
       const subscriber = db
-        .collection("Users")
+        .collection('Users')
         .doc(auth.currentUser.uid)
-        .collection("routines")
+        .collection('routines')
         .onSnapshot((documentSnapshot) => {
           if (initState) {
             initState = false;
             updateRank();
           } else {
             documentSnapshot.docChanges().forEach((change) => {
-              if (change.type === "added") {
+              if (change.type === 'added') {
                 rewardAddedRoutine();
               }
             });
@@ -688,7 +688,7 @@ export default function App() {
             headerStyle: { backgroundColor: colors.samRed },
             headerTitleStyle: { color: colors.darkmodeHighWhite },
             gestureEnabled: true,
-            gestureDirection: "horizontal",
+            gestureDirection: 'horizontal',
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
             transitionSpec: {
               open: config,
@@ -709,7 +709,7 @@ export default function App() {
           <RootStack.Screen
             name="Profile"
             component={ProfileStackScreen}
-            options={{ title: "Profile" }}
+            options={{ title: 'Profile' }}
           />
           <RootStack.Screen name="Register" component={RegisterScreen} />
           <RootStack.Screen name="Login" component={LoginScreen} />
@@ -811,29 +811,29 @@ export default function App() {
 // eslint-disable-next-line no-unused-vars
 const styles = StyleSheet.create({
   container: {
-    justifyContent: "flex-end",
-    alignItems: "center",
+    justifyContent: 'flex-end',
+    alignItems: 'center',
     bottom: 40,
   },
 
   introScreen: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
   },
   introContainer: {
-    flexDirection: "column",
+    flexDirection: 'column',
 
     flex: 1,
   },
   introTitle: {
     fontSize: 56,
     color: colors.darkmodeHighWhite,
-    textAlign: "center",
+    textAlign: 'center',
   },
   introText: {
     color: colors.darkmodeHighWhite,
     fontSize: 26,
-    textAlign: "center",
+    textAlign: 'center',
   },
   introInputContainer: {
     width: 300,
@@ -853,10 +853,10 @@ const styles = StyleSheet.create({
   introSkipButtonText: {
     fontSize: 26,
     color: colors.darkmodeDisabledWhite,
-    textAlign: "center",
+    textAlign: 'center',
   },
   introDoneButtonContainer: {
-    justifyContent: "center",
+    justifyContent: 'center',
     backgroundColor: colors.darkmodeFocused,
     padding: 16,
     borderRadius: 15,
@@ -864,12 +864,12 @@ const styles = StyleSheet.create({
   introDoneButtonText: {
     fontSize: 26,
     color: colors.darkmodeDisabledWhite,
-    textAlign: "center",
+    textAlign: 'center',
   },
   introContinueButton: {},
   introContinueButtonText: {
     fontSize: 16,
     color: colors.darkmodeMediumWhite,
-    textAlign: "right",
+    textAlign: 'right',
   },
 });

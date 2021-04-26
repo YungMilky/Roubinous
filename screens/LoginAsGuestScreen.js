@@ -8,6 +8,7 @@ import AppButton from '../components/AppButton';
 import colors from '../config/colors';
 import PropTypes from 'prop-types';
 import CreateDailyNotification from '../components/notification/CreateDailyNotification';
+import Screen from '../components/Screen';
 
 const LoginAsGuestScreen = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -32,11 +33,12 @@ const LoginAsGuestScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <Screen style={styles.container}>
       <Text style={styles.text}>We just need your name</Text>
       <View style={styles.input}>
         <StatusBar style="light" />
         <Input
+          style={{ color: colors.darkmodeHighWhite }}
           placeholder="Your name here..."
           autoFocus
           type="name"
@@ -52,7 +54,7 @@ const LoginAsGuestScreen = ({ navigation }) => {
         title="Let's go!"
         onPress={signInAnonymously}
       />
-    </View>
+    </Screen>
   );
 };
 
@@ -72,7 +74,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   input: {
-    width: '80%',
+    width: 300,
   },
   text: {
     color: colors.OrchidPink,

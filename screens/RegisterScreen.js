@@ -23,9 +23,10 @@ const RegisterScreen = ({ navigation }) => {
 
   const register = () => {
     if (!email.trim()) {
-      alert('Please write an email');
+      setInputError('Please write an email');
       return;
     } else {
+      auth.signOut();
       auth
         .createUserWithEmailAndPassword(email, password)
         .then((cred) => {
@@ -62,19 +63,19 @@ const RegisterScreen = ({ navigation }) => {
       <View style={styles.inputContainer}>
         <Input
           style={styles.input}
+          placeholder="Email"
+          type="email"
+          value={email}
+          onChangeText={(text) => setEmail(text)}
+        />
+        <Input
+          style={styles.input}
           placeholder="Name"
           type="name"
           value={name}
           onChangeText={(text) => setName(text)}
         />
 
-        <Input
-          style={styles.input}
-          placeholder="Email"
-          type="email"
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-        />
         <Input
           style={styles.input}
           placeholder="Password"
