@@ -1,6 +1,6 @@
 import { Calendar, Agenda } from "react-native-calendars";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Text, Alert } from "react-native";
 import { db, auth } from "../firebase";
 
 const timeToString = (time) => {
@@ -29,7 +29,7 @@ function CalendarScreen(props) {
 
           // setStartDate(new Date( * 1000));
 
-          console.log(routinesData);
+          // console.log(routinesData);
         });
       });
   }, []);
@@ -38,14 +38,13 @@ function CalendarScreen(props) {
     setTimeout(() => {
       //Kanske lägga in en array med datum sen ta ut datumet till time
       for (let i = 0; i < routinesData.length; i++) {
-        // const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-        const time = routinesData[i].StartTime.seconds * 1000;
-        console.log("Tid: " + time);
-        // console.log(day.timestamp + i * 24 * 60 * 60 * 1000);
-        // console.log(day);
+        // const time = day.timestamp * 24 * 60 * 60 * 1000;
+        const time = routinesData[i].StartTime.seconds * 1000 + 9500000;
+        console.log(new Date(time));
+        // StartTime.seconds * 1000 + 86400;
+
         const strTime = timeToString(time);
         console.log(strTime);
-
         if (!items[strTime]) {
           items[strTime] = [];
           // const numItems = Math.floor(Math.random() * 3 + 1);
@@ -68,7 +67,7 @@ function CalendarScreen(props) {
       setItems(newItems);
     }, 1000);
   };
-  console.log(items);
+
   const renderItem = (item) => {
     return (
       <View>
