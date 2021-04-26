@@ -14,6 +14,7 @@ function CalendarScreen(props) {
   console.log(userId);
 
   let routinesData = [];
+  let numOfRoutines = [];
 
   useEffect(() => {
     db.collection("Users")
@@ -23,9 +24,9 @@ function CalendarScreen(props) {
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           routinesData.push(doc.data());
+          numOfRoutines.push(doc.id);
 
           // routinesStartDate = doc.data().timestamp.toDate();
-          // console.log(doc.id, " => ", doc.data());
 
           // setStartDate(new Date( * 1000));
 
@@ -40,7 +41,8 @@ function CalendarScreen(props) {
       for (let i = 0; i < routinesData.length; i++) {
         // const time = day.timestamp * 24 * 60 * 60 * 1000;
         const time = routinesData[i].StartTime.seconds * 1000 + 9500000;
-        console.log(new Date(time));
+        const routineName = routinesData[i].name;
+        console.log("R name: " + routineName);
         // StartTime.seconds * 1000 + 86400;
 
         const strTime = timeToString(time);
@@ -48,15 +50,16 @@ function CalendarScreen(props) {
         if (!items[strTime]) {
           items[strTime] = [];
           // const numItems = Math.floor(Math.random() * 3 + 1);
-          const numItems = 1;
+          // const numItems = 1;
+
           //Letar igenom antal items för dagen
-          for (let j = 0; j <= numItems; j++) {
-            //Items[strTime] = ID (keys), vilet är datum
-            items[strTime].push({
-              name: "Item for " + strTime + " #" + j,
-              height: Math.max(50, Math.floor(Math.random() * 150)),
-            });
-          }
+          // for (let j = 0; j <= numOfRoutines.length; j++) {
+          //Items[strTime] = ID (keys), vilet är datum
+          items[strTime].push({
+            name: "Item for " + strTime + " #" + routineName,
+            height: Math.max(50, Math.floor(Math.random() * 150)),
+          });
+          // }
         }
       }
 
