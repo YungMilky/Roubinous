@@ -9,16 +9,23 @@ import { auth, db } from '../firebase';
 const headerRoubinesButton = () => {
   const navigation = useNavigation();
   const [roubies, setRoubies] = useState('');
-  // useEffect(() => {
-  //   const user = auth.currentUser.uid;
-  //   db.collection('Users')
-  //     .doc(user)
-  //     .get('Roubies')
-  //     .then((documentSnapshot) => {
-  //       setRoubies(documentSnapshot.data().Roubies);
-  //       console.log(roubies);
-  //     });
-  // }, []);
+
+  useEffect(() => {
+    try {
+      const user = auth.currentUser.uid;
+      db.collection('Users')
+        .doc(user)
+        .get('Roubies')
+        .then((documentSnapshot) => {
+          setRoubies(documentSnapshot.data().Roubies);
+          console.log(roubies);
+        });
+    } catch (e) {
+      console.log(
+        'Timo is the best and u looged out cant get Roubies info: ' + e
+      );
+    }
+  }, []);
 
   return (
     <View style={styles.groupButton}>
@@ -52,6 +59,7 @@ const headerRoubinesButton = () => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   logo: {
     width: 40,
