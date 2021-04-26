@@ -308,7 +308,7 @@ export default function App() {
   //    -
 
   const introSlider = useRef(null);
-  const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(false);
   const [showSkipButton, setShowSkipButton] = useState(false);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [isNameFocused, setIsNameFocused] = useState(false);

@@ -9,16 +9,16 @@ import { auth, db } from "../firebase";
 const headerRoubinesButton = () => {
   const navigation = useNavigation();
   const [roubies, setRoubies] = useState("");
-  useEffect(() => {
-    const user = auth.currentUser.uid;
-    db.collection("Users")
-      .doc(user)
-      .get("Roubies")
-      .then((documentSnapshot) => {
-        setRoubies(documentSnapshot.data().Roubies);
-        console.log(roubies);
-      });
-  }, []);
+  // useEffect(() => {
+  //   const user = auth.currentUser.uid;
+  //   db.collection("Users")
+  //     .doc(user)
+  //     .get("Roubies")
+  //     .then((documentSnapshot) => {
+  //       setRoubies(documentSnapshot.data().Roubies);
+  //       console.log(roubies);
+  //     });
+  // }, []);
 
   return (
     <View style={styles.groupButton}>
@@ -45,7 +45,7 @@ const headerRoubinesButton = () => {
               style={styles.logo}
               source={require("../assets/icons/ruby.png")}
             />
-            <AppText style={styles.apptext}>{roubies}</AppText>
+            {/* <AppText style={styles.apptext}>{roubies}</AppText> */}
           </View>
         </TouchableOpacity>
       </View>
