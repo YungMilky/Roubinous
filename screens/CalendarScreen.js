@@ -1,5 +1,5 @@
-import { Calendar, CalendarList, Agenda } from "react-native-calendars";
-import React, { useState } from "react";
+import { Calendar, Agenda } from "react-native-calendars";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
 import { db, auth } from "../firebase";
 
@@ -10,28 +10,29 @@ const timeToString = (time) => {
 
 function CalendarScreen(props) {
   const [items, setItems] = useState({});
-  const [refresh, setRefresh] = useState();
-
   const userId = auth.currentUser.uid;
   console.log(userId);
 
   let routinesData = [];
 
-  db.collection("Users")
-    .doc(userId)
-    .collection("routines")
-    .get()
-    .then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        routinesData.push(doc.data());
-        // routinesStartDate = doc.data().timestamp.toDate();
-        // console.log(doc.id, " => ", doc.data());
+  useEffect(() => {
+    db.collection("Users")
+      .doc(userId)
+      .collection("routines")
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          routinesData.push(doc.data());
 
-        // setStartDate(new Date( * 1000));
+          // routinesStartDate = doc.data().timestamp.toDate();
+          // console.log(doc.id, " => ", doc.data());
 
-        console.log(routinesData);
+          // setStartDate(new Date( * 1000));
+
+          console.log(routinesData);
+        });
       });
-    });
+  }, []);
 
   const loadItems = () => {
     setTimeout(() => {
@@ -39,7 +40,7 @@ function CalendarScreen(props) {
       for (let i = 0; i < routinesData.length; i++) {
         // const time = day.timestamp + i * 24 * 60 * 60 * 1000;
         const time = routinesData[i].StartTime.seconds * 1000;
-        console.log(time);
+        console.log("Tid: " + time);
         // console.log(day.timestamp + i * 24 * 60 * 60 * 1000);
         // console.log(day);
         const strTime = timeToString(time);
@@ -60,46 +61,32 @@ function CalendarScreen(props) {
         }
       }
 
-      setTimeout(() => {
-        console.log("refreshed");
-        setRefresh(true);
-      }, 5000);
-
       const newItems = {};
       Object.keys(items).forEach((key) => {
         newItems[key] = items[key];
       });
       setItems(newItems);
-      console.log(items);
     }, 1000);
   };
-  // const renderItem = (item) => {
-  //   return (
-  //     <View>
-  //       <TouchableOpacity
-  //         style={[styles.item, { height: item.height }]}
-  //         onPress={() => Alert.alert(item.name, item.name)}
-  //       >
-  //         <Text>{item.name}</Text>
-  //       </TouchableOpacity>
-  //     </View>
-  //   );
-  // };
+  console.log(items);
+  const renderItem = (item) => {
+    return (
+      <View>
+        <TouchableOpacity
+          style={[styles.item, { height: item.height }]}
+          onPress={() => Alert.alert(item.name, item.name)}
+        >
+          <Text>{item.name}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   return (
     <Agenda
       items={items}
       loadItemsForMonth={loadItems}
-      renderItem={(item) => {
-        <View>
-          <TouchableOpacity
-            style={[styles.item, { height: item.height }]}
-            onPress={() => Alert.alert(item.name, item.name)}
-          >
-            <Text>{item.name}</Text>
-          </TouchableOpacity>
-        </View>;
-      }}
-      refreshing={refresh}
+      renderItem={renderItem}
     />
   );
 }
