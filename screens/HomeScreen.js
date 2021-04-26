@@ -10,6 +10,37 @@ import CreateDailyNotification from "../components/notification/CreateDailyNotif
 import CancelAllNotifications from "../components/notification/CancelAllNotifications";
 
 const HomeScreen = ({ navigation }) => {
+  
+  let nowDate = new Date();
+
+  const getDailyRewardTime = () => {
+    db.collection('Users')
+      .doc(auth.currentUser.uid)
+      .get()
+      .then((documentSnapshot) => {
+        const date = documentSnapshot.data().DailyRewardDay
+        const month = documentSnapshot.data().DailyRewardMonth
+        const year = documentSnapshot.data().DailyRewardYear
+      
+         if (date < nowDate.getDate() || month < (nowDate.getMonth()+1) || year < nowDate.getFullYear() ) {
+            db.collection("Users").doc(auth.currentUser.uid)
+            .update({
+              Roubies: documentSnapshot.data().Roubies +50, 
+              Exp: documentSnapshot.data().Exp + 50,
+              DailyRewardDay: nowDate.getDate(),
+              DailyRewardMonth: (nowDate.getMonth()+1),
+              DailyRewardYear: nowDate.getFullYear(),
+        });
+           }
+      });
+  };
+ 
+  
+  useEffect(() => {
+    getDailyRewardTime();
+  }, []);
+
+
   // const user = auth.currentUser;
 
   // const getUserTime = () => {
