@@ -76,7 +76,7 @@ function CalendarScreen(props) {
           for (let i = 0; i < routinesNameThatDay.length; i++) {
             //Items[strTime] = ID (keys), vilet är datum
             items[strTime].push({
-              name: "Item for " + strTime + " #" + routinesNameThatDay,
+              name: "Item for " + strTime + " #" + routinesNameThatDay[i],
               height: Math.max(50, Math.floor(Math.random() * 150)),
             });
           }
