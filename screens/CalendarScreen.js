@@ -14,7 +14,6 @@ function CalendarScreen(props) {
   console.log(userId);
 
   let routinesData = [];
-  let numOfRoutines = [];
 
   useEffect(() => {
     db.collection("Users")
@@ -24,7 +23,6 @@ function CalendarScreen(props) {
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           routinesData.push(doc.data());
-          numOfRoutines.push(doc.id);
 
           // routinesStartDate = doc.data().timestamp.toDate();
 
@@ -34,32 +32,55 @@ function CalendarScreen(props) {
         });
       });
   }, []);
+  const daysInNextThirtyDays = () => {
+    let today = new Date();
+
+    let year = today.getFullYear();
+    let month = today.getMonth();
+    let date = today.getDate();
+
+    var daysInWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    for (let i = 0; i < 30; i++) {
+      let days = new Date(year, month - 1, date + i).toDateString();
+    }
+  };
 
   const loadItems = () => {
     setTimeout(() => {
+      let routinesNameThatDay = [];
+      // const [numOfItems, setNumOfItems] = useState({});
       //Kanske lägga in en array med datum sen ta ut datumet till time
       for (let i = 0; i < routinesData.length; i++) {
         // const time = day.timestamp * 24 * 60 * 60 * 1000;
         const time = routinesData[i].StartTime.seconds * 1000 + 9500000;
-        const routineName = routinesData[i].name;
-        console.log("R name: " + routineName);
-        // StartTime.seconds * 1000 + 86400;
 
         const strTime = timeToString(time);
         console.log(strTime);
+
+        for (let i = 0; i < routinesData.length; i++) {
+          const timeCompare =
+            routinesData[i].StartTime.seconds * 1000 + 9500000;
+          const strTimeCompare = timeToString(timeCompare);
+          const routineNames = routinesData[i].name;
+
+          if (strTime === strTimeCompare) {
+            routinesNameThatDay.push(routineNames);
+          }
+        }
+        console.log(routinesNameThatDay);
+
         if (!items[strTime]) {
           items[strTime] = [];
-          // const numItems = Math.floor(Math.random() * 3 + 1);
-          // const numItems = 1;
 
-          //Letar igenom antal items för dagen
-          // for (let j = 0; j <= numOfRoutines.length; j++) {
-          //Items[strTime] = ID (keys), vilet är datum
-          items[strTime].push({
-            name: "Item for " + strTime + " #" + routineName,
-            height: Math.max(50, Math.floor(Math.random() * 150)),
-          });
-          // }
+          for (let i = 0; i < routinesNameThatDay.length; i++) {
+            //Items[strTime] = ID (keys), vilet är datum
+            items[strTime].push({
+              name: "Item for " + strTime + " #" + routinesNameThatDay,
+              height: Math.max(50, Math.floor(Math.random() * 150)),
+            });
+          }
+          routinesNameThatDay = [];
         }
       }
 
