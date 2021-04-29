@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Text, StyleSheet, TouchableOpacity } from "react-native";
-import PropTypes from "prop-types";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React, { useState, useEffect } from 'react';
+import { Text, StyleSheet, TouchableOpacity } from 'react-native';
+import PropTypes from 'prop-types';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import { auth, db } from "../firebase";
-import Screen from "../components/Screen";
-import colors from "../config/colors";
-import CreateDailyNotification from "../components/notification/CreateDailyNotification";
-import CancelAllNotifications from "../components/notification/CancelAllNotifications";
+import { auth, db } from '../firebase';
+import Screen from '../components/Screen';
+import colors from '../config/colors';
+import CreateDailyNotification from '../components/notification/CreateDailyNotification';
+import CancelAllNotifications from '../components/notification/CancelAllNotifications';
 
 const HomeScreen = ({ navigation }) => {
-  
   let nowDate = new Date();
 
   const getDailyRewardTime = () => {
@@ -18,28 +17,34 @@ const HomeScreen = ({ navigation }) => {
       .doc(auth.currentUser.uid)
       .get()
       .then((documentSnapshot) => {
-        const date = documentSnapshot.data().DailyRewardDay
-        const month = documentSnapshot.data().DailyRewardMonth
-        const year = documentSnapshot.data().DailyRewardYear
-      
-         if (date < nowDate.getDate() || month < (nowDate.getMonth()+1) || year < nowDate.getFullYear() ) {
-            db.collection("Users").doc(auth.currentUser.uid)
+        const date = documentSnapshot.data().DailyRewardDay;
+        const month = documentSnapshot.data().DailyRewardMonth;
+        const year = documentSnapshot.data().DailyRewardYear;
+
+        if (
+          date < nowDate.getDate() ||
+          month < nowDate.getMonth() + 1 ||
+          year < nowDate.getFullYear()
+        ) {
+          db.collection('Users')
+            .doc(auth.currentUser.uid)
             .update({
-              Roubies: documentSnapshot.data().Roubies +50, 
+              Roubies: documentSnapshot.data().Roubies + 50,
               Exp: documentSnapshot.data().Exp + 50,
               DailyRewardDay: nowDate.getDate(),
-              DailyRewardMonth: (nowDate.getMonth()+1),
+              DailyRewardMonth: nowDate.getMonth() + 1,
               DailyRewardYear: nowDate.getFullYear(),
-        });
-           }
+            });
+          console.log('Eligible for daily reward!!');
+        } else {
+          console.log('Not eligible for daily reward!');
+        }
       });
   };
- 
-  
+
   useEffect(() => {
     getDailyRewardTime();
   }, []);
-
 
   // const user = auth.currentUser;
 
@@ -82,7 +87,7 @@ const HomeScreen = ({ navigation }) => {
       <TouchableOpacity
         style={styles.button}
         onPress={() =>
-          navigation.navigate("Browse Routines", { screen: "Browse Routines" })
+          navigation.navigate('Browse Routines', { screen: 'Browse Routines' })
         }
       >
         <MaterialCommunityIcons
@@ -97,14 +102,18 @@ const HomeScreen = ({ navigation }) => {
           name="clock-time-eight"
           size={70}
           color={colors.samRed}
+          onPress={() =>
+            navigation.navigate('My Routines', { screen: 'My Routines' })
+          }
         />
         <Text style={styles.buttonText}>My Routines</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
-        onPress={() =>
-          navigation.navigate("Calendars", { screen: "Calendars" })
-        }
+        // onPress={
+        //   //() =>
+        //   // navigation.navigate("Calendars", { screen: "Calendars" })
+        // }
       >
         <MaterialCommunityIcons
           name="baseball"
@@ -119,12 +128,12 @@ const HomeScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   button: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     margin: 20,
     width: 120,
     height: 120,
@@ -134,8 +143,8 @@ const styles = StyleSheet.create({
     color: colors.darkmodeMediumWhite,
   },
   rowButton: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     margin: 20,
   },
 });

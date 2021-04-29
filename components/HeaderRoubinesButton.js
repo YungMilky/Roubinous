@@ -22,7 +22,7 @@ const headerRoubinesButton = () => {
         });
     } catch (e) {
       console.log(
-        'Timo is the best and u looged out cant get Roubies info: ' + e
+        'Timo is a dum-dum and u looged out cant get Roubies info: ' + e
       );
     }
   }, []);
@@ -52,7 +52,7 @@ const headerRoubinesButton = () => {
               style={styles.logo}
               source={require('../assets/icons/ruby.png')}
             />
-            {/* <AppText style={styles.apptext}>{roubies}</AppText> */}
+            <AppText style={styles.apptext}>{roubies}</AppText>
           </View>
         </TouchableOpacity>
       </View>
@@ -79,6 +79,8 @@ const styles = StyleSheet.create({
   },
   apptext: {
     marginTop: 10,
+    fontSize: 20,
+    color: colors.darkmodeHighWhite,
   },
   settings: {
     marginTop: 10,

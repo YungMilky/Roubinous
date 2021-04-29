@@ -19,14 +19,6 @@ const ProfileScreen = ({ navigation }) => {
   const [userRank, setUserRank] = useState('');
   const [guest, setGuest] = useState('');
 
-  var nowDate = new Date();
-  var currentDate =
-    nowDate.getFullYear() +
-    '/' +
-    (nowDate.getMonth() + 1) +
-    '/' +
-    nowDate.getDate();
-
   const signOutUser = () => {
     CancelAllNotifications();
     auth.signOut().then(() => {
@@ -45,8 +37,9 @@ const ProfileScreen = ({ navigation }) => {
         setGuest(documentSnapshot.data().Guest);
       });
   };
-  getUserInfo();
-  console.log(currentDate.parse());
+  useEffect(() => {
+    getUserInfo();
+  }, []);
   return (
     <Screen style={styles.container}>
       <ScrollView>
