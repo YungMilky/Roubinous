@@ -1,6 +1,14 @@
 import { Calendar, Agenda } from "react-native-calendars";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, TouchableOpacity, Text, Alert } from "react-native";
+import { Card, Title, Paragraph } from "react-native-paper";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Text,
+  Alert,
+  Image,
+} from "react-native";
 import { db, auth } from "../firebase";
 
 const timeToString = (time) => {
@@ -34,7 +42,6 @@ function CalendarScreen(props) {
   }, []);
   const daysInNextThirtyDays = () => {
     let today = new Date();
-
     let year = today.getFullYear();
     let month = today.getMonth();
     let date = today.getDate();
@@ -49,6 +56,8 @@ function CalendarScreen(props) {
   const loadItems = () => {
     setTimeout(() => {
       let routinesNameThatDay = [];
+      let notesForThatDay = [];
+
       // const [numOfItems, setNumOfItems] = useState({});
       //Kanske lägga in en array med datum sen ta ut datumet till time
       for (let i = 0; i < routinesData.length; i++) {
@@ -63,12 +72,13 @@ function CalendarScreen(props) {
             routinesData[i].StartTime.seconds * 1000 + 9500000;
           const strTimeCompare = timeToString(timeCompare);
           const routineNames = routinesData[i].name;
+          const notes = routinesData[i].notes;
 
           if (strTime === strTimeCompare) {
             routinesNameThatDay.push(routineNames);
+            notesForThatDay.push(notes);
           }
         }
-        console.log(routinesNameThatDay);
 
         if (!items[strTime]) {
           items[strTime] = [];
@@ -76,13 +86,18 @@ function CalendarScreen(props) {
           for (let i = 0; i < routinesNameThatDay.length; i++) {
             //Items[strTime] = ID (keys), vilet är datum
             items[strTime].push({
-              name: "Item for " + strTime + " #" + routinesNameThatDay[i],
-              height: Math.max(50, Math.floor(Math.random() * 150)),
+              name: routinesNameThatDay[i] + " created!",
+              dayNotes: notesForThatDay[i],
+              height: 100,
+              // height: Math.max(50, Math.floor(Math.random() * 150)),
             });
           }
+
           routinesNameThatDay = [];
+          notesForThatDay = [];
         }
       }
+      console.log(notesForThatDay);
 
       const newItems = {};
       Object.keys(items).forEach((key) => {
@@ -94,14 +109,19 @@ function CalendarScreen(props) {
 
   const renderItem = (item) => {
     return (
-      <View>
-        <TouchableOpacity
-          style={[styles.item, { height: item.height }]}
-          onPress={() => Alert.alert(item.name, item.name)}
-        >
-          <Text>{item.name}</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        style={[styles.item, { height: item.height }]}
+        onPress={() => Alert.alert(item.name, item.dayNotes)}
+      >
+        <View style={styles.box}>
+          <Text style={styles.fonts}>{item.name}</Text>
+
+          <Image
+            style={styles.image}
+            source={require("../assets/RoutinesPics/WaterDrinking.png")}
+          />
+        </View>
+      </TouchableOpacity>
     );
   };
 
@@ -121,6 +141,18 @@ const styles = StyleSheet.create({
     padding: 10,
     marginRight: 10,
     marginTop: 17,
+  },
+  box: {
+    flexDirection: "row",
+  },
+  image: {
+    flex: 1,
+    width: 60,
+    height: 100,
+  },
+  fonts: {
+    fontSize: 15,
+    fontFamily: "Roboto",
   },
 });
 export default CalendarScreen;
