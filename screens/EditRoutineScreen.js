@@ -36,9 +36,11 @@ const EditRoutineScreen = ({ navigation, route }) => {
   const { item } = route.params;
   const user = auth.currentUser;
   const [name, setName] = useState(item.title);
-  const [note, setNote] = useState('');
+  const [shortDescription, setShortDescription] = useState('');
   const [isNameFocused, setIsNameFocused] = useState(false);
-  const [isNotesFocused, setIsNotesFocused] = useState(false);
+  const [isShortDescriptionFocused, setIsShortDescriptionFocused] = useState(
+    false
+  );
   const [value, setValue] = useState(item.title);
 
   const [pressed, setPressed] = useState();
@@ -117,7 +119,7 @@ const EditRoutineScreen = ({ navigation, route }) => {
         .doc(name)
         .set({
           routine: name,
-          note: note,
+          shortDescription: shortDescription,
           days: JSON.stringify(days),
           routineTimes: JSON.stringify(times),
           removed: false,
@@ -207,7 +209,7 @@ const EditRoutineScreen = ({ navigation, route }) => {
         .get()
         .then((documentSnapshot) => {
           setName(documentSnapshot.data().routine);
-          setNote(documentSnapshot.data().note);
+          setShortDescription(documentSnapshot.data().shortDescription);
           setDays(JSON.parse(documentSnapshot.data().days));
           setTimes(JSON.parse(documentSnapshot.data().routineTimes));
         });
@@ -430,7 +432,7 @@ const EditRoutineScreen = ({ navigation, route }) => {
           </View>
           <View
             style={[
-              isNotesFocused
+              isShortDescriptionFocused
                 ? {
                     backgroundColor: 'rgba(255,255,255,0.07)',
                     borderTopLeftRadius: 4,
@@ -447,7 +449,7 @@ const EditRoutineScreen = ({ navigation, route }) => {
             ]}
           >
             <FloatingLabelInput
-              isFocused={isNotesFocused}
+              isFocused={isShortDescriptionFocused}
               hint="eg. 10 push-ups"
               hintTextColor={colors.darkmodeMediumWhite}
               inputStyles={styles.inputStyles}
@@ -458,10 +460,10 @@ const EditRoutineScreen = ({ navigation, route }) => {
               }}
               containerStyles={styles.containerStyles}
               onFocus={() => {
-                setIsNotesFocused(true);
+                setIsShortDescriptionFocused(true);
               }}
               onBlur={() => {
-                setIsNotesFocused(false);
+                setIsShortDescriptionFocused(false);
               }}
               label="Notes (Optional)"
               leftComponent={
@@ -470,7 +472,7 @@ const EditRoutineScreen = ({ navigation, route }) => {
                     name="diamond"
                     size={22}
                     color={
-                      isNotesFocused
+                      isShortDescriptionFocused
                         ? colors.samRed
                         : colors.darkmodeDisabledBlack
                     }
@@ -478,13 +480,13 @@ const EditRoutineScreen = ({ navigation, route }) => {
                 </View>
               }
               rightComponent={
-                note != '' ? (
+                shortDescription != '' ? (
                   <View style={{ padding: 12 }}>
                     <TouchableOpacity
                       style={{ justifyContent: 'center' }}
                       onPress={() => {
-                        setNote('');
-                        setIsNotesFocused(false);
+                        setShortDescription('');
+                        setIsShortDescriptionFocused(false);
                       }}
                     >
                       <MaterialCommunityIcons
@@ -497,8 +499,8 @@ const EditRoutineScreen = ({ navigation, route }) => {
                 ) : null
               }
               type="text"
-              value={note}
-              onChangeText={(text) => setNote(text)}
+              value={shortDescription}
+              onChangeText={(text) => setShortDescription(text)}
               // style={{ color: colors.darkmodeHighWhite, height: 40 }}
             />
           </View>

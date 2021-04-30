@@ -57,7 +57,7 @@ import Screen from './components/Screen';
 import { ImageBackground } from 'react-native';
 import AppButton from './components/AppButton';
 import headerRoubinesButton from './components/HeaderRoubinesButton';
-// import CalendarScreen from './screens/CalendarScreen';
+import CalendarScreen from './screens/CalendarScreen';
 import MyRoutinesScreen from './screens/MyRoutinesScreen';
 import EditRoutineScreen from './screens/EditRoutineScreen';
 
@@ -752,11 +752,11 @@ export default function App() {
             component={RoutinesStackScreen}
             options={{ headerShown: false }}
           />
-          {/* <RootStack.Screen
+          <RootStack.Screen
             name="Calendars"
             component={CalendarScreen}
             options={{ headerShown: false }}
-          /> */}
+          />
           <RootStack.Screen
             name="Notification Settings"
             component={NotificationSettingScreen}

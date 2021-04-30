@@ -1,6 +1,6 @@
-import { Calendar, Agenda } from "react-native-calendars";
-import React, { useEffect, useState } from "react";
-import { Card, Title, Paragraph } from "react-native-paper";
+import { Calendar, Agenda } from 'react-native-calendars';
+import React, { useEffect, useState } from 'react';
+import { Card, Title, Paragraph } from 'react-native-paper';
 import {
   StyleSheet,
   View,
@@ -8,12 +8,12 @@ import {
   Text,
   Alert,
   Image,
-} from "react-native";
-import { db, auth } from "../firebase";
+} from 'react-native';
+import { db, auth } from '../firebase';
 
 const timeToString = (time) => {
   const date = new Date(time);
-  return date.toISOString().split("T")[0];
+  return date.toISOString().split('T')[0];
 };
 
 function CalendarScreen(props) {
@@ -24,9 +24,9 @@ function CalendarScreen(props) {
   let routinesData = [];
 
   useEffect(() => {
-    db.collection("Users")
+    db.collection('Users')
       .doc(userId)
-      .collection("routines")
+      .collection('routines')
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -46,10 +46,21 @@ function CalendarScreen(props) {
     let month = today.getMonth();
     let date = today.getDate();
 
-    var daysInWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    var daysInWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    //hämta customroutines/days från varje rutin i firestore
+    //köra getDay så man vet vart i objektet man ska börja
+    //förläng objektet så det har 30+ items
+    //sen loopa igenom objektet med 30+ items i loopen nedan och kolla true/false
+    //ny array där man listar alla de datum i dateISOstring
+
+    //borde också hämta tiderna för rutinen och köra flera items för samma datum fast med olika tider
 
     for (let i = 0; i < 30; i++) {
-      let days = new Date(year, month - 1, date + i).toDateString();
+      const days = [];
+      let day = new Date(year, month - 1, date + i).toDateString();
+      // if () { //kolla days boolean
+      //   //lägg till day i days
+      // }
     }
   };
 
@@ -86,7 +97,7 @@ function CalendarScreen(props) {
           for (let i = 0; i < routinesNameThatDay.length; i++) {
             //Items[strTime] = ID (keys), vilet är datum
             items[strTime].push({
-              name: routinesNameThatDay[i] + " created!",
+              name: routinesNameThatDay[i] + ' created!',
               dayNotes: notesForThatDay[i],
               height: 100,
               // height: Math.max(50, Math.floor(Math.random() * 150)),
@@ -118,7 +129,7 @@ function CalendarScreen(props) {
 
           <Image
             style={styles.image}
-            source={require("../assets/RoutinesPics/WaterDrinking.png")}
+            source={require('../assets/RoutinesPics/WaterDrinking.png')}
           />
         </View>
       </TouchableOpacity>
@@ -135,7 +146,7 @@ function CalendarScreen(props) {
 }
 const styles = StyleSheet.create({
   item: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     flex: 1,
     borderRadius: 5,
     padding: 10,
@@ -143,7 +154,7 @@ const styles = StyleSheet.create({
     marginTop: 17,
   },
   box: {
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   image: {
     flex: 1,
@@ -152,7 +163,7 @@ const styles = StyleSheet.create({
   },
   fonts: {
     fontSize: 15,
-    fontFamily: "Roboto",
+    fontFamily: 'Roboto',
   },
 });
 export default CalendarScreen;

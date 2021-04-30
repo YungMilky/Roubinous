@@ -41,9 +41,11 @@ const editIcon = () => {
 const AddRoutineScreen = ({ navigation }) => {
   const user = auth.currentUser;
   const [name, setName] = useState('');
-  const [note, setNote] = useState('');
+  const [shortDescription, setShortDescription] = useState('');
   const [isNameFocused, setIsNameFocused] = useState(false);
-  const [isNotesFocused, setIsNotesFocused] = useState(false);
+  const [isShortDescriptionFocused, setIsShortDescriptionFocused] = useState(
+    false
+  );
   const [value, setValue] = useState('empty');
   const [msg, setMsg] = useState();
   const [errorText, setErrorText] = useState();
@@ -117,7 +119,7 @@ const AddRoutineScreen = ({ navigation }) => {
           document
             .set({
               routine: name,
-              note: note,
+              shortDescription: shortDescription,
               days: JSON.stringify(days),
               routineTimes: JSON.stringify(times),
               removed: false,
@@ -131,7 +133,7 @@ const AddRoutineScreen = ({ navigation }) => {
             })
             .then(() => {
               setName('');
-              setNote('');
+              setShortDescription('');
               setDays({
                 1: 1,
                 2: 1,
@@ -223,7 +225,7 @@ const AddRoutineScreen = ({ navigation }) => {
         .get()
         .then((documentSnapshot) => {
           setName(documentSnapshot.id);
-          setNote(documentSnapshot.data().note);
+          setShortDescription(documentSnapshot.data().shortDescription);
           setDays(JSON.parse(documentSnapshot.data().days));
           setTimes(JSON.parse(documentSnapshot.data().routineTimes));
         });
@@ -426,7 +428,7 @@ const AddRoutineScreen = ({ navigation }) => {
           </View>
           <View
             style={[
-              isNotesFocused
+              isShortDescriptionFocused
                 ? {
                     backgroundColor: 'rgba(255,255,255,0.07)',
                     borderTopLeftRadius: 4,
@@ -443,7 +445,7 @@ const AddRoutineScreen = ({ navigation }) => {
             ]}
           >
             <FloatingLabelInput
-              isFocused={isNotesFocused}
+              isFocused={isShortDescriptionFocused}
               hint="eg. 10 push-ups"
               hintTextColor={colors.darkmodeMediumWhite}
               inputStyles={styles.inputStyles}
@@ -454,10 +456,10 @@ const AddRoutineScreen = ({ navigation }) => {
               }}
               containerStyles={styles.containerStyles}
               onFocus={() => {
-                setIsNotesFocused(true);
+                setIsShortDescriptionFocused(true);
               }}
               onBlur={() => {
-                setIsNotesFocused(false);
+                setIsShortDescriptionFocused(false);
               }}
               label="Notes (Optional)"
               leftComponent={
@@ -466,7 +468,7 @@ const AddRoutineScreen = ({ navigation }) => {
                     name="diamond"
                     size={22}
                     color={
-                      isNotesFocused
+                      isShortDescriptionFocused
                         ? colors.samRed
                         : colors.darkmodeDisabledBlack
                     }
@@ -474,13 +476,13 @@ const AddRoutineScreen = ({ navigation }) => {
                 </View>
               }
               rightComponent={
-                note != '' ? (
+                shortDescription != '' ? (
                   <View style={{ padding: 12 }}>
                     <TouchableOpacity
                       style={{ justifyContent: 'center' }}
                       onPress={() => {
-                        setNote('');
-                        setIsNotesFocused(false);
+                        setShortDescription('');
+                        setIsShortDescriptionFocused(false);
                       }}
                     >
                       <MaterialCommunityIcons
@@ -493,8 +495,8 @@ const AddRoutineScreen = ({ navigation }) => {
                 ) : null
               }
               type="text"
-              value={note}
-              onChangeText={(text) => setNote(text)}
+              value={shortDescription}
+              onChangeText={(text) => setShortDescription(text)}
               // style={{ color: colors.darkmodeHighWhite, height: 40 }}
             />
           </View>

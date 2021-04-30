@@ -37,6 +37,7 @@ const MyRoutinesScreen = ({ navigation }) => {
   const [removeOfficialModalVisible, setRemoveOfficialModalVisible] = useState(
     false
   );
+  const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [selectedRoutine, setSelectedRoutine] = useState();
   const [refresh, setRefresh] = useState(false);
 
@@ -180,45 +181,24 @@ const MyRoutinesScreen = ({ navigation }) => {
           );
         }}
       >
-        <View>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('Routine', { item });
-            }}
-            style={styles.routineListItemContainer}
-          >
-            {typeof item != 'undefined' ? (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 22,
-                    color: colors.darkmodeHighWhite,
-                    paddingRight: 8,
-                  }}
-                >
-                  {item.title}
-                </Text>
-                <MaterialCommunityIcons
-                  style={{ marginTop: 3 }}
-                  name="information-outline"
-                  size={16}
-                  color={colors.darkmodeHighWhite}
-                />
-                <MaterialCommunityIcons
-                  style={{ marginTop: 3 }}
-                  name="gesture-swipe-left"
-                  size={16}
-                  color={colors.darkmodeHighWhite}
-                />
-              </View>
-            ) : null}
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('Routine', { item });
+          }}
+          style={styles.routineListItemContainer}
+        >
+          {typeof item != 'undefined' ? (
+            <Text
+              style={{
+                fontSize: 22,
+                color: colors.darkmodeHighWhite,
+                paddingRight: 8,
+              }}
+            >
+              {item.title}
+            </Text>
+          ) : null}
+        </TouchableOpacity>
       </Swipeable>
     );
   };
@@ -238,7 +218,6 @@ const MyRoutinesScreen = ({ navigation }) => {
                 onPress={() => {
                   navigation.navigate('Edit Custom Routines', { item });
                 }}
-                style={styles.routineListItemContainer}
               >
                 <MaterialCommunityIcons
                   name="pencil"
@@ -283,18 +262,6 @@ const MyRoutinesScreen = ({ navigation }) => {
               >
                 {item.title}
               </Text>
-              <MaterialCommunityIcons
-                style={{ marginTop: 3 }}
-                name="information-outline"
-                size={16}
-                color={colors.darkmodeHighWhite}
-              />
-              <MaterialCommunityIcons
-                style={{ marginTop: 3 }}
-                name="gesture-swipe-left"
-                size={16}
-                color={colors.darkmodeHighWhite}
-              />
             </View>
           ) : null}
         </TouchableOpacity>
@@ -317,11 +284,11 @@ const MyRoutinesScreen = ({ navigation }) => {
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
                 <Text style={styles.modalText}>
-                  Are you sure you want to delete this routine?
+                  Are you sure you want to remove this routine?
                 </Text>
                 <AppButton
                   style={styles.button}
-                  title={'Delete'}
+                  title={'Remove'}
                   onPress={() => {
                     removeCustomRoutine(selectedRoutine.key);
                     setRemoveCustomModalVisible(!removeCustomModalVisible);
@@ -348,11 +315,11 @@ const MyRoutinesScreen = ({ navigation }) => {
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
                 <Text style={styles.modalText}>
-                  Are you sure you want to delete this routine?
+                  Are you sure you want to remove this routine?
                 </Text>
                 <AppButton
                   style={styles.button}
-                  title={'Delete'}
+                  title={'Remove'}
                   onPress={() => {
                     removeOfficialRoutine(selectedRoutine.key);
                     setRemoveOfficialModalVisible(!removeOfficialModalVisible);
@@ -369,13 +336,59 @@ const MyRoutinesScreen = ({ navigation }) => {
             </View>
           </Modal>
           <View style={styles.titleContainer}>
-            <Text style={styles.titleText}>Official routines:</Text>
-            {/* <MaterialCommunityIcons
-              style={{ marginTop: 3 }}
-              name="gesture-swipe-left"
-              size={18}
-              color={colors.darkmodeHighWhite}
-            /> */}
+            <Text
+              style={[
+                styles.titleText,
+                {
+                  marginLeft: 100,
+                },
+              ]}
+            >
+              Official routines:
+            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                setInfoModalVisible(!infoModalVisible);
+              }}
+              style={styles.iconContainer}
+            >
+              <MaterialCommunityIcons
+                style={{ marginTop: -3 }}
+                name="information-outline"
+                size={30}
+                color={colors.darkmodeHighWhite}
+              />
+            </TouchableOpacity>
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={infoModalVisible}
+              onRequestClose={() => {
+                setInfoModalVisible(!infoModalVisible);
+              }}
+            >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <Text style={styles.modalText}>
+                    Here you can view all of your routines.
+                    {'\n'}
+                    {'\n'}
+                    Press a routine to view info.
+                    {'\n'}
+                    {'\n'}
+                    Swipe left on a routine to remove.
+                    {'\n'}
+                    {'\n'}
+                    Swipe left on a custom routine to remove/edit.
+                  </Text>
+                  <AppButton
+                    style={[styles.button, styles.buttonClose]}
+                    title={'Thanks'}
+                    onPress={() => setInfoModalVisible(!infoModalVisible)}
+                  ></AppButton>
+                </View>
+              </View>
+            </Modal>
           </View>
           <View>
             {officialRoutines.length < 1 ? (
@@ -453,14 +466,16 @@ const styles = StyleSheet.create({
   },
   flatlist: {},
   modalText: {
-    //
     marginBottom: 15,
     textAlign: 'center',
-    fontSize: 16,
-    color: colors.darkmodeMediumWhite,
+    fontSize: 20,
+    color: colors.darkmodeHighWhite,
+  },
+  iconContainer: {
+    flexDirection: 'row',
+    paddingLeft: 70,
   },
   modalView: {
-    //
     width: '90%',
     margin: 20,
     backgroundColor: colors.darkmodeDisabledBlack,
@@ -481,8 +496,6 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.darkmodeDisabledBlack,
     padding: 10,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
   },
   text: {
     marginTop: 20,
