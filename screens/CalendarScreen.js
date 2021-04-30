@@ -22,7 +22,7 @@ function CalendarScreen(props) {
   console.log(userId);
 
   let routinesData = [];
-
+  let routinesName = [];
   useEffect(() => {
     db.collection("Users")
       .doc(userId)
@@ -31,6 +31,7 @@ function CalendarScreen(props) {
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           routinesData.push(doc.data());
+          routinesName.push(doc.id);
 
           // routinesStartDate = doc.data().timestamp.toDate();
 
@@ -40,6 +41,7 @@ function CalendarScreen(props) {
         });
       });
   }, []);
+
   const daysInNextThirtyDays = () => {
     let today = new Date();
     let year = today.getFullYear();
@@ -57,7 +59,8 @@ function CalendarScreen(props) {
     setTimeout(() => {
       let routinesNameThatDay = [];
       let notesForThatDay = [];
-
+      console.log(routinesData);
+      console.log(routinesName);
       // const [numOfItems, setNumOfItems] = useState({});
       //Kanske lägga in en array med datum sen ta ut datumet till time
       for (let i = 0; i < routinesData.length; i++) {
@@ -71,7 +74,7 @@ function CalendarScreen(props) {
           const timeCompare =
             routinesData[i].StartTime.seconds * 1000 + 9500000;
           const strTimeCompare = timeToString(timeCompare);
-          const routineNames = routinesData[i].name;
+          const routineNames = routinesName[i];
           const notes = routinesData[i].notes;
 
           if (strTime === strTimeCompare) {
@@ -86,7 +89,7 @@ function CalendarScreen(props) {
           for (let i = 0; i < routinesNameThatDay.length; i++) {
             //Items[strTime] = ID (keys), vilet är datum
             items[strTime].push({
-              name: routinesNameThatDay[i] + " created!",
+              name: routinesNameThatDay[i],
               dayNotes: notesForThatDay[i],
               height: 100,
               // height: Math.max(50, Math.floor(Math.random() * 150)),
@@ -147,8 +150,11 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 1,
-    width: 60,
-    height: 100,
+    width: 100,
+    height: 130,
+    position: "absolute",
+    marginLeft: 190,
+    top: -40,
   },
   fonts: {
     fontSize: 15,
