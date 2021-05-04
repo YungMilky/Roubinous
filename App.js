@@ -58,6 +58,8 @@ import { ImageBackground } from 'react-native';
 import AppButton from './components/AppButton';
 import headerRoubinesButton from './components/HeaderRoubinesButton';
 import CalendarScreen from './screens/CalendarScreen';
+import MyRoutinesScreen from './screens/MyRoutinesScreen';
+import EditRoutineScreen from './screens/EditRoutineScreen';
 
 //  TODO:
 //  keep adding nested navigation
@@ -73,6 +75,7 @@ import CalendarScreen from './screens/CalendarScreen';
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
 const RoutinesStack = createStackNavigator();
+const MyRoutinesStack = createStackNavigator();
 const ProfileStack = createStackNavigator();
 const RootStack = createStackNavigator();
 const JourneyStack = createStackNavigator();
@@ -194,6 +197,32 @@ const RoutinesStackScreen = () => {
     </RoutinesStack.Navigator>
   );
 };
+const MyRoutinesStackScreen = () => {
+  return (
+    <RoutinesStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: colors.samRed },
+        headerTitleStyle: { color: colors.darkmodeHighWhite },
+        gestureEnabled: true,
+        gestureDirection: 'horizontal',
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        transitionSpec: {
+          open: config,
+          close: config,
+        },
+      }}
+      headerMode="float"
+    >
+      <RoutinesStack.Screen name="TabBar" component={TabBar} />
+      <RootStack.Screen name="My Routines" component={MyRoutinesScreen} />
+      <RoutinesStack.Screen
+        name="Routine"
+        component={RoutineScreen}
+        options={{ headerShown: false }}
+      />
+    </RoutinesStack.Navigator>
+  );
+};
 
 const JourneyStackScreen = () => {
   return (
@@ -269,7 +298,7 @@ function TabBar() {
           },
           tabBarColor: colors.samRed,
           tabBarIcon: ({ color }) => (
-            // <Image
+            // <
             //   style={{ width: 22, height: 22 }}
             //   source={require('./assets/icons/run.png')}
             // />
@@ -599,7 +628,7 @@ export default function App() {
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        console.log('logged in ');
+        console.log('logged in ' + user.uid);
         setIsLoggedIn(true);
       } else {
         console.log('NOT logged in ');
@@ -614,8 +643,8 @@ export default function App() {
       .get()
       .then((doc) => {
         //get user exp
-        let experience = doc.data().exp;
-        console.log('setting exp: ', doc.data().exp);
+        let experience = doc.data().Exp;
+        console.log('setting exp: ', doc.data().Exp);
         console.log('exp: ', experience);
 
         //decide rank by exp
@@ -646,7 +675,7 @@ export default function App() {
 
         routineRef.update({
           Roubies: doc.data().Roubies + rewardForAddingRoutine,
-          Exp: doc.data().exp + rewardForAddingRoutine,
+          Exp: doc.data().Exp + rewardForAddingRoutine,
         });
       });
   };
@@ -734,6 +763,15 @@ export default function App() {
             options={{ headerRight: () => headerRoubinesButton() }}
           />
           <RootStack.Screen name="Settings" component={SettingsScreen} />
+          <RootStack.Screen
+            name="My Routines"
+            component={MyRoutinesStackScreen}
+            options={{ headerShown: false }}
+          />
+          <RootStack.Screen
+            name="Edit Custom Routines"
+            component={EditRoutineScreen}
+          />
         </RootStack.Navigator>
       </NavigationContainer>
     );

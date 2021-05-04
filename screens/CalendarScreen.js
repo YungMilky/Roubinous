@@ -1,6 +1,5 @@
-import { Calendar, Agenda } from "react-native-calendars";
+import { Agenda } from "react-native-calendars";
 import React, { useEffect, useState } from "react";
-import { Card, Title, Paragraph } from "react-native-paper";
 import {
   StyleSheet,
   View,
@@ -8,7 +7,6 @@ import {
   Text,
   Alert,
   Image,
-  Button,
 } from "react-native";
 import { db, auth } from "../firebase";
 
@@ -50,9 +48,20 @@ function CalendarScreen(props) {
     let date = today.getDate();
 
     var daysInWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    //hämta customroutines/days från varje rutin i firestore
+    //köra getDay så man vet vart i objektet man ska börja
+    //förläng objektet så det har 30+ items
+    //sen loopa igenom objektet med 30+ items i loopen nedan och kolla true/false
+    //ny array där man listar alla de datum i dateISOstring
+
+    //borde också hämta tiderna för rutinen och köra flera items för samma datum fast med olika tider
 
     for (let i = 0; i < 30; i++) {
-      let days = new Date(year, month - 1, date + i).toDateString();
+      const days = [];
+      let day = new Date(year, month - 1, date + i).toDateString();
+      // if () { //kolla days boolean
+      //   //lägg till day i days
+      // }
     }
   };
 

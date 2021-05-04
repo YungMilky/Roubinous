@@ -14,13 +14,8 @@ async function CreateDailyNotification(hour, minute) {
 
   await Notifications.scheduleNotificationAsync({
     content: {
-      title: 'This is a daily notification',
-      body:
-        'You should get this at: ' +
-        hour +
-        ':' +
-        checkNumber(minute) +
-        ' , now do your routines stupid!',
+      title: 'Roubine',
+      body: 'Dont forget to do your routines!',
       data: { data: 'goes here' },
     },
     trigger: {

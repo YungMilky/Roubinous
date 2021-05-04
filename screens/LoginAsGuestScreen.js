@@ -13,6 +13,11 @@ import Screen from '../components/Screen';
 const LoginAsGuestScreen = ({ navigation }) => {
   const [name, setName] = useState('');
 
+  let currentDate = new Date();
+  let day = currentDate.getDate();
+  let month = currentDate.getMonth() + 1;
+  let year = currentDate.getFullYear();
+
   const signInAnonymously = () => {
     if (!name.trim()) {
       alert('Please Enter a Name');
@@ -26,6 +31,10 @@ const LoginAsGuestScreen = ({ navigation }) => {
           Roubies: 50,
           UserAlertHour: 10,
           UserAlertMinute: 30,
+          DailyRewardDay: day,
+          DailyRewardMonth: month,
+          DailyRewardYear: year,
+          Exp: 50,
         });
       });
       CreateDailyNotification(10, 30);
