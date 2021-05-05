@@ -18,6 +18,7 @@ const timeToString = (time) => {
 function CalendarScreen(props) {
   const [items, setItems] = useState({});
   const userId = auth.currentUser.uid;
+
   console.log(userId);
 
   let routinesData = [];
@@ -79,7 +80,6 @@ function CalendarScreen(props) {
         const time = routinesData[i].StartTime.seconds * 1000 + 9500000;
 
         const strTime = timeToString(time);
-        console.log(strTime);
 
         for (let i = 0; i < routinesData.length; i++) {
           const timeCompare =
@@ -100,7 +100,7 @@ function CalendarScreen(props) {
           for (let i = 0; i < routinesNameThatDay.length; i++) {
             //Items[strTime] = ID (keys), vilet är datum
             items[strTime].push({
-              name: routinesNameThatDay[i] + " created",
+              name: routinesNameThatDay[i],
               dayNotes: notesForThatDay[i],
               height: 100,
               // height: Math.max(50, Math.floor(Math.random() * 150)),
@@ -122,6 +122,8 @@ function CalendarScreen(props) {
   };
 
   const renderItem = (item) => {
+    let itemNameForThatDay = item.name;
+    let itemNotesForThatDay = item.dayNotes;
     return (
       <TouchableOpacity
         style={[styles.item, { height: item.height }]}
@@ -132,10 +134,19 @@ function CalendarScreen(props) {
             [
               {
                 text: "Nope",
-                onPress: () => console.log("Cancel Pressed"),
+                onPress: () => console.log("Nope Pressed"),
                 style: "cancel",
               },
-              { text: "Yes!", onPress: () => console.log("OK Pressed") },
+              {
+                text: "Yes!",
+                onPress: () =>
+                  console.log(
+                    "Yes Pressed. " +
+                      itemNameForThatDay +
+                      " " +
+                      itemNotesForThatDay
+                  ),
+              },
             ],
             {
               cancelable: true,
@@ -161,6 +172,7 @@ function CalendarScreen(props) {
       items={items}
       loadItemsForMonth={loadItems}
       renderItem={renderItem}
+      minDate={new Date() - 1}
     />
   );
 }
