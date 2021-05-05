@@ -99,38 +99,42 @@ const EditRoutineScreen = ({ navigation, route }) => {
       .doc(user.uid)
       .collection('customRoutines');
     if (!name.trim()) {
-      alert('Please Enter a Name');
+      setMsg('Please Enter a Name');
       return;
     } else {
-      //om dokumentnamnet ändras tas det gamla dokumentet bort och ett nytt skapas
-      collection
-        .doc(value)
-        .get()
-        .then((doc) => {
-          if (value === name) {
-            console.log('Edit doc');
-          } else {
-            console.log('remove doc');
-            collection.doc(value).delete();
-            setValue(name);
-          }
-        });
-      collection
-        .doc(name)
-        .set({
-          routine: name,
-          shortDescription: shortDescription,
-          days: JSON.stringify(days),
-          routineTimes: JSON.stringify(times),
-          removed: false,
-        })
-        .then(() => {
-          console.log('Document successfully written!');
-          setModalShow(true);
-        })
-        .catch((error) => {
-          console.error('Catch: Error writing document: ', error);
-        });
+      if (times.length === 0) {
+        setMsg('Please add a time');
+      } else {
+        //om dokumentnamnet ändras tas det gamla dokumentet bort och ett nytt skapas
+        collection
+          .doc(value)
+          .get()
+          .then((doc) => {
+            if (value === name) {
+              console.log('Edit doc');
+            } else {
+              console.log('remove doc');
+              collection.doc(value).delete();
+              setValue(name);
+            }
+          });
+        collection
+          .doc(name)
+          .update({
+            routine: name,
+            shortDescription: shortDescription,
+            days: JSON.stringify(days),
+            routineTimes: JSON.stringify(times),
+            removed: false,
+          })
+          .then(() => {
+            console.log('Document successfully written!');
+            setModalShow(true);
+          })
+          .catch((error) => {
+            console.error('Catch: Error writing document: ', error);
+          });
+      }
     }
   };
 
@@ -299,9 +303,7 @@ const EditRoutineScreen = ({ navigation, route }) => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>
-              The routine was succesfully edited!
-            </Text>
+            <Text style={styles.modalText}>Routine Edited!</Text>
             <AppButton
               style={[styles.button, styles.buttonClose]}
               title={'Ok'}
@@ -655,7 +657,7 @@ const styles = StyleSheet.create({
     flexGrow: 0,
   },
   message: {
-    color: colors.samGreen,
+    color: colors.samRed,
     textAlign: 'center',
     marginBottom: 20,
     paddingBottom: 2,
@@ -666,7 +668,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'center',
     fontSize: 16,
-    color: colors.darkmodeMediumWhite,
+    color: colors.darkmodeHighWhite,
   },
   modalView: {
     //

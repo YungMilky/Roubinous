@@ -383,7 +383,7 @@ const MyRoutinesScreen = ({ navigation }) => {
                   </Text>
                   <AppButton
                     style={[styles.button, styles.buttonClose]}
-                    title={'Thanks'}
+                    title={'Ok!'}
                     onPress={() => setInfoModalVisible(!infoModalVisible)}
                   ></AppButton>
                 </View>

@@ -67,6 +67,7 @@ const AddRoutineScreen = ({ navigation }) => {
   const [show, setShow] = useState(false);
   const [editing, setIsEditing] = useState(false);
   const [clickedTime, setClickedTime] = useState();
+  const [modalShow, setModalShow] = useState(false);
   const [userRoutines, setUserRoutines] = useState([]);
 
   const controller = useRef(null);
@@ -103,7 +104,7 @@ const AddRoutineScreen = ({ navigation }) => {
 
   const createRoutine = () => {
     if (!name.trim()) {
-      setMsg('Please enter a name');
+      setMsg('! Please enter a name');
       return;
     } else {
       const document = db
@@ -114,37 +115,43 @@ const AddRoutineScreen = ({ navigation }) => {
 
       document.get().then((doc) => {
         if (doc.exists) {
-          setMsg('Routine name already exists');
+          setMsg('! Routine name already exists');
         } else {
-          document
-            .set({
-              routine: name,
-              shortDescription: shortDescription,
-              days: JSON.stringify(days),
-              routineTimes: JSON.stringify(times),
-              removed: false,
-            })
-            .then(() => {
-              console.log('Document successfully written!');
-              setMsg('Routine Created!');
-            })
-            .catch((error) => {
-              console.error('Catch: Error writing document: ', error);
-            })
-            .then(() => {
-              setName('');
-              setShortDescription('');
-              setDays({
-                1: 1,
-                2: 1,
-                3: 1,
-                4: 1,
-                5: 1,
-                6: 0,
-                0: 0,
+          if (times.length === 0) {
+            setMsg('! Please add a time');
+          } else {
+            document
+              .set({
+                routine: name,
+                shortDescription: shortDescription,
+                days: JSON.stringify(days),
+                routineTimes: JSON.stringify(times),
+                removed: false,
+                StartTime: Date.now(),
+              })
+              .then(() => {
+                console.log('Document successfully written!');
+                setModalShow(true);
+              })
+              .catch((error) => {
+                console.error('Catch: Error writing document: ', error);
+              })
+              .then(() => {
+                setName('');
+                setShortDescription('');
+                setDays({
+                  1: 1,
+                  2: 1,
+                  3: 1,
+                  4: 1,
+                  5: 1,
+                  6: 0,
+                  0: 0,
+                });
+                setTimes([{ key: 1, hours: 10, minutes: 30 }]);
+                setMsg('');
               });
-              setTimes([{ key: 1, hours: 10, minutes: 30 }]);
-            });
+          }
         }
       });
     }
@@ -173,7 +180,7 @@ const AddRoutineScreen = ({ navigation }) => {
         minutes: currentDate.getMinutes(),
       },
     ]);
-    console.log('addItem() ran with times: ' + times);
+    console.log('addItem() ran with times: ' + times[0] + ' ' + days[1]);
     setRefresh(true);
   };
   const checkNumber = (number) => {
@@ -304,10 +311,29 @@ const AddRoutineScreen = ({ navigation }) => {
   return (
     <Screen style={styles.container}>
       <Text style={styles.message}>{msg}</Text>
-      <Text style={styles.name}>Create/Edit a custom routine</Text>
+      <Text style={styles.name}>Create a custom routine</Text>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.inputContainer}>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalShow}
+            onRequestClose={() => {
+              setModalShow(!modalShow);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>Routine created!</Text>
+                <AppButton
+                  style={[styles.button, styles.buttonClose]}
+                  title={'Ok'}
+                  onPress={() => setModalShow(!modalShow)}
+                ></AppButton>
+              </View>
+            </View>
+          </Modal>
           {/* <DropDownPicker
             items={userRoutines}
             labelStyle={{
@@ -595,7 +621,7 @@ const AddRoutineScreen = ({ navigation }) => {
             getUserRoutines();
           }}
         >
-          <Text style={styles.buttonText}>Create/Edit Routine</Text>
+          <Text style={styles.buttonText}>Create Routine</Text>
         </TouchableOpacity>
       ) : null}
     </Screen>
@@ -665,14 +691,36 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   message: {
-    color: colors.samGreen,
+    color: colors.samRed,
     textAlign: 'center',
-    marginBottom: 20,
     paddingBottom: 2,
     fontSize: 24,
   },
+  modalText: {
+    //
+    marginBottom: 15,
+    textAlign: 'center',
+    fontSize: 20,
+    color: colors.darkmodeHighWhite,
+  },
+  modalView: {
+    //
+    width: '90%',
+    margin: 20,
+    backgroundColor: colors.darkmodeDisabledBlack,
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
   name: {
-    marginTop: 10,
     marginBottom: 10,
     fontSize: 22,
     color: colors.darkmodeHighWhite,
