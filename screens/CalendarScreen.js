@@ -19,14 +19,16 @@ function CalendarScreen(props) {
   const [items, setItems] = useState({});
   const [daysDateStringsList, setDaysDateStringsList] = useState([]);
   const [times, setTimes] = useState({});
+  const [routinesData, setRoutinesData] = useState([]);
+  const [routinesName, setRoutinesName] = useState([]);
 
   const userId = auth.currentUser.uid;
   useEffect(() => {
     console.log(userId);
   }, []);
 
-  let routinesData = [];
-  let routinesName = [];
+  // let routinesData = [];
+  // let routinesName = [];
   useEffect(() => {
     db.collection('Users')
       .doc(userId)
@@ -34,19 +36,22 @@ function CalendarScreen(props) {
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          routinesData.push(doc.data());
-          routinesName.push(doc.id);
+          // routinesData.push(doc.data());
+          // routinesName.push(doc.id);
+          // setRoutinesData(doc.data());
+          if (!doc.removed) {
+            setRoutinesData((prevState) => [...prevState, doc.data()]);
+            setRoutinesName((prevArray) => [...prevArray, doc.id]);
+          }
 
           // routinesStartDate = doc.data().timestamp.toDate();
 
           // setStartDate(new Date( * 1000));
-
-          // console.log(routinesData);
         });
       });
   }, []);
 
-  const daysInNextThirtyDays = (routineName) => {
+  const daysInNextThirtyDays = (routineTime, routineName) => {
     // setDaysDateStringsList([]);
     let today = new Date();
     let year = today.getFullYear();
@@ -57,7 +62,7 @@ function CalendarScreen(props) {
     //hämta customroutines/days från varje rutin i firestore
     db.collection('Users')
       .doc(userId)
-      .collection('customRoutines')
+      .collection(routineTime)
       .doc(routineName)
       .get()
       .then((documentSnapshot) => {
@@ -127,39 +132,43 @@ function CalendarScreen(props) {
       });
   };
 
-  useEffect(() => {
-    daysInNextThirtyDays('Kaffedag');
-  }, []);
-  useEffect(() => {
-    console.log(daysDateStringsList);
-  }, [daysDateStringsList]);
+  // useEffect(() => {
+  //   daysInNextThirtyDays('customRoutines', 'lköjnmdfswhkbljfdakjhbhjkbl');
+  // }, []);
+  // useEffect(() => {
+  //   console.log(daysDateStringsList);
+  // }, [daysDateStringsList]);
 
   const loadItems = () => {
     setTimeout(() => {
       let routinesNameThatDay = [];
       let notesForThatDay = [];
+      // console.log(routinesData);
+
       console.log(routinesData);
-      console.log(routinesName);
+      // console.log(routinesName);
+      console.log(routinesData.length);
 
       // const [numOfItems, setNumOfItems] = useState({});
       //Kanske lägga in en array med datum sen ta ut datumet till time
       for (let i = 0; i < routinesData.length; i++) {
         // const time = day.timestamp * 24 * 60 * 60 * 1000;
-        const time = routinesData[i].StartTime.seconds * 1000 + 9500000;
+
+        const time = routinesData[i].StartDate.seconds * 1000 + 9500000;
 
         const strTime = timeToString(time);
         console.log(strTime);
 
         for (let i = 0; i < routinesData.length; i++) {
           const timeCompare =
-            routinesData[i].StartTime.seconds * 1000 + 9500000;
+            routinesData[i].StartDate.seconds * 1000 + 9500000;
           const strTimeCompare = timeToString(timeCompare);
           const routineNames = routinesName[i];
-          const notes = routinesData[i].notes;
+          // const notes = routinesData[i].notes;
 
           if (strTime === strTimeCompare) {
             routinesNameThatDay.push(routineNames);
-            notesForThatDay.push(notes);
+            // notesForThatDay.push(notes);
           }
         }
 
@@ -170,17 +179,17 @@ function CalendarScreen(props) {
             //Items[strTime] = ID (keys), vilet är datum
             items[strTime].push({
               name: routinesNameThatDay[i] + ' created',
-              dayNotes: notesForThatDay[i],
+              // dayNotes: notesForThatDay[i],
               height: 100,
               // height: Math.max(50, Math.floor(Math.random() * 150)),
             });
           }
-
+          console.log('Hej ' + routinesNameThatDay);
           routinesNameThatDay = [];
           notesForThatDay = [];
         }
       }
-      console.log(notesForThatDay);
+      // console.log(notesForThatDay);
 
       const newItems = {};
       Object.keys(items).forEach((key) => {
@@ -191,6 +200,9 @@ function CalendarScreen(props) {
   };
 
   const renderItem = (item) => {
+    let itemNameForThatDay = item.name;
+    let itemNotesForThatDay = item.dayNotes;
+
     return (
       <TouchableOpacity
         style={[styles.item, { height: item.height }]}
@@ -201,10 +213,19 @@ function CalendarScreen(props) {
             [
               {
                 text: 'Nope',
-                onPress: () => console.log('Cancel Pressed'),
+                onPress: () => console.log('Nope Pressed'),
                 style: 'cancel',
               },
-              { text: 'Yes!', onPress: () => console.log('OK Pressed') },
+              {
+                text: 'Yes!',
+                onPress: () =>
+                  console.log(
+                    'Yes Pressed. ' +
+                      itemNameForThatDay +
+                      ' ' +
+                      itemNotesForThatDay
+                  ),
+              },
             ],
             {
               cancelable: true,

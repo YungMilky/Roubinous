@@ -127,7 +127,7 @@ const AddRoutineScreen = ({ navigation }) => {
                 days: JSON.stringify(days),
                 routineTimes: JSON.stringify(times),
                 removed: false,
-                StartTime: Date.now(),
+                StartDate: Date.now(),
               })
               .then(() => {
                 console.log('Document successfully written!');
