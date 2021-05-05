@@ -18,8 +18,13 @@ const timeToString = (time) => {
 
 function CalendarScreen(props) {
   const [items, setItems] = useState({});
+  const [daysDateStringsList, setDaysDateStringsList] = useState([]);
+  const [times, setTimes] = useState({});
+
   const userId = auth.currentUser.uid;
-  console.log(userId);
+  useEffect(() => {
+    console.log(userId);
+  }, []);
 
   let routinesData = [];
   let routinesName = [];
@@ -42,29 +47,93 @@ function CalendarScreen(props) {
       });
   }, []);
 
-  const daysInNextThirtyDays = () => {
+  const daysInNextThirtyDays = (routineName) => {
+    // setDaysDateStringsList([]);
     let today = new Date();
     let year = today.getFullYear();
     let month = today.getMonth();
     let date = today.getDate();
+    let day = new Date(year, month, date);
 
-    var daysInWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     //hämta customroutines/days från varje rutin i firestore
-    //köra getDay så man vet vart i objektet man ska börja
-    //förläng objektet så det har 30+ items
-    //sen loopa igenom objektet med 30+ items i loopen nedan och kolla true/false
-    //ny array där man listar alla de datum i dateISOstring
+    db.collection('Users')
+      .doc(userId)
+      .collection('customRoutines')
+      .doc(routineName)
+      .get()
+      .then((documentSnapshot) => {
+        // setDays(JSON.parse(documentSnapshot.data().days));
+        // console.log(JSON.parse(documentSnapshot.data().days));
 
-    //borde också hämta tiderna för rutinen och köra flera items för samma datum fast med olika tider
+        const times = JSON.parse(documentSnapshot.data().routineTimes);
+        const days = JSON.parse(documentSnapshot.data().days);
+        const daysCurrent = {};
+        const daysDateStrings = [];
+        // console.log(times);
 
-    for (let i = 0; i < 30; i++) {
-      const days = [];
-      let day = new Date(year, month - 1, date + i).toDateString();
-      // if () { //kolla days boolean
-      //   //lägg till day i days
-      // }
-    }
+        setTimeout(() => {
+          let firstDayFound = false;
+          let x = 1;
+          //förläng objektet så det har 30+ items
+          for (let o = 0; o < 6; o++) {
+            // console.log('loop 1 ' + o);
+            for (let i = 0; i < 7; i++) {
+              // console.log('loop 2 ' + i);
+              if (firstDayFound) {
+                daysCurrent[x] = days[i];
+                // daysCurrent.push({ [x]: days[i] });
+                // setDaysCurrent((prevState) => ({ ...prevState, [x]: days[i] }));
+                x++;
+              }
+              //köra getDay så man vet vart i objektet man ska börja
+              if (i === today.getDay() && !firstDayFound) {
+                daysCurrent[0] = days[i];
+                // daysCurrent.push({ 0: days[i] });
+                // setDaysCurrent({ 0: days[i] });
+                // console.log('dgaga ', days);
+                // console.log('hej');
+                firstDayFound = true;
+              }
+            }
+          }
+          // console.log('current day: ' + today.getDay());
+          // console.log(daysCurrent);
+          setTimeout(() => {
+            // console.log(daysCurrent);
+            //loopar igenom objektet med 30+ items nedan och kollar true/false
+            for (let i = 0; i < 31; i++) {
+              //kollar days boolean
+              if (daysCurrent[i] === 1) {
+                //lägger till flera om man har flera tider för rutinen
+                for (let i = 0; i < times.length; i++) {
+                  // console.log(day.toDateString(day));
+
+                  //ny array där alla de datum i dateStrings listas
+                  daysDateStrings.push(day.toDateString(day));
+                  // setDaysDateStrings((prevArray) => [
+                  //   ...prevArray,
+                  //   day.toDateString(day),
+                  // ]);
+                }
+              }
+              day.setDate(day.getDate() + 1);
+            }
+            setDaysDateStringsList(daysDateStrings);
+            // console.log(daysDateStrings);
+          }, 200);
+        }, 200);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
+
+  useEffect(() => {
+    daysInNextThirtyDays('Kaffedag');
+  }, []);
+  useEffect(() => {
+    console.log(daysDateStringsList);
+  }, [daysDateStringsList]);
 
   const loadItems = () => {
     setTimeout(() => {
