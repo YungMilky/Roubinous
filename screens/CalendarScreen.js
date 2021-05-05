@@ -1,6 +1,5 @@
-import { Calendar, Agenda } from 'react-native-calendars';
+import { Agenda } from 'react-native-calendars';
 import React, { useEffect, useState } from 'react';
-import { Card, Title, Paragraph } from 'react-native-paper';
 import {
   StyleSheet,
   View,
@@ -141,6 +140,7 @@ function CalendarScreen(props) {
       let notesForThatDay = [];
       console.log(routinesData);
       console.log(routinesName);
+
       // const [numOfItems, setNumOfItems] = useState({});
       //Kanske lägga in en array med datum sen ta ut datumet till time
       for (let i = 0; i < routinesData.length; i++) {
@@ -169,7 +169,7 @@ function CalendarScreen(props) {
           for (let i = 0; i < routinesNameThatDay.length; i++) {
             //Items[strTime] = ID (keys), vilet är datum
             items[strTime].push({
-              name: routinesNameThatDay[i],
+              name: routinesNameThatDay[i] + ' created',
               dayNotes: notesForThatDay[i],
               height: 100,
               // height: Math.max(50, Math.floor(Math.random() * 150)),
@@ -194,7 +194,24 @@ function CalendarScreen(props) {
     return (
       <TouchableOpacity
         style={[styles.item, { height: item.height }]}
-        onPress={() => Alert.alert(item.name, item.dayNotes)}
+        onPress={() =>
+          Alert.alert(
+            item.name,
+            item.dayNotes,
+            [
+              {
+                text: 'Nope',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              { text: 'Yes!', onPress: () => console.log('OK Pressed') },
+            ],
+            {
+              cancelable: true,
+              onDismiss: () => console.log('Dismissed'),
+            }
+          )
+        }
       >
         <View style={styles.box}>
           <Text style={styles.fonts}>{item.name}</Text>
