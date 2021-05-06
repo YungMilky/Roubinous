@@ -40,6 +40,8 @@ export default (title) => {
             StartDate: new Date(),
             UserAlertTime: 7,
             UserRoutineRank: 'Rookie',
+            days: '{"0":0,"1":1,"2":1,"3":1,"4":1,"5":1,"6":0}',
+            routineTimes: '[{"key":1,"hours":10,"minutes":30}]',
             removed: false,
           },
           { merge: true }

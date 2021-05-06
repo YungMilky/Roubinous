@@ -119,7 +119,7 @@ const ProfileScreen = ({ navigation }) => {
           )}
 
           <View style={styles.separator} />
-          <View style={styles.buttonContainer}>
+          {/* <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={styles.rowButton}
               onPress={() => navigation.navigate('My Routines')}
@@ -142,7 +142,7 @@ const ProfileScreen = ({ navigation }) => {
               />
               <Text style={styles.buttonText}>My Journey</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
       </ScrollView>
     </Screen>
@@ -166,8 +166,6 @@ const styles = StyleSheet.create({
     color: colors.darkmodeMediumWhite,
   },
   container: {
-    justifyContent: 'center',
-    alignItems: 'flex-start',
     flexGrow: 1,
     width: width,
   },
@@ -204,7 +202,7 @@ const styles = StyleSheet.create({
   separator: {
     width: '80%',
     height: 1,
-    backgroundColor: 'lightgrey',
+    backgroundColor: colors.darkmodeMediumWhite,
     marginTop: 10,
   },
   topContainer: {
