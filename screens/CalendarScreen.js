@@ -9,6 +9,8 @@ import {
   Image,
 } from "react-native";
 import { db, auth } from "../firebase";
+import colors from "../config/colors";
+import { Icon } from "react-native-elements";
 
 const timeToString = (time) => {
   const date = new Date(time);
@@ -135,6 +137,8 @@ function CalendarScreen() {
     console.log(daysDateStringsList);
   }, [daysDateStringsList]);
 
+  const lista = routinesData.length;
+
   const loadItems = () => {
     try {
       setTimeout(() => {
@@ -174,6 +178,7 @@ function CalendarScreen() {
                 name: routinesNameThatDay[i],
                 dayNotes: notesForThatDay[i],
                 ItemisDone: routinesDoneForThatDay[i],
+                itemTime: strTime,
                 height: 100,
                 // height: Math.max(50, Math.floor(Math.random() * 150)),
               });
@@ -199,54 +204,76 @@ function CalendarScreen() {
   };
 
   const renderItem = (item) => {
-    try {
-      if (!item.ItemisDone) {
-        return (
-          <TouchableOpacity
-            style={[styles.item, { height: item.height }]}
-            onPress={() =>
-              Alert.alert(
-                item.name,
-                item.dayNotes,
-                [
-                  {
-                    text: "Nope",
-                    onPress: () => console.log("Nope Pressed"),
-                    style: "cancel",
-                  },
-                  {
-                    text: "Yes!",
-                    onPress: () => checkItemDone(item.name, item),
-                  },
-                ],
-                {
-                  cancelable: true,
-                  onDismiss: () => console.log("Dismissed"),
-                }
-              )
-            }
-          >
-            <View style={styles.box}>
-              <Text style={styles.fonts}>{item.name}</Text>
+    // itemTimesADay = JSON.parse(documentSnapshot.data().routineTimes);
+    // console.log(JSON.parse(documentSnapshot.data().routineTimes));
 
-              <Image
-                style={styles.image}
-                source={require("../assets/RoutinesPics/WaterDrinking.png")}
-              />
-            </View>
-          </TouchableOpacity>
-        );
+    try {
+      const todayCheck = new Date().toISOString().split("T")[0];
+      const itemTimeCompare = item.itemTime;
+      if (!item.ItemisDone && todayCheck == itemTimeCompare) {
+        {
+          return (
+            <TouchableOpacity
+              style={[styles.item, { height: item.height }]}
+              onPress={() =>
+                Alert.alert(
+                  item.name,
+                  item.dayNotes,
+                  [
+                    {
+                      text: "Nope",
+                      onPress: () => console.log("Nope Pressed"),
+                      style: "cancel",
+                    },
+                    {
+                      text: "Yes!",
+                      onPress: () => checkItemDone(item.name, item),
+                    },
+                  ],
+                  {
+                    cancelable: true,
+                    onDismiss: () => console.log("Dismissed"),
+                  }
+                )
+              }
+            >
+              <View style={styles.box}>
+                <Text style={styles.fonts}>{item.name}</Text>
+                <Image
+                  style={styles.image}
+                  source={require("../assets/RoutinesPics/WaterDrinking.png")}
+                />
+              </View>
+            </TouchableOpacity>
+          );
+        }
       } else if (item.ItemisDone) {
         return (
-          <View style={[styles.item, { height: item.height }]}>
+          <View style={[styles.itemDone, { height: item.height }]}>
             <View style={styles.box}>
               <Text style={styles.fonts}>{item.name + " is done!"}</Text>
 
+              <Icon name="checkmark" type="ionicon" color="#39B91C" />
+
               <Image
                 style={styles.image}
                 source={require("../assets/RoutinesPics/WaterDrinking.png")}
               />
             </View>
+            <Text style={styles.fontsDone}>{"Good Job!"}</Text>
+          </View>
+        );
+      } else {
+        return (
+          <View style={[styles.itemDone, { height: item.height }]}>
+            <View style={styles.box}>
+              <Text style={styles.fonts}>{item.name + " u failed"}</Text>
+              <Image
+                style={styles.image}
+                source={require("../assets/RoutinesPics/WaterDrinking.png")}
+              />
+            </View>
+            <Text style={styles.fontsDone}>{"Bad Boy"}</Text>
           </View>
         );
       }
@@ -260,7 +287,6 @@ function CalendarScreen() {
   //Behöver kanske lägga in time som parameter också om getthirtydays är implementerad
   const checkItemDone = (routineName, item) => {
     onRefresh();
-
     item.ItemisDone = true;
 
     db.collection("Users")
@@ -287,9 +313,12 @@ function CalendarScreen() {
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          if (!doc.removed) {
-            routinesData.push(doc.data());
-            routinesName.push(doc.id);
+          let timesLength = JSON.parse(doc.data().routineTimes).length;
+          for (let i = 0; i < timesLength; i++) {
+            if (!doc.removed) {
+              routinesData.push(doc.data());
+              routinesName.push(doc.id);
+            }
           }
         });
       });
@@ -299,7 +328,6 @@ function CalendarScreen() {
 
   const onRefresh = () => {
     setRefresh(true);
-
     setTimeout(() => {
       setRefresh(false);
     }, 1500);
@@ -318,7 +346,15 @@ function CalendarScreen() {
 }
 const styles = StyleSheet.create({
   item: {
-    backgroundColor: "white",
+    backgroundColor: colors.test,
+    flex: 1,
+    borderRadius: 5,
+    padding: 10,
+    marginRight: 10,
+    marginTop: 17,
+  },
+  itemDone: {
+    backgroundColor: "#D1D0CE",
     flex: 1,
     borderRadius: 5,
     padding: 10,
@@ -339,6 +375,16 @@ const styles = StyleSheet.create({
   fonts: {
     fontSize: 15,
     fontFamily: "Roboto",
+    color: "black",
+    marginTop: 3.5,
+    marginRight: 3,
+  },
+  fontsDone: {
+    fontSize: 20,
+    fontFamily: "Roboto",
+    fontStyle: "italic",
+    color: "black",
+    marginTop: 8,
   },
 });
 export default CalendarScreen;

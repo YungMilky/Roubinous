@@ -1,5 +1,5 @@
-import { auth, db, db1 } from '../firebase';
-import firebase from 'firebase/app';
+import { auth, db, db1 } from "../firebase";
+import firebase from "firebase/app";
 
 //  Just add routine fields as props when
 //  we've decided on the logic for them
@@ -14,12 +14,12 @@ export default (title) => {
   // // Document reference
   const userID = auth.currentUser.uid;
   console.log(userID);
-  const roubineRef = db.collection('Users').doc(userID);
+  const roubineRef = db.collection("Users").doc(userID);
 
   const userRoutines = db
-    .collection('Users')
+    .collection("Users")
     .doc(userID)
-    .collection('routines');
+    .collection("routines");
 
   userRoutines
     .doc(title)
@@ -35,13 +35,13 @@ export default (title) => {
         roubineRef.update({ Roubies: increment });
         userRoutines.doc(title).set(
           {
-            ComboFrequency: '2',
+            ComboFrequency: "2",
             DaysInCombo: 2,
             StartDate: new Date(),
             UserAlertTime: 7,
-            UserRoutineRank: 'Rookie',
             days: '{"0":0,"1":1,"2":1,"3":1,"4":1,"5":1,"6":0}',
             routineTimes: '[{"key":1,"hours":10,"minutes":30}]',
+            UserRoutineRank: "Rookie",
             removed: false,
           },
           { merge: true }

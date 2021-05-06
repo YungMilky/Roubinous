@@ -9,6 +9,9 @@ export default {
   white: "#FFFFFF",
   OrchidPink: "#FFC6D9",
   red: "#FF101F",
+  ashGrey: "#666362",
+  granite: "#837E7C",
+  greyCloud: "#B6B6B4",
 
   samGreen: "#64F58D",
   samRed: "#DB5461",
@@ -19,6 +22,7 @@ export default {
   yungBlue: "#2E86AB",
   darkOpacity: "rgba(0,0,0,0.6)",
   samSexyRed: "#a70c42",
+  test: "#FFFFFF",
 
   pastelRed: "#820933",
   pastelGreen: "#59CD90",
