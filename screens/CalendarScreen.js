@@ -15,38 +15,39 @@ const timeToString = (time) => {
   return date.toISOString().split("T")[0];
 };
 
-function CalendarScreen(props) {
+function CalendarScreen() {
   const [items, setItems] = useState({});
   const [daysDateStringsList, setDaysDateStringsList] = useState([]);
   const [times, setTimes] = useState({});
+  // const [routinesData, setRoutinesData] = useState([]);
+  // const [routinesName, setRoutinesName] = useState([]);
 
   const userId = auth.currentUser.uid;
-  useEffect(() => {
-    console.log(userId);
-  }, []);
 
   let routinesData = [];
   let routinesName = [];
   useEffect(() => {
-    db.collection("Users")
-      .doc(userId)
-      .collection("routines")
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          routinesData.push(doc.data());
-          routinesName.push(doc.id);
-
-          // routinesStartDate = doc.data().timestamp.toDate();
-
-          // setStartDate(new Date( * 1000));
-
-          // console.log(routinesData);
-        });
-      });
+    getItems();
   }, []);
 
-  const daysInNextThirtyDays = (routineName) => {
+  // useEffect(() => {
+  //   db.collection("Users")
+  //     .doc(userId)
+  //     .collection("routines")
+  //     .get()
+  //     .then((querySnapshot) => {
+  //       querySnapshot.forEach((doc) => {
+  //         if (!doc.removed) {
+  //           routinesData.push(doc.data());
+  //           routinesName.push(doc.id);
+
+  //           setRoutinesData((prevState) => [...prevState, doc.data()]);
+  //           setRoutinesName((prevArray) => [...prevArray, doc.id]);
+  //         }
+  //       });
+  //     });
+  // }, []);
+  const daysInNextThirtyDays = (routineTime, routineName) => {
     // setDaysDateStringsList([]);
     let today = new Date();
     let year = today.getFullYear();
@@ -57,7 +58,7 @@ function CalendarScreen(props) {
     //hämta customroutines/days från varje rutin i firestore
     db.collection("Users")
       .doc(userId)
-      .collection("customRoutines")
+      .collection(routineTime)
       .doc(routineName)
       .get()
       .then((documentSnapshot) => {
@@ -138,10 +139,9 @@ function CalendarScreen(props) {
     setTimeout(() => {
       let routinesNameThatDay = [];
       let notesForThatDay = [];
-      console.log(routinesData);
-      console.log(routinesName);
 
-      // const [numOfItems, setNumOfItems] = useState({});
+      console.log(routinesData);
+
       //Kanske lägga in en array med datum sen ta ut datumet till time
       for (let i = 0; i < routinesData.length; i++) {
         // const time = day.timestamp * 24 * 60 * 60 * 1000;
@@ -174,12 +174,12 @@ function CalendarScreen(props) {
               // height: Math.max(50, Math.floor(Math.random() * 150)),
             });
           }
-
+          console.log("Hej " + routinesNameThatDay);
           routinesNameThatDay = [];
           notesForThatDay = [];
         }
       }
-      console.log(notesForThatDay);
+      // console.log(notesForThatDay);
 
       const newItems = {};
       Object.keys(items).forEach((key) => {
@@ -190,8 +190,6 @@ function CalendarScreen(props) {
   };
 
   const renderItem = (item) => {
-    let itemNameForThatDay = item.name;
-    let itemNotesForThatDay = item.dayNotes;
     return (
       <TouchableOpacity
         style={[styles.item, { height: item.height }]}
@@ -207,13 +205,7 @@ function CalendarScreen(props) {
               },
               {
                 text: "Yes!",
-                onPress: () =>
-                  console.log(
-                    "Yes Pressed. " +
-                      itemNameForThatDay +
-                      " " +
-                      itemNotesForThatDay
-                  ),
+                onPress: () => checkItemDone(item.name),
               },
             ],
             {
@@ -234,13 +226,41 @@ function CalendarScreen(props) {
       </TouchableOpacity>
     );
   };
+  //Behöver kanske lägga in time som parameter också om getthirtydays är implementerad
+  const checkItemDone = (routineName) => {
+    db.collection("Users")
+      .doc(userId)
+      .collection("routines")
+      .doc(routineName)
+      .update({
+        isDone: true,
+      });
+    routinesData = [];
+    getItems();
+    loadItems();
+  };
+
+  const getItems = () => {
+    db.collection("Users")
+      .doc(userId)
+      .collection("routines")
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          if (!doc.removed) {
+            routinesData.push(doc.data());
+            routinesName.push(doc.id);
+          }
+        });
+      });
+  };
 
   return (
     <Agenda
       items={items}
       loadItemsForMonth={loadItems}
       renderItem={renderItem}
-      minDate={new Date() - 1}
+      // minDate={new Date() }
     />
   );
 }
