@@ -1,5 +1,5 @@
-import { Agenda } from 'react-native-calendars';
-import React, { useEffect, useState } from 'react';
+import { Agenda } from "react-native-calendars";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -7,50 +7,46 @@ import {
   Text,
   Alert,
   Image,
-} from 'react-native';
-import { db, auth } from '../firebase';
+} from "react-native";
+import { db, auth } from "../firebase";
 
 const timeToString = (time) => {
   const date = new Date(time);
-  return date.toISOString().split('T')[0];
+  return date.toISOString().split("T")[0];
 };
 
-function CalendarScreen(props) {
+function CalendarScreen() {
   const [items, setItems] = useState({});
   const [daysDateStringsList, setDaysDateStringsList] = useState([]);
   const [times, setTimes] = useState({});
-  const [routinesData, setRoutinesData] = useState([]);
-  const [routinesName, setRoutinesName] = useState([]);
+  // const [routinesData, setRoutinesData] = useState([]);
+  // const [routinesName, setRoutinesName] = useState([]);
 
   const userId = auth.currentUser.uid;
+
+  let routinesData = [];
+  let routinesName = [];
   useEffect(() => {
-    console.log(userId);
+    getItems();
   }, []);
 
-  // let routinesData = [];
-  // let routinesName = [];
-  useEffect(() => {
-    db.collection('Users')
-      .doc(userId)
-      .collection('routines')
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          // routinesData.push(doc.data());
-          // routinesName.push(doc.id);
-          // setRoutinesData(doc.data());
-          if (!doc.removed) {
-            setRoutinesData((prevState) => [...prevState, doc.data()]);
-            setRoutinesName((prevArray) => [...prevArray, doc.id]);
-          }
+  // useEffect(() => {
+  //   db.collection("Users")
+  //     .doc(userId)
+  //     .collection("routines")
+  //     .get()
+  //     .then((querySnapshot) => {
+  //       querySnapshot.forEach((doc) => {
+  //         if (!doc.removed) {
+  //           routinesData.push(doc.data());
+  //           routinesName.push(doc.id);
 
-          // routinesStartDate = doc.data().timestamp.toDate();
-
-          // setStartDate(new Date( * 1000));
-        });
-      });
-  }, []);
-
+  //           setRoutinesData((prevState) => [...prevState, doc.data()]);
+  //           setRoutinesName((prevArray) => [...prevArray, doc.id]);
+  //         }
+  //       });
+  //     });
+  // }, []);
   const daysInNextThirtyDays = (routineTime, routineName) => {
     // setDaysDateStringsList([]);
     let today = new Date();
@@ -60,7 +56,7 @@ function CalendarScreen(props) {
     let day = new Date(year, month, date);
 
     //hämta customroutines/days från varje rutin i firestore
-    db.collection('Users')
+    db.collection("Users")
       .doc(userId)
       .collection(routineTime)
       .doc(routineName)
@@ -133,117 +129,180 @@ function CalendarScreen(props) {
   };
 
   // useEffect(() => {
-  //   daysInNextThirtyDays('customRoutines', 'lköjnmdfswhkbljfdakjhbhjkbl');
+  //   daysInNextThirtyDays("Kaffedag");
   // }, []);
-  // useEffect(() => {
-  //   console.log(daysDateStringsList);
-  // }, [daysDateStringsList]);
+  useEffect(() => {
+    console.log(daysDateStringsList);
+  }, [daysDateStringsList]);
 
   const loadItems = () => {
-    setTimeout(() => {
-      let routinesNameThatDay = [];
-      let notesForThatDay = [];
-      // console.log(routinesData);
+    try {
+      setTimeout(() => {
+        let routinesNameThatDay = [];
+        let notesForThatDay = [];
+        let routinesDoneForThatDay = [];
 
-      console.log(routinesData);
-      // console.log(routinesName);
-      console.log(routinesData.length);
-
-      // const [numOfItems, setNumOfItems] = useState({});
-      //Kanske lägga in en array med datum sen ta ut datumet till time
-      for (let i = 0; i < routinesData.length; i++) {
-        // const time = day.timestamp * 24 * 60 * 60 * 1000;
-
-        const time = routinesData[i].StartDate.seconds * 1000 + 9500000;
-
-        const strTime = timeToString(time);
-        console.log(strTime);
-
+        // !!! Så fort den kommer in i for loopen så blir det fucked !!!
+        //Kanske lägga in en array med datum sen ta ut datumet till time
         for (let i = 0; i < routinesData.length; i++) {
-          const timeCompare =
-            routinesData[i].StartDate.seconds * 1000 + 9500000;
-          const strTimeCompare = timeToString(timeCompare);
-          const routineNames = routinesName[i];
-          // const notes = routinesData[i].notes;
+          // const time = day.timestamp * 24 * 60 * 60 * 1000;
+          const time = routinesData[i].StartDate.seconds * 1000 + 9500000;
 
-          if (strTime === strTimeCompare) {
-            routinesNameThatDay.push(routineNames);
-            // notesForThatDay.push(notes);
+          const strTime = timeToString(time);
+
+          for (let i = 0; i < routinesData.length; i++) {
+            const timeCompare =
+              routinesData[i].StartDate.seconds * 1000 + 9500000;
+            const strTimeCompare = timeToString(timeCompare);
+            const routineNames = routinesName[i];
+            const notes = routinesData[i].notes;
+            const isDone = routinesData[i].isDone;
+
+            if (strTime === strTimeCompare) {
+              routinesNameThatDay.push(routineNames);
+              notesForThatDay.push(notes);
+              routinesDoneForThatDay.push(isDone);
+            }
           }
-        }
 
-        if (!items[strTime]) {
-          items[strTime] = [];
+          if (!items[strTime]) {
+            items[strTime] = [];
 
-          for (let i = 0; i < routinesNameThatDay.length; i++) {
-            //Items[strTime] = ID (keys), vilet är datum
-            items[strTime].push({
-              name: routinesNameThatDay[i] + ' created',
-              // dayNotes: notesForThatDay[i],
-              height: 100,
-              // height: Math.max(50, Math.floor(Math.random() * 150)),
-            });
+            for (let i = 0; i < routinesNameThatDay.length; i++) {
+              //Items[strTime] = ID (keys), vilet är datum
+              items[strTime].push({
+                name: routinesNameThatDay[i],
+                dayNotes: notesForThatDay[i],
+                ItemisDone: routinesDoneForThatDay[i],
+                height: 100,
+                // height: Math.max(50, Math.floor(Math.random() * 150)),
+              });
+              // console.log(routinesDoneForThatDay[i]);
+            }
           }
-          console.log('Hej ' + routinesNameThatDay);
           routinesNameThatDay = [];
           notesForThatDay = [];
+          routinesDoneForThatDay = [];
         }
-      }
-      // console.log(notesForThatDay);
 
-      const newItems = {};
-      Object.keys(items).forEach((key) => {
-        newItems[key] = items[key];
-      });
-      setItems(newItems);
-    }, 1000);
+        // console.log("hej" + items);
+
+        const newItems = {};
+        Object.keys(items).forEach((key) => {
+          newItems[key] = items[key];
+        });
+        setItems(newItems);
+      }, 1000);
+    } catch (e) {
+      console.log("Något gick fel!");
+    }
   };
 
   const renderItem = (item) => {
-    let itemNameForThatDay = item.name;
-    let itemNotesForThatDay = item.dayNotes;
-
-    return (
-      <TouchableOpacity
-        style={[styles.item, { height: item.height }]}
-        onPress={() =>
-          Alert.alert(
-            item.name,
-            item.dayNotes,
-            [
-              {
-                text: 'Nope',
-                onPress: () => console.log('Nope Pressed'),
-                style: 'cancel',
-              },
-              {
-                text: 'Yes!',
-                onPress: () =>
-                  console.log(
-                    'Yes Pressed. ' +
-                      itemNameForThatDay +
-                      ' ' +
-                      itemNotesForThatDay
-                  ),
-              },
-            ],
-            {
-              cancelable: true,
-              onDismiss: () => console.log('Dismissed'),
+    try {
+      if (!item.ItemisDone) {
+        return (
+          <TouchableOpacity
+            style={[styles.item, { height: item.height }]}
+            onPress={() =>
+              Alert.alert(
+                item.name,
+                item.dayNotes,
+                [
+                  {
+                    text: "Nope",
+                    onPress: () => console.log("Nope Pressed"),
+                    style: "cancel",
+                  },
+                  {
+                    text: "Yes!",
+                    onPress: () => checkItemDone(item.name, item),
+                  },
+                ],
+                {
+                  cancelable: true,
+                  onDismiss: () => console.log("Dismissed"),
+                }
+              )
             }
-          )
-        }
-      >
-        <View style={styles.box}>
-          <Text style={styles.fonts}>{item.name}</Text>
+          >
+            <View style={styles.box}>
+              <Text style={styles.fonts}>{item.name}</Text>
 
-          <Image
-            style={styles.image}
-            source={require('../assets/RoutinesPics/WaterDrinking.png')}
-          />
-        </View>
-      </TouchableOpacity>
-    );
+              <Image
+                style={styles.image}
+                source={require("../assets/RoutinesPics/WaterDrinking.png")}
+              />
+            </View>
+          </TouchableOpacity>
+        );
+      } else if (item.ItemisDone) {
+        return (
+          <View style={[styles.item, { height: item.height }]}>
+            <View style={styles.box}>
+              <Text style={styles.fonts}>{item.name + " is done!"}</Text>
+
+              <Image
+                style={styles.image}
+                source={require("../assets/RoutinesPics/WaterDrinking.png")}
+              />
+            </View>
+          </View>
+        );
+      }
+    } catch (e) {
+      console.log(
+        "Opps, crash! Luckily OP Timo is here and you can refresh without crash :)"
+      );
+    }
+  };
+
+  //Behöver kanske lägga in time som parameter också om getthirtydays är implementerad
+  const checkItemDone = (routineName, item) => {
+    onRefresh();
+
+    item.ItemisDone = true;
+
+    db.collection("Users")
+      .doc(userId)
+      .collection("routines")
+      .doc(routineName)
+      .update({
+        isDone: true,
+      });
+    // setItems({});
+    routinesData = [];
+    getItems();
+    loadItems();
+    renderItem();
+    // setTimeout(() => {
+    //   renderItem();
+    // }, 3000);
+  };
+
+  const getItems = () => {
+    db.collection("Users")
+      .doc(userId)
+      .collection("routines")
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          if (!doc.removed) {
+            routinesData.push(doc.data());
+            routinesName.push(doc.id);
+          }
+        });
+      });
+  };
+
+  const [refreshing, setRefresh] = useState(false);
+
+  const onRefresh = () => {
+    setRefresh(true);
+
+    setTimeout(() => {
+      setRefresh(false);
+    }, 1500);
   };
 
   return (
@@ -251,12 +310,15 @@ function CalendarScreen(props) {
       items={items}
       loadItemsForMonth={loadItems}
       renderItem={renderItem}
+      // minDate={new Date() }
+      onRefresh={onRefresh}
+      refreshing={refreshing}
     />
   );
 }
 const styles = StyleSheet.create({
   item: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     flex: 1,
     borderRadius: 5,
     padding: 10,
@@ -264,19 +326,19 @@ const styles = StyleSheet.create({
     marginTop: 17,
   },
   box: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   image: {
     flex: 1,
     width: 100,
     height: 130,
-    position: 'absolute',
+    position: "absolute",
     marginLeft: 190,
     top: -40,
   },
   fonts: {
     fontSize: 15,
-    fontFamily: 'Roboto',
+    fontFamily: "Roboto",
   },
 });
 export default CalendarScreen;
