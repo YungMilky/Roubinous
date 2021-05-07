@@ -8,9 +8,15 @@ import AppButton from '../components/AppButton';
 import colors from '../config/colors';
 import PropTypes from 'prop-types';
 import CreateDailyNotification from '../components/notification/CreateDailyNotification';
+import Screen from '../components/Screen';
 
 const LoginAsGuestScreen = ({ navigation }) => {
   const [name, setName] = useState('');
+
+  let currentDate = new Date();
+  let day = currentDate.getDate();
+  let month = currentDate.getMonth() + 1;
+  let year = currentDate.getFullYear();
 
   const signInAnonymously = () => {
     if (!name.trim()) {
@@ -25,6 +31,10 @@ const LoginAsGuestScreen = ({ navigation }) => {
           Roubies: 50,
           UserAlertHour: 10,
           UserAlertMinute: 30,
+          DailyRewardDay: day,
+          DailyRewardMonth: month,
+          DailyRewardYear: year,
+          Exp: 50,
         });
       });
       CreateDailyNotification(10, 30);
@@ -32,11 +42,12 @@ const LoginAsGuestScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <Screen style={styles.container}>
       <Text style={styles.text}>We just need your name</Text>
       <View style={styles.input}>
         <StatusBar style="light" />
         <Input
+          style={{ color: colors.darkmodeHighWhite }}
           placeholder="Your name here..."
           autoFocus
           type="name"
@@ -52,7 +63,7 @@ const LoginAsGuestScreen = ({ navigation }) => {
         title="Let's go!"
         onPress={signInAnonymously}
       />
-    </View>
+    </Screen>
   );
 };
 
@@ -72,7 +83,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   input: {
-    width: '80%',
+    width: 300,
   },
   text: {
     color: colors.OrchidPink,

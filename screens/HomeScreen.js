@@ -40,7 +40,7 @@ const HomeScreen = ({ navigation }) => {
           month < nowDate.getMonth() + 1 ||
           year < nowDate.getFullYear()
         ) {
-          db.collection("Users")
+          db.collection('Users')
             .doc(auth.currentUser.uid)
             .update({
               Roubies: documentSnapshot.data().Roubies + 50,
@@ -50,6 +50,9 @@ const HomeScreen = ({ navigation }) => {
               DailyRewardYear: nowDate.getFullYear(),
             });
           setShowModal(true);
+          console.log('Eligible for daily reward!!');
+        } else {
+          console.log('Not eligible for daily reward!');
         }
       });
   };
@@ -100,7 +103,7 @@ const HomeScreen = ({ navigation }) => {
       <TouchableOpacity
         style={styles.button}
         onPress={() =>
-          navigation.navigate("Browse Routines", { screen: "Browse Routines" })
+          navigation.navigate('Browse Routines', { screen: 'Browse Routines' })
         }
       >
         <MaterialCommunityIcons
@@ -115,13 +118,16 @@ const HomeScreen = ({ navigation }) => {
           name="clock-time-eight"
           size={70}
           color={colors.samRed}
+          onPress={() =>
+            navigation.navigate('My Routines', { screen: 'My Routines' })
+          }
         />
         <Text style={styles.buttonText}>My Routines</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
         onPress={() =>
-          navigation.navigate("Calendars", { screen: "Calendars" })
+          navigation.navigate('Calendars', { screen: 'Calendars' })
         }
       >
         <MaterialCommunityIcons
@@ -230,12 +236,12 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   container: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   button: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     margin: 20,
     width: 120,
     height: 120,
@@ -265,8 +271,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   rowButton: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     margin: 20,
   },
   press: {

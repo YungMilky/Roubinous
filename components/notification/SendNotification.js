@@ -10,8 +10,9 @@ Notifications.setNotificationHandler({
   }),
 });
 
+// parametern time är hur många sekunder efter man kallar på metoden som notisen skickas
 async function SendNotification(time, title, info) {
-  console.log(time);
+  console.log('time: ' + time);
   const identifier = await Notifications.scheduleNotificationAsync({
     content: {
       title: title,
@@ -19,7 +20,7 @@ async function SendNotification(time, title, info) {
     },
     trigger: { seconds: time, repeats: false },
   });
-  console.log(identifier);
+  console.log('identifier: ' + identifier);
   return 'Notification sent';
 }
 
