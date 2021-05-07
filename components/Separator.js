@@ -1,6 +1,6 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import colors from "../config/colors";
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import colors from '../config/colors';
 
 function Separator(style) {
   return <View style={[styles.separator, style]} />;
@@ -8,7 +8,7 @@ function Separator(style) {
 
 const styles = StyleSheet.create({
   separator: {
-    width: "100%",
+    width: '100%',
     height: 1,
     backgroundColor: colors.darkmodeDisabledWhite,
   },

@@ -12,6 +12,7 @@ import { db, auth } from '../firebase';
 import PropTypes from 'prop-types';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useIsFocused } from '@react-navigation/native';
 
 import Screen from '../components/Screen';
 import colors from '../config/colors';
@@ -45,9 +46,13 @@ const ProfileScreen = ({ navigation }) => {
         setGuest(documentSnapshot.data().Guest);
       });
   };
+  // useEffect(() => {
+  //   getUserInfo();
+  // }, []);
+  const isFocused = useIsFocused();
   useEffect(() => {
     getUserInfo();
-  }, []);
+  }, [isFocused]);
   return (
     <Screen style={styles.container}>
       <ScrollView>
@@ -60,6 +65,12 @@ const ProfileScreen = ({ navigation }) => {
                 'https://png.pngtree.com/png-vector/20190803/ourlarge/pngtree-avatar-user-basic-abstract-circle-background-flat-color-icon-png-image_1647265.jpg',
             }}
           />
+          {/* <MaterialCommunityIcons
+            name="account-circle-outline"
+            size={80}
+            color={colors.darkmodeMediumWhite}
+          /> */}
+
           <View style={styles.topTextContainer}>
             <Text style={styles.name}>{name}</Text>
             <Text style={styles.description}>Rank: {userRank}</Text>

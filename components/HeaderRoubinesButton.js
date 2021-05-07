@@ -25,7 +25,7 @@ const headerRoubinesButton = () => {
         'Timo is a dum-dum and u looged out cant get Roubies info: ' + e
       );
     }
-  }, []);
+  }, [roubies]);
 
   return (
     <View style={styles.groupButton}>
