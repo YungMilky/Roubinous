@@ -1,45 +1,62 @@
 import React, { useState, useEffect } from "react";
-import { Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  View,
+  Dimensions,
+  Image,
+} from "react-native";
 import PropTypes from "prop-types";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 
 import { auth, db } from "../firebase";
 import Screen from "../components/Screen";
 import colors from "../config/colors";
 import CreateDailyNotification from "../components/notification/CreateDailyNotification";
 import CancelAllNotifications from "../components/notification/CancelAllNotifications";
+import * as Animatable from "react-native-animatable";
+import { TouchableWithoutFeedback } from "react-native";
+import AppButton from "../components/AppButton";
+import { SimpleAnimation } from "react-native-simple-animations";
 
+const { width, height } = Dimensions.get("screen");
 const HomeScreen = ({ navigation }) => {
-  
+  const [showModal, setShowModal] = useState(false);
   let nowDate = new Date();
 
   const getDailyRewardTime = () => {
-    db.collection('Users')
+    db.collection("Users")
       .doc(auth.currentUser.uid)
       .get()
       .then((documentSnapshot) => {
-        const date = documentSnapshot.data().DailyRewardDay
-        const month = documentSnapshot.data().DailyRewardMonth
-        const year = documentSnapshot.data().DailyRewardYear
-      
-         if (date < nowDate.getDate() || month < (nowDate.getMonth()+1) || year < nowDate.getFullYear() ) {
-            db.collection("Users").doc(auth.currentUser.uid)
+        const date = documentSnapshot.data().DailyRewardDay;
+        const month = documentSnapshot.data().DailyRewardMonth;
+        const year = documentSnapshot.data().DailyRewardYear;
+
+        if (
+          date < nowDate.getDate() ||
+          month < nowDate.getMonth() + 1 ||
+          year < nowDate.getFullYear()
+        ) {
+          db.collection("Users")
+            .doc(auth.currentUser.uid)
             .update({
-              Roubies: documentSnapshot.data().Roubies +50, 
+              Roubies: documentSnapshot.data().Roubies + 50,
               Exp: documentSnapshot.data().Exp + 50,
               DailyRewardDay: nowDate.getDate(),
-              DailyRewardMonth: (nowDate.getMonth()+1),
+              DailyRewardMonth: nowDate.getMonth() + 1,
               DailyRewardYear: nowDate.getFullYear(),
-        });
-           }
+            });
+          setShowModal(true);
+        }
       });
   };
- 
-  
+
   useEffect(() => {
     getDailyRewardTime();
   }, []);
-
 
   // const user = auth.currentUser;
 
@@ -79,6 +96,7 @@ const HomeScreen = ({ navigation }) => {
         />
         <Text>Profile Page</Text>
       </TouchableOpacity> */}
+
       <TouchableOpacity
         style={styles.button}
         onPress={() =>
@@ -113,11 +131,104 @@ const HomeScreen = ({ navigation }) => {
         />
         <Text style={styles.buttonText}>Calendars</Text>
       </TouchableOpacity>
+      {showModal && (
+        <Modal
+          style={{
+            borderWidth: 0,
+            borderColor: "none",
+            width: "100%",
+            height: "100%",
+          }}
+          animationType={"fade"}
+          transparent={true}
+          statusBarTranslucent={true}
+        >
+          <SimpleAnimation
+            style={{ flex: 1 }}
+            delay={500}
+            duration={1000}
+            fade
+            staticType="zoom"
+          >
+            <View style={styles.centeredView}>
+              <View
+                style={
+                  styles.modalView
+                  //   {
+                  //   backgroundColor: colors.darkmodePressed,
+                  //   flex: 1,
+                  //   justifyContent: "center",
+                  //   alignItems: "center",
+                  //   marginTop: 0,
+                  //   borderRadius: 10,
+                  // }
+                }
+              >
+                <Image
+                  style={styles.imageDefault}
+                  source={require("../assets/RoutinesPics/confetti.png")}
+                />
+                <Text style={styles.text}>Daily reward:</Text>
+                <View style={styles.rubyContianer}>
+                  <Text style={styles.roubieText}>+50</Text>
+                  <FontAwesome
+                    style={{ marginTop: 5, marginLeft: 5 }}
+                    name="diamond"
+                    size={30}
+                    color={colors.samRed}
+                  />
+                  {/* <Image
+                    style={styles.imageRuby}
+                    source={require("../assets/icons/ruby.png")}
+                  /> */}
+                </View>
+
+                <AppButton
+                  style={styles.buttonReward}
+                  title="Okay!"
+                  onPress={() => setShowModal(false)}
+                />
+              </View>
+            </View>
+          </SimpleAnimation>
+        </Modal>
+      )}
     </Screen>
   );
 };
 
 const styles = StyleSheet.create({
+  centeredView: {
+    //
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalText: {
+    //
+    marginBottom: 15,
+    textAlign: "center",
+    fontSize: 16,
+    color: colors.darkmodeMediumWhite,
+  },
+  modalView: {
+    //
+    width: "70%",
+    margin: 20,
+    backgroundColor: colors.darkmodeDisabledBlack,
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
   container: {
     justifyContent: "center",
     alignItems: "center",
@@ -129,14 +240,60 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
   },
+  buttonReward: {
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 10,
+    width: 20,
+    height: 10,
+    marginTop: 50,
+  },
   buttonText: {
     fontSize: 16,
     color: colors.darkmodeMediumWhite,
+  },
+  imageDefault: {
+    width: 150,
+    height: 150,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  imageRuby: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
   },
   rowButton: {
     justifyContent: "center",
     alignItems: "center",
     margin: 20,
+  },
+  press: {
+    width: 200,
+    height: 200,
+    justifyContent: "center",
+    alignItems: "center",
+    alignContent: "center",
+
+    backgroundColor: colors.darkmodePressed,
+    // flex: 1,
+
+    borderRadius: 10,
+  },
+  rubyContianer: {
+    flexDirection: "row",
+    marginBottom: 10,
+  },
+  roubieText: {
+    fontSize: 30,
+    color: colors.darkmodeHighWhite,
+  },
+  text: {
+    fontSize: 25,
+    color: colors.darkmodeHighWhite,
+    marginBottom: 20,
+    textAlign: "center",
   },
 });
 

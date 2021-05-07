@@ -320,6 +320,7 @@ const RoutineScreen = ({ navigation, route }) => {
               onPress={() => {
                 AddRoutine(item.title);
                 setShowModal(true);
+              
                 playSound();
               }}
             />

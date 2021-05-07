@@ -29,6 +29,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import co.apptailor.googlesignin.RNGoogleSigninPackage;  
+
 import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 
 
@@ -90,8 +91,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-          new RNGoogleSigninPackage(), // <-- this needs to be in the list
-          new ReactNativeFirebaseAppPackage(),
+          new RNGoogleSigninPackage() // <-- this needs to be in the list
+          // new ReactNativeFirebaseAppPackage(),
       );
     }
 

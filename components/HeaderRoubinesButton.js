@@ -25,7 +25,7 @@ const headerRoubinesButton = () => {
         "Timo is the best and u looged out cant get Roubies info: " + e
       );
     }
-  }, []);
+  }, [roubies]);
 
   return (
     <View style={styles.groupButton}>
@@ -52,7 +52,7 @@ const headerRoubinesButton = () => {
               style={styles.logo}
               source={require("../assets/icons/ruby.png")}
             />
-            {/* <AppText style={styles.apptext}>{roubies}</AppText> */}
+            <AppText style={styles.apptext}>{roubies}</AppText>
           </View>
         </TouchableOpacity>
       </View>
