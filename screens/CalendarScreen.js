@@ -28,27 +28,33 @@ function CalendarScreen() {
 
   let routinesData = [];
   let routinesName = [];
+  let routinestimes = [];
+
   useEffect(() => {
     getItems();
   }, []);
 
-  // useEffect(() => {
-  //   db.collection("Users")
-  //     .doc(userId)
-  //     .collection("routines")
-  //     .get()
-  //     .then((querySnapshot) => {
-  //       querySnapshot.forEach((doc) => {
-  //         if (!doc.removed) {
-  //           routinesData.push(doc.data());
-  //           routinesName.push(doc.id);
+  const getItems = () => {
+    db.collection("Users")
+      .doc(userId)
+      .collection("routines")
+      .get()
+      .then((querySnapshot) => {
+        let routineTimeArr = [];
+        querySnapshot.forEach((doc) => {
+          let time = JSON.parse(doc.data().routineTimes);
 
-  //           setRoutinesData((prevState) => [...prevState, doc.data()]);
-  //           setRoutinesName((prevArray) => [...prevArray, doc.id]);
-  //         }
-  //       });
-  //     });
-  // }, []);
+          for (let i = 0; i < time.length; i++) {
+            if (!doc.removed) {
+              routinesData.push(doc.data());
+              routinesName.push(doc.id);
+              routineTimeArr.push(time[i]);
+            }
+          }
+          routinestimes = routineTimeArr;
+        });
+      });
+  };
   const daysInNextThirtyDays = (routineTime, routineName) => {
     // setDaysDateStringsList([]);
     let today = new Date();
@@ -137,17 +143,19 @@ function CalendarScreen() {
     console.log(daysDateStringsList);
   }, [daysDateStringsList]);
 
-  const lista = routinesData.length;
-
   const loadItems = () => {
     try {
       setTimeout(() => {
         let routinesNameThatDay = [];
         let notesForThatDay = [];
         let routinesDoneForThatDay = [];
+        let routineHoursThatDay = [];
+        let routineMinutesThatDay = [];
 
+        // for (let i = 0; i < routinestimes.length; i++) {
+        //   let array = routinestimes[i];
         // !!! Så fort den kommer in i for loopen så blir det fucked !!!
-        //Kanske lägga in en array med datum sen ta ut datumet till time
+        //Kanske lägga in en array med datum sen ta ut datumet till time //refereshed
         for (let i = 0; i < routinesData.length; i++) {
           // const time = day.timestamp * 24 * 60 * 60 * 1000;
           const time = routinesData[i].StartDate.seconds * 1000 + 9500000;
@@ -159,6 +167,8 @@ function CalendarScreen() {
               routinesData[i].StartDate.seconds * 1000 + 9500000;
             const strTimeCompare = timeToString(timeCompare);
             const routineNames = routinesName[i];
+            const hoursThatDay = routinestimes[i].hours;
+            const minutesThatDay = routinestimes[i].minutes;
             const notes = routinesData[i].notes;
             const isDone = routinesData[i].isDone;
 
@@ -166,6 +176,8 @@ function CalendarScreen() {
               routinesNameThatDay.push(routineNames);
               notesForThatDay.push(notes);
               routinesDoneForThatDay.push(isDone);
+              routineHoursThatDay.push(hoursThatDay);
+              routineMinutesThatDay.push(minutesThatDay);
             }
           }
 
@@ -179,18 +191,18 @@ function CalendarScreen() {
                 dayNotes: notesForThatDay[i],
                 ItemisDone: routinesDoneForThatDay[i],
                 itemTime: strTime,
+                timeToDo: `${routineHoursThatDay[i]}:${routineMinutesThatDay[i]}`,
                 height: 100,
                 // height: Math.max(50, Math.floor(Math.random() * 150)),
               });
-              // console.log(routinesDoneForThatDay[i]);
             }
           }
+          routineHoursThatDay = [];
+          routineMinutesThatDay = [];
           routinesNameThatDay = [];
           notesForThatDay = [];
           routinesDoneForThatDay = [];
         }
-
-        // console.log("hej" + items);
 
         const newItems = {};
         Object.keys(items).forEach((key) => {
@@ -208,6 +220,7 @@ function CalendarScreen() {
     // console.log(JSON.parse(documentSnapshot.data().routineTimes));
 
     try {
+      console.log(item.timeToDo);
       const todayCheck = new Date().toISOString().split("T")[0];
       const itemTimeCompare = item.itemTime;
       if (!item.ItemisDone && todayCheck == itemTimeCompare) {
@@ -244,6 +257,7 @@ function CalendarScreen() {
                   source={require("../assets/RoutinesPics/WaterDrinking.png")}
                 />
               </View>
+              <Text style={styles.timeSheet}>{item.timeToDo}</Text>
             </TouchableOpacity>
           );
         }
@@ -279,7 +293,8 @@ function CalendarScreen() {
       }
     } catch (e) {
       console.log(
-        "Opps, crash! Luckily OP Timo is here and you can refresh without crash :)"
+        "Opps, crash! Luckily OP Timo is here and you can refresh without crash :)" +
+          e
       );
     }
   };
@@ -287,6 +302,7 @@ function CalendarScreen() {
   //Behöver kanske lägga in time som parameter också om getthirtydays är implementerad
   const checkItemDone = (routineName, item) => {
     onRefresh();
+    //Sätter item till annan render i logiken under loadItems
     item.ItemisDone = true;
 
     db.collection("Users")
@@ -296,32 +312,11 @@ function CalendarScreen() {
       .update({
         isDone: true,
       });
-    // setItems({});
+
     routinesData = [];
     getItems();
     loadItems();
     renderItem();
-    // setTimeout(() => {
-    //   renderItem();
-    // }, 3000);
-  };
-
-  const getItems = () => {
-    db.collection("Users")
-      .doc(userId)
-      .collection("routines")
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          let timesLength = JSON.parse(doc.data().routineTimes).length;
-          for (let i = 0; i < timesLength; i++) {
-            if (!doc.removed) {
-              routinesData.push(doc.data());
-              routinesName.push(doc.id);
-            }
-          }
-        });
-      });
   };
 
   const [refreshing, setRefresh] = useState(false);
@@ -376,7 +371,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "Roboto",
     color: "black",
-    marginTop: 3.5,
+    marginTop: 5,
     marginRight: 3,
   },
   fontsDone: {
@@ -384,7 +379,10 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
     fontStyle: "italic",
     color: "black",
-    marginTop: 8,
+    marginTop: 6,
+  },
+  timeSheet: {
+    marginTop: 4,
   },
 });
 export default CalendarScreen;
