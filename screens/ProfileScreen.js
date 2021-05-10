@@ -187,13 +187,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   info: {
-    fontSize: 16,
+    fontSize: 20,
     color: colors.darkmodeMediumWhite,
     marginBottom: 10,
     textAlign: 'center',
   },
   link: {
-    fontSize: 16,
+    fontSize: 20,
     color: colors.blue,
     marginBottom: 10,
     textAlign: 'center',
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   name: {
-    fontSize: 22,
+    fontSize: 24,
     color: colors.darkmodeMediumWhite,
     fontWeight: '600',
   },

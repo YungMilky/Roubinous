@@ -82,6 +82,9 @@ const NotificationSettingScreen = ({ navigation }) => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === 'ios');
     setDate(currentDate);
+    if (selectedDate) {
+      changeNotificationTime(selectedDate);
+    }
   };
 
   const showMode = (currentMode) => {
@@ -182,18 +185,18 @@ const NotificationSettingScreen = ({ navigation }) => {
               Current Daily Notification time:
             </Text>
             <Text style={styles.timeText}>
-              {userAlertHour}:{checkNumber(userAlertMinute)}
+              {checkNumber(userAlertHour)}:{checkNumber(userAlertMinute)}
             </Text>
             {/* <Text style={styles.innerText}>
               Change daily notification time:{' '}
             </Text> */}
-            <AppButton onPress={showTimepicker} title="Select new time" />
-            <AppButton
+            <AppButton onPress={showTimepicker} title="Change time" />
+            {/* <AppButton
               title="Apply selected time"
               onPress={async () => {
                 await changeNotificationTime();
               }}
-            />
+            /> */}
 
             {show && (
               <DateTimePicker
@@ -211,17 +214,17 @@ const NotificationSettingScreen = ({ navigation }) => {
     </Screen>
   );
 
-  async function changeNotificationTime() {
-    setUserAlertHour(date.getHours());
-    setUserAlertMinute(date.getMinutes());
+  async function changeNotificationTime(selectedDate) {
+    setUserAlertHour(selectedDate.getHours());
+    setUserAlertMinute(selectedDate.getMinutes());
 
     // console.log(date.getHours() + ':' + date.getMinutes());
 
     db.collection('Users')
       .doc(auth.currentUser.uid)
       .update({
-        UserAlertHour: date.getHours(),
-        UserAlertMinute: date.getMinutes(),
+        UserAlertHour: selectedDate.getHours(),
+        UserAlertMinute: selectedDate.getMinutes(),
       })
       .then(() => {
         console.log('UserAlertTime updated!');
@@ -232,15 +235,15 @@ const NotificationSettingScreen = ({ navigation }) => {
         title: 'This is a daily notification',
         body:
           'You should get this at: ' +
-          date.getHours() +
+          selectedDate.getHours() +
           ':' +
-          checkNumber(date.getMinutes()) +
+          checkNumber(selectedDate.getMinutes()) +
           ' , now do your routines stupid!',
         data: { data: 'goes here' },
       },
       trigger: {
-        hour: date.getHours(),
-        minute: date.getMinutes(),
+        hour: selectedDate.getHours(),
+        minute: selectedDate.getMinutes(),
         repeats: true,
       },
     });
