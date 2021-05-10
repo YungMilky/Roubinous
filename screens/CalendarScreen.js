@@ -21,41 +21,123 @@ function CalendarScreen() {
   const [items, setItems] = useState({});
   const [daysDateStringsList, setDaysDateStringsList] = useState([]);
   const [times, setTimes] = useState({});
+  const [routinesDataComplete, setRoutinesDataComplete] = useState([]);
   // const [routinesData, setRoutinesData] = useState([]);
   // const [routinesName, setRoutinesName] = useState([]);
 
   const userId = auth.currentUser.uid;
 
-  let routinesData = [];
-  let routinesName = [];
-  let routinestimes = [];
+  let allRoutinesData = [];
+  let allCustomRoutinesData = [];
+
+  // data.sort(function (a, b) {
+  //   return a.count - b.count || a.year - b.year;
+  // });
+
+  // const applyFurureDates = () =>{
+  //   allRoutinesData =
+  // };
 
   useEffect(() => {
     getItems();
   }, []);
 
   const getItems = () => {
+    let allRoutinesDataComplete = [];
     db.collection("Users")
       .doc(userId)
       .collection("routines")
       .get()
       .then((querySnapshot) => {
-        let routineTimeArr = [];
         querySnapshot.forEach((doc) => {
+          let id = doc.id;
           let time = JSON.parse(doc.data().routineTimes);
-
           for (let i = 0; i < time.length; i++) {
-            if (!doc.removed) {
-              routinesData.push(doc.data());
-              routinesName.push(doc.id);
-              routineTimeArr.push(time[i]);
+            if (!doc.data().removed) {
+              allRoutinesData.push({
+                routineName: doc.id,
+                dates: "",
+                isDone: doc.data().isDone,
+                times: time[i],
+                notes: doc.data().shortDescription,
+              });
             }
           }
-          routinestimes = routineTimeArr;
+          // console.log(allRoutinesData);
         });
+      })
+      .then(() => {
+        for (let i = 0; i < allRoutinesData.length; i++) {
+          daysInNextThirtyDays("routines", allRoutinesData[i].routineName);
+          // console.log(daysDateStringsList);
+
+          // console.log(allRoutinesData[i]);
+
+          for (let x = 0; x < daysDateStringsList.length; x++) {
+            // allRoutinesData[i].dates.push()
+            allRoutinesDataComplete.push({
+              routineName: allRoutinesData[i].routineName,
+              dates: daysDateStringsList[x],
+              isDone: allRoutinesData[i].isDone,
+              times: allRoutinesData[i].times,
+              notes: allRoutinesData[i].shortDescription,
+            });
+          }
+          // console.log(allRoutinesDataComplete);
+        }
+        // setRoutinesDataComplete(allRoutinesDataComplete);
+      });
+    // .then(() => {
+    db.collection("Users")
+      .doc(userId)
+      .collection("customRoutines")
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          let id = doc.id;
+          let time = JSON.parse(doc.data().routineTimes);
+          for (let i = 0; i < time.length; i++) {
+            if (!doc.data().removed) {
+              allCustomRoutinesData.push({
+                routineName: doc.id,
+                dates: "",
+                isDone: doc.data().isDone,
+                times: time[i],
+                notes: doc.data().shortDescription,
+              });
+            }
+          }
+          // console.log(allRoutinesData);
+        });
+      })
+      .then(() => {
+        for (let i = 0; i < allCustomRoutinesData.length; i++) {
+          daysInNextThirtyDays(
+            "customRoutines",
+            allCustomRoutinesData[i].routineName
+          );
+          // console.log(daysDateStringsList);
+
+          // console.log(allRoutinesData[i]);
+
+          for (let x = 0; x < daysDateStringsList.length; x++) {
+            // allRoutinesData[i].dates.push()
+            allRoutinesDataComplete.push({
+              routineName: allCustomRoutinesData[i].routineName,
+              dates: daysDateStringsList[x],
+              isDone: allCustomRoutinesData[i].isDone,
+              times: allCustomRoutinesData[i].times,
+              notes: allCustomRoutinesData[i].notes,
+            });
+          }
+          // console.log(allRoutinesDataComplete);
+        }
+        // });
+        setRoutinesDataComplete(allRoutinesDataComplete);
       });
   };
-  const daysInNextThirtyDays = (routineTime, routineName) => {
+
+  const daysInNextThirtyDays = (routineType, routineName) => {
     // setDaysDateStringsList([]);
     let today = new Date();
     let year = today.getFullYear();
@@ -66,27 +148,23 @@ function CalendarScreen() {
     //hämta customroutines/days från varje rutin i firestore
     db.collection("Users")
       .doc(userId)
-      .collection(routineTime)
+      .collection(routineType)
       .doc(routineName)
       .get()
       .then((documentSnapshot) => {
         // setDays(JSON.parse(documentSnapshot.data().days));
-        // console.log(JSON.parse(documentSnapshot.data().days));
 
         const times = JSON.parse(documentSnapshot.data().routineTimes);
         const days = JSON.parse(documentSnapshot.data().days);
         const daysCurrent = {};
-        const daysDateStrings = [];
-        // console.log(times);
+        let daysDateStrings = [];
 
         setTimeout(() => {
           let firstDayFound = false;
           let x = 1;
           //förläng objektet så det har 30+ items
-          for (let o = 0; o < 6; o++) {
-            // console.log('loop 1 ' + o);
+          for (let o = 0; o < 2; o++) {
             for (let i = 0; i < 7; i++) {
-              // console.log('loop 2 ' + i);
               if (firstDayFound) {
                 daysCurrent[x] = days[i];
                 // daysCurrent.push({ [x]: days[i] });
@@ -98,24 +176,19 @@ function CalendarScreen() {
                 daysCurrent[0] = days[i];
                 // daysCurrent.push({ 0: days[i] });
                 // setDaysCurrent({ 0: days[i] });
-                // console.log('dgaga ', days);
-                // console.log('hej');
+
                 firstDayFound = true;
               }
             }
           }
-          // console.log('current day: ' + today.getDay());
-          // console.log(daysCurrent);
+
           setTimeout(() => {
-            // console.log(daysCurrent);
             //loopar igenom objektet med 30+ items nedan och kollar true/false
-            for (let i = 0; i < 31; i++) {
+            for (let i = 0; i < 11; i++) {
               //kollar days boolean
               if (daysCurrent[i] === 1) {
                 //lägger till flera om man har flera tider för rutinen
                 for (let i = 0; i < times.length; i++) {
-                  // console.log(day.toDateString(day));
-
                   //ny array där alla de datum i dateStrings listas
                   daysDateStrings.push(day.toDateString(day));
                   // setDaysDateStrings((prevArray) => [
@@ -128,6 +201,7 @@ function CalendarScreen() {
             }
             setDaysDateStringsList(daysDateStrings);
             // console.log(daysDateStrings);
+            // return daysDateStrings;
           }, 200);
         }, 200);
       })
@@ -139,13 +213,14 @@ function CalendarScreen() {
   // useEffect(() => {
   //   daysInNextThirtyDays("Kaffedag");
   // }, []);
-  useEffect(() => {
-    console.log(daysDateStringsList);
-  }, [daysDateStringsList]);
+  // useEffect(() => {
+  //   console.log(daysDateStringsList);
+  // }, [daysDateStringsList]);
 
   const loadItems = () => {
     try {
       setTimeout(() => {
+        console.log(routinesDataComplete);
         let routinesNameThatDay = [];
         let notesForThatDay = [];
         let routinesDoneForThatDay = [];
@@ -156,21 +231,18 @@ function CalendarScreen() {
         //   let array = routinestimes[i];
         // !!! Så fort den kommer in i for loopen så blir det fucked !!!
         //Kanske lägga in en array med datum sen ta ut datumet till time //refereshed
-        for (let i = 0; i < routinesData.length; i++) {
+        for (let i = 0; i < routinesDataComplete.length; i++) {
           // const time = day.timestamp * 24 * 60 * 60 * 1000;
-          const time = routinesData[i].StartDate.seconds * 1000 + 9500000;
 
-          const strTime = timeToString(time);
+          const strTime = routinesDataComplete.dates[i];
 
-          for (let i = 0; i < routinesData.length; i++) {
-            const timeCompare =
-              routinesData[i].StartDate.seconds * 1000 + 9500000;
-            const strTimeCompare = timeToString(timeCompare);
-            const routineNames = routinesName[i];
-            const hoursThatDay = routinestimes[i].hours;
-            const minutesThatDay = routinestimes[i].minutes;
-            const notes = routinesData[i].notes;
-            const isDone = routinesData[i].isDone;
+          for (let i = 0; i < routinesDataComplete.length; i++) {
+            const strTimeCompare = routinesDataComplete.dates[i];
+            const routineNames = routinesDataComplete[i].routineName;
+            const hoursThatDay = routinesDataComplete[i].time.hours;
+            const minutesThatDay = routinesDataComplete[i].time.minutes;
+            const notes = routinesDataComplete[i].notes;
+            const isDone = routinesDataComplete[i].isDone;
 
             if (strTime === strTimeCompare) {
               routinesNameThatDay.push(routineNames);
@@ -217,10 +289,8 @@ function CalendarScreen() {
 
   const renderItem = (item) => {
     // itemTimesADay = JSON.parse(documentSnapshot.data().routineTimes);
-    // console.log(JSON.parse(documentSnapshot.data().routineTimes));
 
     try {
-      console.log(item.timeToDo);
       const todayCheck = new Date().toISOString().split("T")[0];
       const itemTimeCompare = item.itemTime;
       if (!item.ItemisDone && todayCheck == itemTimeCompare) {
