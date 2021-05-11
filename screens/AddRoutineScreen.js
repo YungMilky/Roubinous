@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,30 +9,30 @@ import {
   Button,
   FlatList,
   Dimensions,
-} from "react-native";
-import { Input } from "react-native-elements";
-import PropTypes from "prop-types";
-import { db, auth } from "../firebase";
-import WeekdayPicker from "react-native-weekday-picker";
-import DateTimePicker from "@react-native-community/datetimepicker";
+} from 'react-native';
+import { Input } from 'react-native-elements';
+import PropTypes from 'prop-types';
+import { db, auth } from '../firebase';
+import WeekdayPicker from 'react-native-weekday-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import {
   MaterialCommunityIcons,
   FontAwesome,
   EvilIcons,
-} from "@expo/vector-icons";
-import Icon from "react-native-vector-icons/Feather";
-import { ScrollView } from "react-native-gesture-handler";
-import { Swipeable } from "react-native-gesture-handler";
-import { FloatingLabelInput } from "react-native-floating-label-input";
-import DropDownPicker from "react-native-dropdown-picker";
+} from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/Feather';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Swipeable } from 'react-native-gesture-handler';
+import { FloatingLabelInput } from 'react-native-floating-label-input';
+import DropDownPicker from 'react-native-dropdown-picker';
 
-import colors from "../config/colors";
-import AppButton from "../components/AppButton";
-import Screen from "../components/Screen";
-import { set } from "react-native-reanimated";
-import { setBadgeCountAsync } from "expo-notifications";
+import colors from '../config/colors';
+import AppButton from '../components/AppButton';
+import Screen from '../components/Screen';
+import { set } from 'react-native-reanimated';
+import { setBadgeCountAsync } from 'expo-notifications';
 
-const width = Dimensions.get("window").width;
+const width = Dimensions.get('window').width;
 
 const editIcon = () => {
   return <MaterialCommunityIcons name="pencil" size={24} color="black" />;
@@ -40,13 +40,13 @@ const editIcon = () => {
 
 const AddRoutineScreen = ({ navigation }) => {
   const user = auth.currentUser;
-  const [name, setName] = useState("");
-  const [shortDescription, setShortDescription] = useState("");
+  const [name, setName] = useState('');
+  const [shortDescription, setShortDescription] = useState('');
   const [isNameFocused, setIsNameFocused] = useState(false);
   const [isShortDescriptionFocused, setIsShortDescriptionFocused] = useState(
     false
   );
-  const [value, setValue] = useState("empty");
+  const [value, setValue] = useState('empty');
   const [msg, setMsg] = useState();
   const [errorText, setErrorText] = useState();
 
@@ -74,9 +74,9 @@ const AddRoutineScreen = ({ navigation }) => {
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
-    setShow(Platform.OS === "ios");
+    setShow(Platform.OS === 'ios');
     setDate(currentDate);
-    if (event.type == "set") {
+    if (event.type == 'set') {
       //ok button clicked
       if (!editing) {
         addItem(currentDate);
@@ -94,7 +94,7 @@ const AddRoutineScreen = ({ navigation }) => {
       }
     } else {
       //cancel button clicked
-      console.log("Cancel button pressed");
+      console.log('Cancel button pressed');
     }
   };
 
@@ -104,21 +104,21 @@ const AddRoutineScreen = ({ navigation }) => {
 
   const createRoutine = () => {
     if (!name.trim()) {
-      setMsg("! Please enter a name");
+      setMsg('! Please enter a name');
       return;
     } else {
       const document = db
-        .collection("Users")
+        .collection('Users')
         .doc(user.uid)
-        .collection("customRoutines")
+        .collection('customRoutines')
         .doc(name);
 
       document.get().then((doc) => {
         if (doc.exists) {
-          setMsg("! Routine name already exists");
+          setMsg('! Routine name already exists');
         } else {
           if (times.length === 0) {
-            setMsg("! Please add a time");
+            setMsg('! Please add a time');
           } else {
             document
               .set({
@@ -126,21 +126,19 @@ const AddRoutineScreen = ({ navigation }) => {
                 shortDescription: shortDescription,
                 days: JSON.stringify(days),
                 routineTimes: JSON.stringify(times),
-                days: '{"0":0,"1":1,"2":1,"3":1,"4":1,"5":1,"6":0}',
-                routineTimes: '[{"key":1,"hours":10,"minutes":30}]',
                 removed: false,
                 StartDate: Date.now(),
               })
               .then(() => {
-                console.log("Document successfully written!");
+                console.log('Document successfully written!');
                 setModalShow(true);
               })
               .catch((error) => {
-                console.error("Catch: Error writing document: ", error);
+                console.error('Catch: Error writing document: ', error);
               })
               .then(() => {
-                setName("");
-                setShortDescription("");
+                setName('');
+                setShortDescription('');
                 setDays({
                   1: 1,
                   2: 1,
@@ -151,7 +149,7 @@ const AddRoutineScreen = ({ navigation }) => {
                   0: 0,
                 });
                 setTimes([{ key: 1, hours: 10, minutes: 30 }]);
-                setMsg("");
+                setMsg('');
               });
           }
         }
@@ -164,7 +162,7 @@ const AddRoutineScreen = ({ navigation }) => {
   };
 
   const removeTime = (clicked) => {
-    console.log("removed: " + clicked);
+    console.log('removed: ' + clicked);
     setRefresh(!refresh);
 
     const filteredData = times.filter((item, index) => index !== clicked);
@@ -182,12 +180,12 @@ const AddRoutineScreen = ({ navigation }) => {
         minutes: currentDate.getMinutes(),
       },
     ]);
-    console.log("addItem() ran with times: " + times[0] + " " + days[1]);
+    console.log('addItem() ran with times: ' + times[0] + ' ' + days[1]);
     setRefresh(true);
   };
   const checkNumber = (number) => {
     if (number < 10) {
-      number = "0" + number.toString();
+      number = '0' + number.toString();
     }
     return number;
   };
@@ -199,9 +197,9 @@ const AddRoutineScreen = ({ navigation }) => {
   //hämtar namnen på rutinerna och lägger in dom i dropdownpickern
   const getUserRoutines = async () => {
     await db
-      .collection("Users")
+      .collection('Users')
       .doc(user.uid)
-      .collection("customRoutines")
+      .collection('customRoutines')
       .get()
       .then((QuerySnapshot) => {
         setUserRoutines([]);
@@ -224,12 +222,12 @@ const AddRoutineScreen = ({ navigation }) => {
 
   //hämtar det valda namnet i dropdownpickern och hämtar fälten för den rutinen
   const getRoutineInfo = () => {
-    if (value === "empty") {
-      console.log("value is empty");
+    if (value === 'empty') {
+      console.log('value is empty');
     } else {
-      db.collection("Users")
+      db.collection('Users')
         .doc(user.uid)
-        .collection("customRoutines")
+        .collection('customRoutines')
         .doc(value)
         .get()
         .then((documentSnapshot) => {
@@ -249,7 +247,7 @@ const AddRoutineScreen = ({ navigation }) => {
           const scale = dragX.interpolate({
             inputRange: [0, 100],
             outputRange: [0, 1],
-            extrapolate: "clamp",
+            extrapolate: 'clamp',
           });
           return (
             <TouchableOpacity
@@ -261,7 +259,7 @@ const AddRoutineScreen = ({ navigation }) => {
               <MaterialCommunityIcons
                 name="close"
                 size={30}
-                color={"#F45B69"}
+                color={'#F45B69'}
               />
             </TouchableOpacity>
           );
@@ -276,8 +274,8 @@ const AddRoutineScreen = ({ navigation }) => {
             }}
             style={styles.timeListItemContainer}
           >
-            {typeof item != "undefined" ? (
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
+            {typeof item != 'undefined' ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Text
                   style={{
                     fontSize: 22,
@@ -285,7 +283,7 @@ const AddRoutineScreen = ({ navigation }) => {
                     paddingRight: 8,
                   }}
                 >
-                  {checkNumber(item.hours) + ":" + checkNumber(item.minutes)}
+                  {checkNumber(item.hours) + ':' + checkNumber(item.minutes)}
                 </Text>
                 <MaterialCommunityIcons
                   name="pencil"
@@ -330,7 +328,7 @@ const AddRoutineScreen = ({ navigation }) => {
                 <Text style={styles.modalText}>Routine created!</Text>
                 <AppButton
                   style={[styles.button, styles.buttonClose]}
-                  title={"Ok"}
+                  title={'Ok'}
                   onPress={() => setModalShow(!modalShow)}
                 ></AppButton>
               </View>
@@ -384,7 +382,7 @@ const AddRoutineScreen = ({ navigation }) => {
             style={[
               isNameFocused
                 ? {
-                    backgroundColor: "rgba(255,255,255,0.07)",
+                    backgroundColor: 'rgba(255,255,255,0.07)',
                     borderTopLeftRadius: 4,
                     borderTopRightRadius: 4,
                     borderBottomWidth: 1,
@@ -430,12 +428,12 @@ const AddRoutineScreen = ({ navigation }) => {
                 </View>
               }
               rightComponent={
-                name != "" ? (
+                name != '' ? (
                   <View style={{ padding: 12 }}>
                     <TouchableOpacity
-                      style={{ justifyContent: "center" }}
+                      style={{ justifyContent: 'center' }}
                       onPress={() => {
-                        setName("");
+                        setName('');
                         setIsNameFocused(false);
                       }}
                     >
@@ -458,7 +456,7 @@ const AddRoutineScreen = ({ navigation }) => {
             style={[
               isShortDescriptionFocused
                 ? {
-                    backgroundColor: "rgba(255,255,255,0.07)",
+                    backgroundColor: 'rgba(255,255,255,0.07)',
                     borderTopLeftRadius: 4,
                     borderTopRightRadius: 4,
                     borderBottomWidth: 1,
@@ -504,12 +502,12 @@ const AddRoutineScreen = ({ navigation }) => {
                 </View>
               }
               rightComponent={
-                shortDescription != "" ? (
+                shortDescription != '' ? (
                   <View style={{ padding: 12 }}>
                     <TouchableOpacity
-                      style={{ justifyContent: "center" }}
+                      style={{ justifyContent: 'center' }}
                       onPress={() => {
-                        setShortDescription("");
+                        setShortDescription('');
                         setIsShortDescriptionFocused(false);
                       }}
                     >
@@ -563,8 +561,8 @@ const AddRoutineScreen = ({ navigation }) => {
             >
               <View
                 style={{
-                  flexDirection: "row",
-                  alignItems: "center",
+                  flexDirection: 'row',
+                  alignItems: 'center',
                   marginBottom: -8,
                 }}
               >
@@ -600,7 +598,7 @@ const AddRoutineScreen = ({ navigation }) => {
             </View>
 
             <View styles={styles.flatlist}>
-              {typeof times != "undefined" ? (
+              {typeof times != 'undefined' ? (
                 <FlatList
                   initialNumToRender={times.length}
                   data={times}
@@ -615,7 +613,7 @@ const AddRoutineScreen = ({ navigation }) => {
           </View>
         </View>
       </ScrollView>
-      {name != "" && typeof days != "undefined" ? (
+      {name != '' && typeof days != 'undefined' ? (
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
@@ -633,36 +631,36 @@ const AddRoutineScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   button: {
     width: width,
-    backgroundColor: "#F45B69",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#F45B69',
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
   buttonText: {
     color: colors.floralWhite,
     fontSize: 18,
-    textTransform: "uppercase",
-    fontWeight: "bold",
+    textTransform: 'uppercase',
+    fontWeight: 'bold',
   },
   buttonOpen: {
-    backgroundColor: "#F194FF",
+    backgroundColor: '#F194FF',
   },
   buttonClose: {
-    backgroundColor: "#2196F3",
+    backgroundColor: '#2196F3',
   },
   centeredView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 22,
   },
   container: {
     paddingTop: 5,
     width: width,
-    height: "100%",
+    height: '100%',
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: colors.darkmodeLightBlack,
   },
   inputStyles: {
@@ -680,9 +678,9 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.darkmodeMediumWhite,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 14,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   picker: {
     margin: 40,
@@ -694,26 +692,26 @@ const styles = StyleSheet.create({
   },
   message: {
     color: colors.samRed,
-    textAlign: "center",
+    textAlign: 'center',
     paddingBottom: 2,
     fontSize: 24,
   },
   modalText: {
     //
     marginBottom: 15,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 20,
     color: colors.darkmodeHighWhite,
   },
   modalView: {
     //
-    width: "90%",
+    width: '90%',
     margin: 20,
     backgroundColor: colors.darkmodeDisabledBlack,
     borderRadius: 20,
     padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
+    alignItems: 'center',
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -726,44 +724,44 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontSize: 22,
     color: colors.darkmodeHighWhite,
-    fontWeight: "600",
-    alignItems: "center",
+    fontWeight: '600',
+    alignItems: 'center',
   },
   timeTitleContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     padding: 5,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   timeContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   timeListItemContainer: {
     borderBottomWidth: 1,
     borderBottomColor: colors.darkmodeDisabledBlack,
     padding: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     height: 50,
   },
   timeListContainerAddButton: {
     borderBottomWidth: 1,
     borderBottomColor: colors.darkmodeDisabledBlack,
     padding: 12,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
     height: 50,
-    width: "105%",
+    width: '105%',
   },
   weekText: {
     color: colors.darkmodeMediumWhite,
     marginBottom: 8,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 14,
-    fontWeight: "700",
+    fontWeight: '700',
   },
 });
 

@@ -107,7 +107,6 @@ const MyRoutinesScreen = ({ navigation }) => {
       .collection('routines')
       .get()
       .then((docs) => {
-        let index = 0;
         docs.forEach((doc) => {
           let routineName = doc.id;
           if (!doc.data().removed) {
@@ -121,8 +120,6 @@ const MyRoutinesScreen = ({ navigation }) => {
               },
             ]);
           }
-
-          index++;
         });
       });
 
@@ -271,176 +268,174 @@ const MyRoutinesScreen = ({ navigation }) => {
 
   return (
     <Screen style={styles.container}>
-      <ScrollView>
-        <View styles={styles.flatlist}>
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={removeCustomModalVisible}
-            onRequestClose={() => {
-              setRemoveCustomModalVisible(!removeCustomModalVisible);
-            }}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Text style={styles.modalText}>
-                  Are you sure you want to remove this routine?
-                </Text>
-                <AppButton
-                  style={styles.button}
-                  title={'Remove'}
-                  onPress={() => {
-                    removeCustomRoutine(selectedRoutine.key);
-                    setRemoveCustomModalVisible(!removeCustomModalVisible);
-                  }}
-                />
-                <AppButton
-                  style={[styles.button, styles.buttonClose]}
-                  title={'Cancel'}
-                  onPress={() =>
-                    setRemoveCustomModalVisible(!removeCustomModalVisible)
-                  }
-                ></AppButton>
-              </View>
-            </View>
-          </Modal>
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={removeOfficialModalVisible}
-            onRequestClose={() => {
-              setRemoveOfficialModalVisible(!removeOfficialModalVisible);
-            }}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Text style={styles.modalText}>
-                  Are you sure you want to remove this routine?
-                </Text>
-                <AppButton
-                  style={styles.button}
-                  title={'Remove'}
-                  onPress={() => {
-                    removeOfficialRoutine(selectedRoutine.key);
-                    setRemoveOfficialModalVisible(!removeOfficialModalVisible);
-                  }}
-                />
-                <AppButton
-                  style={[styles.button, styles.buttonClose]}
-                  title={'Cancel'}
-                  onPress={() =>
-                    setRemoveOfficialModalVisible(!removeOfficialModalVisible)
-                  }
-                ></AppButton>
-              </View>
-            </View>
-          </Modal>
-          <View style={styles.titleContainer}>
-            <Text
-              style={[
-                styles.titleText,
-                {
-                  marginLeft: 100,
-                },
-              ]}
-            >
-              Official routines:
-            </Text>
-            <TouchableOpacity
-              onPress={() => {
-                setInfoModalVisible(!infoModalVisible);
-              }}
-              style={styles.iconContainer}
-            >
-              <MaterialCommunityIcons
-                style={{ marginTop: -3 }}
-                name="information-outline"
-                size={30}
-                color={colors.darkmodeHighWhite}
-              />
-            </TouchableOpacity>
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={infoModalVisible}
-              onRequestClose={() => {
-                setInfoModalVisible(!infoModalVisible);
-              }}
-            >
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <Text style={styles.modalText}>
-                    Here you can view all of your routines.
-                    {'\n'}
-                    {'\n'}
-                    Press a routine to view info.
-                    {'\n'}
-                    {'\n'}
-                    Swipe left on a routine to remove.
-                    {'\n'}
-                    {'\n'}
-                    Swipe left on a custom routine to remove/edit.
-                  </Text>
-                  <AppButton
-                    style={[styles.button, styles.buttonClose]}
-                    title={'Ok!'}
-                    onPress={() => setInfoModalVisible(!infoModalVisible)}
-                  ></AppButton>
-                </View>
-              </View>
-            </Modal>
-          </View>
-          <View>
-            {officialRoutines.length < 1 ? (
-              <Text style={styles.text}>
-                You don't have any official routines.
+      {/* <ScrollView> */}
+      <View styles={styles.flatlist}>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={removeCustomModalVisible}
+          onRequestClose={() => {
+            setRemoveCustomModalVisible(!removeCustomModalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>
+                Are you sure you want to remove this routine?
               </Text>
-            ) : (
-              <View styles={styles.flatlist}>
-                {typeof officialRoutines != 'undefined' ? (
-                  <FlatList
-                    initialNumToRender={officialRoutines.length}
-                    data={officialRoutines}
-                    renderItem={renderUneditableItems}
-                    updateCellsBatchingPeriod={0}
-                    windowSize={5}
-                    extraData={refresh}
-                    //Style={{ flexGrow: 1 }}
-                  />
-                ) : null}
+              <AppButton
+                style={styles.button}
+                title={'Remove'}
+                onPress={() => {
+                  removeCustomRoutine(selectedRoutine.key);
+                  setRemoveCustomModalVisible(!removeCustomModalVisible);
+                }}
+              />
+              <AppButton
+                style={[styles.button, styles.buttonClose]}
+                title={'Cancel'}
+                onPress={() =>
+                  setRemoveCustomModalVisible(!removeCustomModalVisible)
+                }
+              ></AppButton>
+            </View>
+          </View>
+        </Modal>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={removeOfficialModalVisible}
+          onRequestClose={() => {
+            setRemoveOfficialModalVisible(!removeOfficialModalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>
+                Are you sure you want to remove this routine?
+              </Text>
+              <AppButton
+                style={styles.button}
+                title={'Remove'}
+                onPress={() => {
+                  removeOfficialRoutine(selectedRoutine.key);
+                  setRemoveOfficialModalVisible(!removeOfficialModalVisible);
+                }}
+              />
+              <AppButton
+                style={[styles.button, styles.buttonClose]}
+                title={'Cancel'}
+                onPress={() =>
+                  setRemoveOfficialModalVisible(!removeOfficialModalVisible)
+                }
+              ></AppButton>
+            </View>
+          </View>
+        </Modal>
+        <View style={styles.titleContainer}>
+          <Text
+            style={[
+              styles.titleText,
+              {
+                marginLeft: 100,
+              },
+            ]}
+          >
+            Official routines:
+          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              setInfoModalVisible(!infoModalVisible);
+            }}
+            style={styles.iconContainer}
+          >
+            <MaterialCommunityIcons
+              style={{ marginTop: -3 }}
+              name="information-outline"
+              size={30}
+              color={colors.darkmodeHighWhite}
+            />
+          </TouchableOpacity>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={infoModalVisible}
+            onRequestClose={() => {
+              setInfoModalVisible(!infoModalVisible);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>
+                  Here you can view all of your routines.
+                  {'\n'}
+                  {'\n'}
+                  Press a routine to view info.
+                  {'\n'}
+                  {'\n'}
+                  Swipe left on a routine to remove.
+                  {'\n'}
+                  {'\n'}
+                  Swipe left on a custom routine to remove/edit.
+                </Text>
+                <AppButton
+                  style={[styles.button, styles.buttonClose]}
+                  title={'Ok!'}
+                  onPress={() => setInfoModalVisible(!infoModalVisible)}
+                ></AppButton>
               </View>
-            )}
-            <View style={[styles.titleContainer, { marginTop: 20 }]}>
-              <Text style={styles.titleText}>Custom routines:</Text>
-              {/* <MaterialCommunityIcons
+            </View>
+          </Modal>
+        </View>
+        <View>
+          {officialRoutines.length < 1 ? (
+            <Text style={styles.text}>
+              You don't have any official routines.
+            </Text>
+          ) : (
+            <View styles={styles.flatlist}>
+              {typeof officialRoutines != 'undefined' ? (
+                <FlatList
+                  initialNumToRender={officialRoutines.length}
+                  data={officialRoutines}
+                  renderItem={renderUneditableItems}
+                  updateCellsBatchingPeriod={0}
+                  windowSize={5}
+                  extraData={refresh}
+                  //Style={{ flexGrow: 1 }}
+                />
+              ) : null}
+            </View>
+          )}
+          <View style={[styles.titleContainer, { marginTop: 20 }]}>
+            <Text style={styles.titleText}>Custom routines:</Text>
+            {/* <MaterialCommunityIcons
                 style={{ marginTop: 3 }}
                 name="gesture-swipe-left"
                 size={18}
                 color={colors.darkmodeHighWhite}
               /> */}
-            </View>
-            {customRoutines.length < 1 ? (
-              <Text style={styles.text}>
-                You don't have any custom routines.
-              </Text>
-            ) : (
-              <View styles={styles.flatlist}>
-                {typeof customRoutines != 'undefined' ? (
-                  <FlatList
-                    initialNumToRender={customRoutines.length}
-                    data={customRoutines}
-                    renderItem={renderItems}
-                    updateCellsBatchingPeriod={0}
-                    windowSize={5}
-                    extraData={refresh}
-                    //contentContainerStyle={{ flexGrow: 1 }}
-                  />
-                ) : null}
-              </View>
-            )}
           </View>
+          {customRoutines.length < 1 ? (
+            <Text style={styles.text}>You don't have any custom routines.</Text>
+          ) : (
+            <View styles={styles.flatlist}>
+              {typeof customRoutines != 'undefined' ? (
+                <FlatList
+                  initialNumToRender={customRoutines.length}
+                  data={customRoutines}
+                  renderItem={renderItems}
+                  updateCellsBatchingPeriod={0}
+                  windowSize={5}
+                  extraData={refresh}
+                  //contentContainerStyle={{ flexGrow: 1 }}
+                />
+              ) : null}
+            </View>
+          )}
         </View>
-      </ScrollView>
+      </View>
+      {/* </ScrollView> */}
     </Screen>
   );
 };
