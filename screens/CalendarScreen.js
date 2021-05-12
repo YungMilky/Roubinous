@@ -1,5 +1,5 @@
-import { Agenda } from "react-native-calendars";
-import React, { useCallback, useEffect, useState } from "react";
+import { Agenda } from 'react-native-calendars';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,14 +7,14 @@ import {
   Text,
   Alert,
   Image,
-} from "react-native";
-import { db, auth } from "../firebase";
-import colors from "../config/colors";
-import { Icon } from "react-native-elements";
+} from 'react-native';
+import { db, auth } from '../firebase';
+import colors from '../config/colors';
+import { Icon } from 'react-native-elements';
 
 const timeToString = (time) => {
   const date = new Date(time);
-  return date.toISOString().split("T")[0];
+  return date.toISOString().split('T')[0];
 };
 
 function CalendarScreen() {
@@ -25,7 +25,7 @@ function CalendarScreen() {
   let allRoutinesData = [];
 
   const getItems = (routineType) => {
-    db.collection("Users")
+    db.collection('Users')
       .doc(userId)
       .collection(routineType)
       .get()
@@ -39,37 +39,36 @@ function CalendarScreen() {
           );
           let times = JSON.parse(doc.data().routineTimes);
           const days = JSON.parse(doc.data().days);
-          for (let i = 0; i < times.length; i++) {
-            if (!doc.data().removed) {
-              const daysCurrent = {};
-              let daysDateStrings = [];
 
-              let firstDayFound = false;
-              let x = 1;
-              //förlänger daysobjektet och gör så att det börjar på dagens datum
-              for (let o = 0; o < 2; o++) {
-                for (let i = 0; i < 7; i++) {
-                  //förläng objektet så det har 30+ items
-                  if (firstDayFound) {
-                    daysCurrent[x] = days[i];
-                    x++;
-                  }
-                  if (i === today.getDay() && !firstDayFound) {
-                    daysCurrent[0] = days[i]; //köra getDay så man vet vart i objektet man ska börja
-                    firstDayFound = true;
-                  }
+          if (!doc.data().removed) {
+            const daysCurrent = {};
+            let daysDateStrings = [];
+
+            let firstDayFound = false;
+            let x = 1;
+            //förlänger daysobjektet och gör så att det börjar på dagens datum
+            for (let o = 0; o < 2; o++) {
+              for (let i = 0; i < 7; i++) {
+                //förläng objektet så det har 30+ items
+                if (firstDayFound) {
+                  daysCurrent[x] = days[i];
+                  x++;
+                }
+                if (i === today.getDay() && !firstDayFound) {
+                  daysCurrent[0] = days[i]; //köra getDay så man vet vart i objektet man ska börja
+                  firstDayFound = true;
                 }
               }
-              for (let i = 0; i < 11; i++) {
-                //loopar igenom objektet med items och kollar true/false
-                if (daysCurrent[i] === 1) {
-                  for (let i = 0; i < times.length; i++) {
-                    //lägger till flera om man har flera tider för rutinen
-                    daysDateStrings.push(day.toISOString().split("T")[0]); //ny array där alla de datum i dateStrings listas
-                  }
-                }
-                day.setDate(day.getDate() + 1);
+            }
+            for (let i = 0; i < 10; i++) {
+              //loopar igenom objektet med items och kollar true/false
+              day.setDate(day.getDate() + 1);
+              if (daysCurrent[i] === 1) {
+                daysDateStrings.push(day.toISOString().split('T')[0]); //ny array där alla de datum i dateStrings listas
               }
+            }
+            //lägger till flera om man har flera tider för rutinen
+            for (let i = 0; i < times.length; i++) {
               for (let x = 0; x < daysDateStrings.length; x++) {
                 allRoutinesData.push({
                   routineName: doc.id,
@@ -85,8 +84,8 @@ function CalendarScreen() {
   };
 
   const loadItems = () => {
-    getItems("routines");
-    getItems("customRoutines");
+    getItems('routines');
+    getItems('customRoutines');
     try {
       setTimeout(() => {
         let routinesNameThatDay = [];
@@ -95,7 +94,7 @@ function CalendarScreen() {
         let routineHoursThatDay = [];
         let routineMinutesThatDay = [];
 
-        console.log(allRoutinesData.length);
+        // console.log(allRoutinesData.length);
         // for (let i = 0; i < routinestimes.length; i++) {
         //   let array = routinestimes[i];
         // !!! Så fort den kommer in i for loopen så blir det fucked !!!
@@ -153,7 +152,7 @@ function CalendarScreen() {
         setItems(newItems);
       }, 1000);
     } catch (e) {
-      console.log("Något gick fel!");
+      console.log('Något gick fel!');
     }
   };
 
@@ -163,7 +162,7 @@ function CalendarScreen() {
     try {
       // const todayCheck = new Date().toISOString().split('T')[0];
 
-      const todayCheck = new Date().toISOString().split("T")[0];
+      const todayCheck = new Date().toISOString().split('T')[0];
       const itemTimeCompare = item.itemTime;
 
       if (!item.ItemisDone && todayCheck == itemTimeCompare) {
@@ -177,18 +176,18 @@ function CalendarScreen() {
                   item.dayNotes,
                   [
                     {
-                      text: "Nope",
-                      onPress: () => console.log("Nope Pressed"),
-                      style: "cancel",
+                      text: 'Nope',
+                      onPress: () => console.log('Nope Pressed'),
+                      style: 'cancel',
                     },
                     {
-                      text: "Yes!",
+                      text: 'Yes!',
                       onPress: () => checkItemDone(item.name, item),
                     },
                   ],
                   {
                     cancelable: true,
-                    onDismiss: () => console.log("Dismissed"),
+                    onDismiss: () => console.log('Dismissed'),
                   }
                 )
               }
@@ -197,27 +196,27 @@ function CalendarScreen() {
                 <Text style={styles.fonts}>{item.name}</Text>
                 <Image
                   style={styles.image}
-                  source={require("../assets/RoutinesPics/WaterDrinking.png")}
+                  source={require('../assets/RoutinesPics/WaterDrinking.png')}
                 />
               </View>
               <Text style={styles.timeSheet}>{item.timeToDo}</Text>
             </TouchableOpacity>
           );
         }
-      } else if (item.ItemisDone) {
+      } else if (item.ItemisDone && todayCheck == itemTimeCompare) {
         return (
           <View style={[styles.itemDone, { height: item.height }]}>
             <View style={styles.box}>
-              <Text style={styles.fonts}>{item.name + " is done!"}</Text>
+              <Text style={styles.fonts}>{item.name + ' is done!'}</Text>
 
               <Icon name="checkmark" type="ionicon" color="#39B91C" />
 
               <Image
                 style={styles.image}
-                source={require("../assets/RoutinesPics/WaterDrinking.png")}
+                source={require('../assets/RoutinesPics/WaterDrinking.png')}
               />
             </View>
-            <Text style={styles.fontsDone}>{"Good Job!"}</Text>
+            <Text style={styles.fontsDone}>{'Good Job!'}</Text>
           </View>
         );
       } else {
@@ -227,16 +226,16 @@ function CalendarScreen() {
               <Text style={styles.fonts}>{item.name}</Text>
               <Image
                 style={styles.image}
-                source={require("../assets/RoutinesPics/WaterDrinking.png")}
+                source={require('../assets/RoutinesPics/WaterDrinking.png')}
               />
             </View>
-            <Text style={styles.fontsDone}>{"Coming"}</Text>
+            <Text style={styles.fontsDone}>{'Coming'}</Text>
           </View>
         );
       }
     } catch (e) {
       console.log(
-        "Opps, crash! Luckily OP Timo is here and you can refresh without crash :)" +
+        'Opps, crash! Luckily OP Timo is here and you can refresh without crash :)' +
           e
       );
     }
@@ -248,17 +247,17 @@ function CalendarScreen() {
     //Sätter item till annan render i logiken under loadItems
     item.ItemisDone = true;
 
-    db.collection("Users")
+    db.collection('Users')
       .doc(userId)
-      .collection("routines")
+      .collection('routines')
       .doc(routineName)
       .update({
         isDone: true,
       });
 
     allRoutinesData = [];
-    getItems("routines");
-    getItems("customRoutines");
+    getItems('routines');
+    getItems('customRoutines');
     loadItems();
     renderItem();
   };
@@ -293,7 +292,7 @@ const styles = StyleSheet.create({
     marginTop: 17,
   },
   itemDone: {
-    backgroundColor: "#D1D0CE",
+    backgroundColor: '#D1D0CE',
     flex: 1,
     borderRadius: 5,
     padding: 10,
@@ -301,28 +300,28 @@ const styles = StyleSheet.create({
     marginTop: 17,
   },
   box: {
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   image: {
     flex: 1,
     width: 100,
     height: 130,
-    position: "absolute",
+    position: 'absolute',
     marginLeft: 190,
     top: -40,
   },
   fonts: {
     fontSize: 15,
-    fontFamily: "Roboto",
-    color: "black",
+    fontFamily: 'Roboto',
+    color: 'black',
     marginTop: 5,
     marginRight: 3,
   },
   fontsDone: {
     fontSize: 20,
-    fontFamily: "Roboto",
-    fontStyle: "italic",
-    color: "black",
+    fontFamily: 'Roboto',
+    fontStyle: 'italic',
+    color: 'black',
     marginTop: 6,
   },
   timeSheet: {
