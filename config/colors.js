@@ -26,6 +26,11 @@ export default {
   pastelYellow: "#fcee7e",
   pastelPink: "#EF798A",
 
+  nudeBloo: "#4D7C8A",
+  nudePink: "#C98686",
+  nudeBrown: "#AE847E",
+  nudeGreen: "#B9D8C2",
+
   //  DARK MODE STANDARD COLORS:
   //  https://material.io/design/color/dark-theme.html
 

@@ -13,7 +13,15 @@ export default (title) => {
   // const increment = db.FieldValue.increment(50);
   // // Document reference
   const userID = auth.currentUser.uid;
-  console.log(userID);
+
+  let routineDifficulty = 1;
+  db.collection('Routines')
+    .doc(title)
+    .get()
+    .then((doc) => {
+      routineDifficulty = doc?.data()?.DifficultyRank;
+    });
+
   const roubineRef = db.collection('Users').doc(userID);
 
   const userRoutines = db
@@ -41,6 +49,7 @@ export default (title) => {
             UserAlertTime: 7,
             UserRoutineRank: 'Rookie',
             removed: false,
+            RoutineDifficulty: routineDifficulty,
           },
           { merge: true }
         );

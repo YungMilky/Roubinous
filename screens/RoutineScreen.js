@@ -10,6 +10,8 @@ import {
   ScrollView,
   FlatList,
   Modal,
+  Easing,
+  Pressable,
 } from 'react-native';
 
 import AppLoading from 'expo-app-loading';
@@ -18,6 +20,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts, BadScript_400Regular } from '@expo-google-fonts/bad-script';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
+import WeekdayPicker from 'react-native-weekday-picker';
 
 // import { SharedElement } from "react-navigation-shared-element";
 
@@ -56,14 +59,8 @@ const RoutineScreen = ({ navigation, route }) => {
     }
   }, []);
 
-  const scrollX = React.useRef(new Animated.Value(0)).current;
   const [currentIndex, setCurrentIndex] = useState();
-  const [refFlatList, setrefFlatList] = useState();
 
-  const [animation, setAnimation] = useState('fadeIn');
-  const [duration, setDuration] = useState(1800);
-
-  const [showSwiper, setShowSwiper] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
   const [buttonTitle, setButtonTitle] = useState('I got this!');
@@ -115,215 +112,316 @@ const RoutineScreen = ({ navigation, route }) => {
   //   refFlatList.scrollToIndex({ animated: true, index: currentIndex });
   // };
 
+  const [descriptions, setDescriptions] = useState(() => {
+    if (item.descriptionArray) {
+      return item.descriptionArray.map((text, index) => ({
+        text,
+        key: index,
+        toggled: false,
+      }));
+    } else if (item.shortDescription) {
+      return { text: item.shortDescription, key: 0, toggled: false };
+    } else return null;
+  });
+
+  const [selected, setSelected] = useState(0);
+  const descriptionViewer = ({ item }) => {
+    return (
+      <View style={{}}>
+        <Pressable
+          style={{ width: '100%', alignItems: 'center' }}
+          onPress={() => {
+            typeof descriptions[1] != 'undefined'
+              ? setSelected(selected === item.key ? null : item.key)
+              : null;
+          }}
+        >
+          <View style={{ width: 340 }}>
+            {item.key === selected ? (
+              <View>
+                <Animatable.Text
+                  animation='bounceInUp'
+                  duration={150}
+                  easing={'ease-out-expo'}
+                  useNativeDriver={true}
+                  numberOfLines={30}
+                  // ellipsizeMode={"end"}
+                  style={{
+                    paddingTop: 4,
+                    color: colors.darkmodeMediumWhite,
+                    fontSize: 22,
+                    lineHeight: 28,
+                    textAlign: 'justify',
+                  }}
+                >
+                  {item.text}
+                </Animatable.Text>
+
+                {typeof descriptions[1] != 'undefined' && (
+                  <Pressable
+                    style={{
+                      height: 32,
+                      marginBottom: -30,
+                      marginTop: -16,
+                    }}
+                    onPress={() => {
+                      setSelected(null);
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.keepReading,
+                        {
+                          textAlign: 'right',
+                          paddingRight: 8,
+                          color: colors.darkmodeDisabledWhite,
+                        },
+                        typeof descriptions[item.key + 1] === 'undefined'
+                          ? {
+                              marginBottom: 20,
+                            }
+                          : null,
+                      ]}
+                    >
+                      close
+                    </Text>
+                  </Pressable>
+                )}
+              </View>
+            ) : (
+              <View style={styles.separator}></View>
+            )}
+          </View>
+
+          {item.key === selected &&
+          typeof descriptions[item.key + 1] != 'undefined' ? (
+            <View style={{ marginBottom: -30 }}>
+              <View style={styles.separator}></View>
+              <Pressable
+                style={{
+                  height: 40,
+                }}
+                onPress={() => {
+                  setSelected(item.key + 1);
+                }}
+              >
+                <Text style={[styles.keepReading]}>Keep reading...</Text>
+              </Pressable>
+            </View>
+          ) : null}
+        </Pressable>
+        {/* <Pressable
+          onPress={() => {
+            // let toggled = descriptions.map((item) => {
+            //   return { ...item, toggled: false };
+            // });
+            // toggled[item.key] = {
+            //   ...toggled[item.key],
+            //   toggled: !descriptions[item.key].toggled,
+            // };
+            // setDescriptions(toggled);
+            // // //if 1 is open and two is closed
+            // // if (expanded && !expandedTwo) {
+            // //   toggleExpansionTwo();
+            // //   //if 1 is closed and two is open
+            // // } else if (!expanded && expandedTwo) {
+            // //   toggleExpansion();
+            // //   toggleExpansionTwo();
+            // //   //if both are open
+            // // } else {
+            // //   toggleExpansion();
+            // // }
+          }}
+          style={{ width: "100%", height: 40 }}
+        >
+          {/* {expanded && typeof item.descriptionArray[0 + 1] != "undefined" ? (
+            <Text style={styles.keepReading}>Keep reading...</Text>
+            ) : (
+              <Text
+              style={[
+                styles.keepReading,
+                { textAlign: "right", paddingRight: 40 },
+              ]}
+              >
+              close
+              </Text>
+              )}  
+        </Pressable> */}
+      </View>
+    );
+  };
+
   if (!fontsLoaded) {
     return <AppLoading />;
   } else {
     return (
-      <Screen style={{ backgroundColor: item.color, marginTop: -25 }}>
-        {/* <SharedElement id={`item.${item.id}.color`} style={[
-            StyleSheet.absoluteFillObject,
-            { backgroundColor: item.color },
-          ]}> */}
-        <View
-          style={[
-            StyleSheet.absoluteFillObject,
-            { backgroundColor: item.color },
-          ]}
+      <Screen
+        style={{
+          backgroundColor: item.color,
+          height: '100%',
+        }}
+      >
+        <TouchableOpacity
+          style={styles.one}
+          onPress={() => {
+            navigation.goBack();
+          }}
         >
-          <LinearGradient
-            colors={[colors.OrchidPink, colors.darkmodeMediumWhite, item.color]}
-            style={styles.background}
-            start={{ x: 5, y: 0.01 }}
-            end={{ x: 0.1, y: 0.3 }}
-            // locations={[0.4, 0.1]}
-          ></LinearGradient>
-        </View>
-        {/* </SharedElement> */}
-        <View style={styles.container}>
-          <TouchableOpacity
-            style={styles.one}
-            onPress={() => {
-              navigation.goBack();
-            }}
-          >
-            <MaterialCommunityIcons
-              name="window-close"
-              color={colors.darkmodeMediumWhite}
-              size={28}
-            />
-          </TouchableOpacity>
-          {item.alreadyAdded && !item.removed && (
-            <AddAndRemoveButton
-              check={false}
-              routine={item.title}
-              style={{
-                backgroundColor: 'rgba(0.0.0.0,0)',
-                borderWidth: 0,
-              }}
-              // size={40}
-            />
-          )}
-
-          <View style={styles.imgcontainer}>
-            <View style={styles.two}>
-              {/* <SharedElement id={`item.${item.id}.image`} style={styles.two}> */}
-              {item.image ? (
-                <Image
-                  style={styles.image}
-                  source={{ uri: item.imageRoutine }}
-                />
-              ) : (
-                <Image
-                  style={styles.imageDefault}
-                  source={require('../assets/RoutinesPics/defaultbig.png')}
-                />
-              )}
-              {/* </SharedElement> */}
-            </View>
-          </View>
-          <View style={styles.three}>
-            {/* <SharedElement id={`item.${item.id}.title`} style={styles.three}> */}
-            <Animatable.Text
-              animation="fadeIn"
-              useNativeDriver={true}
-              duration={2100}
-              style={styles.title}
-            >
-              {item.title}
-            </Animatable.Text>
-            {/* </SharedElement> */}
-          </View>
-          <Text style={styles.difficultyRating}>
-            {'   '}difficulty: {stars}
-          </Text>
-
-          <FlatList
-            ref={(ref) => setrefFlatList(ref)}
-            style={styles.flatlist}
-            data={item.descriptionArray}
-            getItemLayout={getItemLayout}
-            keyExtractor={(item) => item.id}
-            showsHorizontalScrollIndicator={false}
-            onScroll={Animated.event(
-              [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-              {
-                useNativeDriver: false,
-              }
-            )}
-            snapToAlignment="center"
-            scrollEventThrottle={16}
-            snapToInterval={ITEM_SIZE}
-            decelerationRate={0}
-            snapToAlignment={'center'}
-            bounces={false}
-            horizontal
-            onScrollBeginDrag={() => {
-              setShowSwiper(!showSwiper);
-            }}
-            renderItem={({ item }) => (
-              <RoutineDetails description={item} size={ITEM_SIZE} />
-            )}
-            bounces={true}
+          <MaterialCommunityIcons
+            name='window-close'
+            color={colors.darkmodeMediumWhite}
+            size={28}
           />
-          {showSwiper &&
-            typeof item.descriptionArray != 'undefined' &&
-            item.descriptionArray.length >= 1 && (
-              <Animatable.Image
-                source={require('../assets/RoutinesPics/swipe-left.gif')}
-                delay={2100}
-                animation={animation}
-                useNativeDriver={true}
-                onAnimationEnd={() => {
-                  setDuration(500);
-                  setTimeout(() => {
-                    setAnimation('fadeOut');
-                  }, 2900);
+        </TouchableOpacity>
+        <View style={styles.imgcontainer}>
+          <View style={styles.two}>
+            {item.image ? (
+              <Image style={styles.image} source={{ uri: item.imageRoutine }} />
+            ) : (
+              <Image
+                style={styles.imageDefault}
+                source={require('../assets/RoutinesPics/defaultbig.png')}
+              />
+            )}
+          </View>
+        </View>
+        <ScrollView>
+          <View style={styles.container}>
+            {/* <LinearGradient
+              colors={[
+                colors.OrchidPink,
+                colors.darkmodeMediumWhite,
+                item.color,
+              ]}
+              style={styles.background}
+              start={{ x: 5, y: 0.01 }}
+              end={{ x: 0.1, y: 0.3 }}
+              // locations={[0.4, 0.1]}
+            > */}
+
+            {item.alreadyAdded && !item.removed && (
+              <AddAndRemoveButton
+                check={false}
+                routine={item.title}
+                style={{
+                  backgroundColor: 'rgba(0.0.0.0,0)',
+                  borderWidth: 0,
                 }}
-                duration={duration}
-                style={styles.swiper}
-                tintColor={colors.darkmodeMediumWhite}
+                // size={40}
               />
             )}
 
-          {showModal && (
-            <Modal
-              style={{ margin: 0 }}
-              animationType={'fade'}
-              transparent={true}
-              statusBarTranslucent={true}
-              onShow={() => {
-                setTimeout(() => {
-                  setShowModal(false);
-                }, 2700);
-                setTimeout(() => {
-                  navigation.goBack();
-                }, 2800);
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: colors.darkmodePressed,
-                  flex: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginTop: 0,
+            <View style={styles.three}>
+              {/* <SharedElement id={`item.${item.id}.title`} style={styles.three}> */}
+              <Animatable.Text
+                animation='fadeIn'
+                useNativeDriver={true}
+                duration={2100}
+                style={styles.title}
+              >
+                {item.title}
+              </Animatable.Text>
+              {/* </SharedElement> */}
+            </View>
+            <Text style={styles.difficultyRating}>
+              {'   '}difficulty: {stars}
+            </Text>
+
+            <FlatList data={descriptions} renderItem={descriptionViewer} />
+            {/* </LinearGradient> */}
+            {item.days && (
+              <WeekdayPicker
+                days={JSON.parse(item.days)}
+                onChange={() => null}
+                style={styles.picker}
+              />
+            )}
+            {showModal && (
+              <Modal
+                style={{ margin: 0 }}
+                animationType={'fade'}
+                transparent={true}
+                statusBarTranslucent={true}
+                onShow={() => {
+                  setTimeout(() => {
+                    setShowModal(false);
+                  }, 2700);
+                  setTimeout(() => {
+                    navigation.goBack();
+                  }, 2800);
                 }}
               >
                 <View
                   style={{
-                    backgroundColor: colors.darkOpacity,
+                    backgroundColor: colors.darkmodePressed,
+                    flex: 1,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    height: height,
-                    width: width,
+                    marginTop: 0,
                   }}
                 >
-                  <Animatable.Image
-                    source={require('../assets/RoutinesPics/anxious-mountain.png')}
-                    animation={'bounceIn'}
-                    useNativeDriver={true}
-                    duration={1000}
-                    style={styles.successModalImage}
-                  />
+                  <View
+                    style={{
+                      backgroundColor: colors.darkOpacity,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      height: height,
+                      width: width,
+                    }}
+                  >
+                    <Animatable.Image
+                      source={require('../assets/RoutinesPics/anxious-mountain.png')}
+                      animation={'bounceIn'}
+                      useNativeDriver={true}
+                      duration={1000}
+                      style={styles.successModalImage}
+                    />
+                  </View>
                 </View>
-              </View>
-            </Modal>
-          )}
-
-          <View style={styles.buttonContainer}>
-            <AppButton
-              style={
-                buttonDisabled
-                  ? {
-                      color: colors.darkmodeDisabledText,
-                      height: 55,
-                      backgroundColor: colors.darkmodeDisabledBlack,
-                      borderTopWidth: 1,
-                    }
-                  : {
-                      color: 'rgba(0,0,0,0.64)',
-                      height: 55,
-                      backgroundColor: colors.darkmodeHighWhite,
-                    }
-              }
-              textStyle={
-                buttonDisabled
-                  ? {
-                      color: colors.darkmodeDisabledText,
-                    }
-                  : {
-                      color: 'rgba(0,0,0,0.64)',
-                    }
-              }
-              title={buttonTitle}
-              disabled={buttonDisabled}
-              onPress={() => {
-                AddRoutine(item.title);
-                setShowModal(true);
-                playSound();
-              }}
-            />
+              </Modal>
+            )}
           </View>
+        </ScrollView>
+        <View style={{ alignItems: 'flex-end' }}>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              buttonDisabled
+                ? {
+                    color: colors.darkmodeDisabledText,
+                    backgroundColor: colors.darkmodeDisabledBlack,
+                    borderTopWidth: 1,
+                    borderRadius: 0,
+                  }
+                : {
+                    color: 'rgba(0,0,0,0.64)',
+                    backgroundColor: colors.darkmodeHighWhite,
+                    borderRadius: 0,
+                  },
+            ]}
+            title={buttonTitle}
+            disabled={buttonDisabled}
+            onPress={() => {
+              AddRoutine(item.title);
+              setShowModal(true);
+              playSound();
+            }}
+          >
+            <Text
+              style={[
+                buttonDisabled
+                  ? {
+                      color: colors.darkmodeDisabledText,
+                    }
+                  : {
+                      color: 'rgba(0,0,0,0.64)',
+                    },
+                styles.buttonText,
+              ]}
+            >
+              {buttonTitle}
+            </Text>
+          </TouchableOpacity>
         </View>
       </Screen>
     );
@@ -418,60 +516,57 @@ const RoutineScreen = ({ navigation, route }) => {
 //  db interaction
 
 const styles = StyleSheet.create({
+  picker: {
+    paddingTop: 10,
+    marginBottom: 10,
+  },
+  button: {
+    width: width,
+    backgroundColor: '#F45B69',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  buttonText: {
+    fontSize: 22,
+    fontWeight: '700',
+  },
+
   container: {
     paddingHorizontal: 12,
   },
-  // Close button
+  // upper close button
   one: {
-    top: height * 0.06,
-    position: 'absolute',
+    top: 20,
+    // position: "absolute",
     zIndex: 1,
     paddingLeft: 20,
   },
   // Image
-  two: {
-    flex: 1,
-    marginBottom: 178,
-    padding: 40,
-  },
+  two: { alignItems: 'center' },
   //  Title
+  imgcontainer: { top: 20 },
+  image: {
+    width: ITEM_HEIGHT * 1.24,
+    height: ITEM_HEIGHT * 1.6,
+    position: 'absolute',
+  },
+  imageDefault: {
+    width: ITEM_HEIGHT * 2.6,
+    height: ITEM_HEIGHT * 1.6,
+    left: 40,
+    top: 20,
+  },
   three: {
-    flex: 1,
-    paddingTop: 38,
-    paddingBottom: 28,
+    marginTop: 250,
+    paddingBottom: 2,
     paddingLeft: 28,
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   title: {
     fontFamily: 'BadScript_400Regular',
     alignItems: 'center',
     fontSize: 38,
     color: colors.darkmodeHighWhite,
-  },
-
-  swiper: {
-    position: 'absolute',
-    width: 55,
-    height: 55,
-    top: height * 0.732,
-    left: width * 0.74,
-  },
-
-  flatlist: {},
-
-  buttonContainer: {
-    position: 'absolute',
-    top: height * 0.86,
-    width: width,
-  },
-  //  Button
-  five: {
-    width: width,
-    height: height,
-    position: 'absolute',
-    height: 55,
-    backgroundColor: colors.darkmodeHighWhite,
   },
 
   successModalImage: {
@@ -483,32 +578,16 @@ const styles = StyleSheet.create({
 
   screen: {
     // flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+    // flexDirection: "column",
+    // justifyContent: "flex-end",
+    // alignItems: "center",
   },
   background: {
+    position: 'absolute',
+    // flex: 1,
+    // zIndex: 2,
     height: height,
     width: width,
-  },
-  closeButton: {
-    padding: 20,
-  },
-
-  imgcontainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: height * 0.032,
-  },
-  image: {
-    width: ITEM_HEIGHT * 1.24,
-    height: ITEM_HEIGHT * 1.6,
-  },
-  imageDefault: {
-    width: ITEM_HEIGHT * 2.6,
-    height: ITEM_HEIGHT * 1.6,
-    left: 40,
-    top: 20,
   },
 
   difficultyRating: {
@@ -517,6 +596,19 @@ const styles = StyleSheet.create({
     paddingBottom: 6,
     alignItems: 'center',
     fontSize: 15,
+    color: colors.darkmodeMediumWhite,
+  },
+  separator: {
+    paddingVertical: 16,
+    width: 345,
+    borderBottomColor: colors.darkmodeDisabledWhite,
+    borderBottomWidth: 1,
+  },
+  keepReading: {
+    paddingTop: 6,
+    paddingBottom: 10,
+    paddingLeft: 10,
+    fontSize: 16,
     color: colors.darkmodeMediumWhite,
   },
 });

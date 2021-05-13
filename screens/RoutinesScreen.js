@@ -98,11 +98,10 @@ const separator = (text) => {
 function RoutinesScreen({ navigation }) {
   const user = auth.currentUser;
   const dbUser = db.collection('Users').doc(user.uid);
-  console.log(user.uid);
 
-  const rank1 = 'kn00b';
+  const rank1 = 'Hopeful';
   const rank2 = 'Achiever';
-  const rank3 = 'Bambaclat';
+  const rank3 = 'Cosmic engineer';
   const [userRank, setuserRank] = useState(rank1);
 
   //routines, locked routines, ongoing routines
@@ -182,6 +181,7 @@ function RoutinesScreen({ navigation }) {
                       title: routineName,
                       shortDescription: doc.data().ShortDescription,
                       descriptionArray: doc.data().LongDescription,
+                      days: doc.data().days,
                       color: doc.data().Color,
                       difficulty: diff,
                       image: urlRoutines,
@@ -203,6 +203,7 @@ function RoutinesScreen({ navigation }) {
                       title: routineName,
                       shortDescription: doc.data().ShortDescription,
                       descriptionArray: doc.data().LongDescription,
+                      days: doc.data().days,
                       color: doc.data().Color,
                       difficulty: diff,
                       image: urlRoutines,
@@ -224,6 +225,7 @@ function RoutinesScreen({ navigation }) {
                       title: routineName,
                       shortDescription: doc.data().ShortDescription,
                       descriptionArray: doc.data().LongDescription,
+                      days: doc.data().days,
                       color: doc.data().Color,
                       difficulty: diff,
                       image: urlRoutines,
@@ -248,6 +250,7 @@ function RoutinesScreen({ navigation }) {
                   title: routineName,
                   shortDescription: doc.data().ShortDescription,
                   descriptionArray: doc.data().LongDescription,
+                  days: doc.data().days,
                   color: doc.data().Color,
                   difficulty: diff,
                   imageDefault: require('../assets/RoutinesPics/default.png'),
@@ -264,6 +267,7 @@ function RoutinesScreen({ navigation }) {
                   title: routineName,
                   shortDescription: doc.data().ShortDescription,
                   descriptionArray: doc.data().LongDescription,
+                  days: doc.data().days,
                   color: doc.data().Color,
                   difficulty: diff,
                   imageDefault: require('../assets/RoutinesPics/default.png'),
@@ -280,6 +284,7 @@ function RoutinesScreen({ navigation }) {
                   title: routineName,
                   shortDescription: doc.data().ShortDescription,
                   descriptionArray: doc.data().LongDescription,
+                  days: doc.data().days,
                   color: doc.data().Color,
                   difficulty: diff,
                   imageDefault: require('../assets/RoutinesPics/default.png'),
@@ -384,7 +389,7 @@ function RoutinesScreen({ navigation }) {
       //   ]}
       // >
       <Animatable.View
-        animation="zoomIn"
+        animation='zoomIn'
         duration={200}
         useNativeDriver={true}
         style={[
@@ -678,7 +683,7 @@ function RoutinesScreen({ navigation }) {
       //   ]}
       // >
       <Animatable.View
-        animation="zoomIn"
+        animation='zoomIn'
         duration={200}
         useNativeDriver={true}
         style={[
@@ -808,7 +813,7 @@ function RoutinesScreen({ navigation }) {
         >
           <View style={{ alignItems: 'center', paddingTop: 2 }}>
             <SearchBar
-              placeholder="Search routines..."
+              placeholder='Search routines...'
               onChangeText={setSearch}
               value={search}
               containerStyle={{
@@ -888,7 +893,7 @@ function RoutinesScreen({ navigation }) {
               </AppText>
               <View style={itemStyles.makeYourOwnRoutinePlus}>
                 <AntDesign
-                  name="plus"
+                  name='plus'
                   size={28}
                   color={colors.darkmodeHighWhite}
                 />

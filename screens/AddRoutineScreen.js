@@ -35,7 +35,7 @@ import { setBadgeCountAsync } from 'expo-notifications';
 const width = Dimensions.get('window').width;
 
 const editIcon = () => {
-  return <MaterialCommunityIcons name="pencil" size={24} color="black" />;
+  return <MaterialCommunityIcons name='pencil' size={24} color='black' />;
 };
 
 const AddRoutineScreen = ({ navigation }) => {
@@ -112,6 +112,7 @@ const AddRoutineScreen = ({ navigation }) => {
           days: JSON.stringify(days),
           routineTimes: JSON.stringify(times),
           removed: false,
+          isCustom: true,
         })
         .then(() => {
           console.log('Document successfully written!');
@@ -220,7 +221,7 @@ const AddRoutineScreen = ({ navigation }) => {
               style={styles.timeListItemContainer}
             >
               <MaterialCommunityIcons
-                name="close"
+                name='close'
                 size={30}
                 color={'#F45B69'}
               />
@@ -249,7 +250,7 @@ const AddRoutineScreen = ({ navigation }) => {
                   {checkNumber(item.hours) + ':' + checkNumber(item.minutes)}
                 </Text>
                 <MaterialCommunityIcons
-                  name="pencil"
+                  name='pencil'
                   size={14}
                   color={colors.darkmodeHighWhite}
                 />
@@ -261,7 +262,7 @@ const AddRoutineScreen = ({ navigation }) => {
               color={colors.darkmodeHighWhite}
             /> */}
             <EvilIcons
-              name="navicon"
+              name='navicon'
               size={33}
               color={colors.darkmodeHighWhite}
             />
@@ -284,7 +285,7 @@ const AddRoutineScreen = ({ navigation }) => {
               textAlign: 'left',
               color: colors.darkmodeMediumWhite,
             }}
-            placeholder="Edit one of your routines here"
+            placeholder='Edit one of your routines here'
             defaultValue={value}
             containerStyle={{ height: 30 }}
             style={{
@@ -341,7 +342,7 @@ const AddRoutineScreen = ({ navigation }) => {
           >
             <FloatingLabelInput
               isFocused={isNameFocused}
-              hint="eg. Morning workout"
+              hint='eg. Morning workout'
               hintTextColor={colors.darkmodeMediumWhite}
               inputStyles={styles.inputStyles}
               customLabelStyles={{
@@ -356,11 +357,11 @@ const AddRoutineScreen = ({ navigation }) => {
               onBlur={() => {
                 setIsNameFocused(false);
               }}
-              label="Routine name"
+              label='Routine name'
               leftComponent={
                 <View style={{ padding: 12 }}>
                   <FontAwesome
-                    name="diamond"
+                    name='diamond'
                     size={22}
                     color={
                       isNameFocused
@@ -381,7 +382,7 @@ const AddRoutineScreen = ({ navigation }) => {
                       }}
                     >
                       <MaterialCommunityIcons
-                        name="close"
+                        name='close'
                         size={20}
                         color={colors.darkmodeMediumWhite}
                       />
@@ -389,7 +390,7 @@ const AddRoutineScreen = ({ navigation }) => {
                   </View>
                 ) : null
               }
-              type="text"
+              type='text'
               value={name}
               onChangeText={(text) => setName(text)}
               // style={{ color: colors.darkmodeHighWhite, height: 40 }}
@@ -415,7 +416,7 @@ const AddRoutineScreen = ({ navigation }) => {
           >
             <FloatingLabelInput
               isFocused={isNotesFocused}
-              hint="eg. 10 push-ups"
+              hint='eg. 10 push-ups'
               hintTextColor={colors.darkmodeMediumWhite}
               inputStyles={styles.inputStyles}
               customLabelStyles={{
@@ -430,11 +431,11 @@ const AddRoutineScreen = ({ navigation }) => {
               onBlur={() => {
                 setIsNotesFocused(false);
               }}
-              label="Notes (Optional)"
+              label='Notes (Optional)'
               leftComponent={
                 <View style={{ padding: 12 }}>
                   <FontAwesome
-                    name="diamond"
+                    name='diamond'
                     size={22}
                     color={
                       isNotesFocused
@@ -455,7 +456,7 @@ const AddRoutineScreen = ({ navigation }) => {
                       }}
                     >
                       <MaterialCommunityIcons
-                        name="close"
+                        name='close'
                         size={20}
                         color={colors.darkmodeMediumWhite}
                       />
@@ -463,7 +464,7 @@ const AddRoutineScreen = ({ navigation }) => {
                   </View>
                 ) : null
               }
-              type="text"
+              type='text'
               value={note}
               onChangeText={(text) => setNote(text)}
               // style={{ color: colors.darkmodeHighWhite, height: 40 }}
@@ -519,7 +520,7 @@ const AddRoutineScreen = ({ navigation }) => {
                   Add
                 </Text>
                 <MaterialCommunityIcons
-                  name="plus"
+                  name='plus'
                   size={22}
                   color={colors.darkmodeHighWhite}
                 />
@@ -530,11 +531,11 @@ const AddRoutineScreen = ({ navigation }) => {
             <View style={styles.timeTitleContainer}>
               {show && (
                 <DateTimePicker
-                  testID="dateTimePicker"
+                  testID='dateTimePicker'
                   value={date}
-                  mode="time"
+                  mode='time'
                   is24Hour={true}
-                  display="spinner"
+                  display='spinner'
                   onChange={onChange}
                 />
               )}

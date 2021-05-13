@@ -1,24 +1,24 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
   Animated,
   TouchableWithoutFeedback,
   Easing,
-} from "react-native";
+} from 'react-native';
 
-import * as Animatable from "react-native-animatable";
+import * as Animatable from 'react-native-animatable';
 
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 
-import colors from "../config/colors";
-import AddRoutine from "./AddRoutine";
-import RemoveRoutine from "./RemoveRoutine";
+import colors from '../config/colors';
+import AddRoutine from './AddRoutine';
+import RemoveRoutine from './RemoveRoutine';
 
 const plusSymbol = () => {
   return (
     <MaterialIcons
-      name="playlist-add"
+      name='playlist-add'
       size={20}
       color={colors.darkmodeSuccessColor}
     />
@@ -27,7 +27,7 @@ const plusSymbol = () => {
 const minusSymbol = () => {
   return (
     <MaterialCommunityIcons
-      name="minus"
+      name='minus'
       size={20}
       color={colors.darkmodeErrorColor}
     />
@@ -36,7 +36,7 @@ const minusSymbol = () => {
 const undoSymbol = () => {
   return (
     <MaterialCommunityIcons
-      name="undo"
+      name='undo'
       size={18}
       color={colors.darkmodeHighWhite}
     />
@@ -47,12 +47,9 @@ const undoSymbol = () => {
 //routine - routine name
 //size - plus and minus icon size
 function AddAndRemoveButton({ style, size, check, routine }) {
-  const [expanded, setExpanded] = useState(true);
-  const animationWidth = useRef(new Animated.Value(2)).current;
-
   const [addingOrRemoving, setAddingOrRemoving] = useState(check);
   const [checkMessage, setCheckMessage] = useState(
-    check ? " Added!" : " Removed"
+    check ? ' Added!' : ' Removed'
   );
   const [maxWidth, setMaxWidth] = useState(check ? 70 : 84);
   const [plusOrMinus, setPlusOrMinus] = useState(
@@ -60,6 +57,9 @@ function AddAndRemoveButton({ style, size, check, routine }) {
   );
   const [undo, toggleUndo] = useState();
   const [undoRender, setUndoRender] = useState();
+
+  const [expanded, setExpanded] = useState(true);
+  const animationWidth = useRef(new Animated.Value(2)).current;
   const toggleExpansion = () => {
     setExpanded(!expanded);
   };
@@ -81,11 +81,11 @@ function AddAndRemoveButton({ style, size, check, routine }) {
 
   return (
     <Animatable.View
-      animation={"swing"}
+      animation={'swing'}
       useNativeDriver={true}
       style={[
         {
-          backgroundColor: "rgba(0,0,0,0.2)",
+          backgroundColor: 'rgba(0,0,0,0.2)',
           height: 20,
           padding: 1,
           paddingBottom: 23,
@@ -98,18 +98,18 @@ function AddAndRemoveButton({ style, size, check, routine }) {
         style,
       ]}
     >
-      {typeof check != "undefined" && (
+      {typeof check != 'undefined' && (
         <Animated.View style={{ width: animationWidth }} useNativeDriver={true}>
-          <View style={{ position: "absolute" }}>
+          <View style={{ position: 'absolute' }}>
             <TouchableWithoutFeedback
               onPress={() => {
                 toggleExpansion();
                 if (undo) {
-                  checkMessage === " Added!"
+                  checkMessage === ' Added!'
                     ? RemoveRoutine(routine)
                     : AddRoutine(routine);
                   // 3. set message to undone
-                  setCheckMessage(" Undone!");
+                  setCheckMessage(' Undone!');
                   // set width to adapt to "undone" text
                   setMaxWidth(74);
 
@@ -120,19 +120,19 @@ function AddAndRemoveButton({ style, size, check, routine }) {
                     toggleUndo(false);
                     setUndoRender(null);
                     // 2. remove plus/minus depending on previous
-                    checkMessage === " Added!"
+                    checkMessage === ' Added!'
                       ? setPlusOrMinus(plusSymbol)
                       : setPlusOrMinus(minusSymbol);
                   }, 2000);
 
                   //  set back to added when out of sight
                   setTimeout(() => {
-                    setCheckMessage(" Added!");
+                    setCheckMessage(' Added!');
                   }, 2600);
                 } else if (addingOrRemoving) {
                   //  IF ADDING
                   // 1. set message to Added!
-                  setCheckMessage(" Added!");
+                  setCheckMessage(' Added!');
 
                   // 2. add routine to db
                   AddRoutine(routine);
@@ -147,7 +147,7 @@ function AddAndRemoveButton({ style, size, check, routine }) {
                 } else if (!addingOrRemoving) {
                   //  IF REMOVING
                   // 1. set message to Removed!
-                  setCheckMessage(" Removed");
+                  setCheckMessage(' Removed');
 
                   // 2. remove routine from db
                   RemoveRoutine(routine);
@@ -190,7 +190,7 @@ function AddAndRemoveButton({ style, size, check, routine }) {
                   }}
                   numberOfLines={1}
                   multiline={false}
-                  ellipsizeMode="clip"
+                  ellipsizeMode='clip'
                 >
                   {undoRender}
                   {plusOrMinus}

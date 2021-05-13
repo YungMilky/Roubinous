@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { auth, db } from '../firebase';
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import { auth, db } from '../firebase';
 import Screen from '../components/Screen';
-import colors from '../config/colors';
+import InfographicPopup from '../components/InfographicPopup';
 import CreateDailyNotification from '../components/notification/CreateDailyNotification';
 import CancelAllNotifications from '../components/notification/CancelAllNotifications';
+import colors from '../config/colors';
 
 const HomeScreen = ({ navigation }) => {
   // const user = auth.currentUser;
@@ -48,6 +49,7 @@ const HomeScreen = ({ navigation }) => {
         />
         <Text>Profile Page</Text>
       </TouchableOpacity> */}
+      <InfographicPopup />
       <TouchableOpacity
         style={styles.button}
         onPress={() =>
@@ -55,7 +57,7 @@ const HomeScreen = ({ navigation }) => {
         }
       >
         <MaterialCommunityIcons
-          name="baseball"
+          name='baseball'
           size={70}
           color={colors.samRed}
         />
@@ -63,7 +65,7 @@ const HomeScreen = ({ navigation }) => {
       </TouchableOpacity>
       <TouchableOpacity style={styles.button}>
         <MaterialCommunityIcons
-          name="clock-time-eight"
+          name='clock-time-eight'
           size={70}
           color={colors.samRed}
         />

@@ -86,19 +86,19 @@ const LoginScreen = ({ navigation }) => {
       <View style={styles.inputContainer}>
         <Input
           style={styles.input}
-          placeholder="Email"
+          placeholder='Email'
           autoFocus
-          type="email"
+          type='email'
           value={email}
           onChangeText={(text) => setEmail(text)}
         />
 
-        <StatusBar style="light" />
+        <StatusBar style='light' />
         <Input
           style={styles.input}
-          placeholder="Password"
+          placeholder='Password'
           autoFocus
-          type="password"
+          type='password'
           secureTextEntry
           value={password}
           onChangeText={(text) => setPassword(text)}
@@ -109,7 +109,7 @@ const LoginScreen = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         <AppButton
           style={styles.button}
-          title="Login"
+          title='Login'
           onPress={signInWithEmailAndPassword}
         />
       </View>
