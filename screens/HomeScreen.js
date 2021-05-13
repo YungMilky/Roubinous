@@ -1,17 +1,4 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
-import { auth, db } from '../firebase';
-import { Text, StyleSheet, TouchableOpacity } from 'react-native';
-import PropTypes from 'prop-types';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-
-import Screen from '../components/Screen';
-import InfographicPopup from '../components/InfographicPopup';
-import CreateDailyNotification from '../components/notification/CreateDailyNotification';
-import CancelAllNotifications from '../components/notification/CancelAllNotifications';
-import colors from '../config/colors';
-=======
-import React, { useState, useEffect } from "react";
 import {
   Text,
   StyleSheet,
@@ -20,28 +7,28 @@ import {
   View,
   Dimensions,
   Image,
-} from "react-native";
-import PropTypes from "prop-types";
-import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
+} from 'react-native';
+import PropTypes from 'prop-types';
+import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 
-import { auth, db } from "../firebase";
-import Screen from "../components/Screen";
-import colors from "../config/colors";
-import CreateDailyNotification from "../components/notification/CreateDailyNotification";
-import CancelAllNotifications from "../components/notification/CancelAllNotifications";
-import * as Animatable from "react-native-animatable";
-import { TouchableWithoutFeedback } from "react-native";
-import AppButton from "../components/AppButton";
-import { SimpleAnimation } from "react-native-simple-animations";
->>>>>>> 0c796844dfd1827b3d87b05e837c42ac726d45c9
+import { auth, db } from '../firebase';
+import Screen from '../components/Screen';
+import colors from '../config/colors';
+import CreateDailyNotification from '../components/notification/CreateDailyNotification';
+import CancelAllNotifications from '../components/notification/CancelAllNotifications';
+import * as Animatable from 'react-native-animatable';
+import { TouchableWithoutFeedback } from 'react-native';
+import AppButton from '../components/AppButton';
+import InfographicPopup from '../components/InfographicPopup';
+import { SimpleAnimation } from 'react-native-simple-animations';
 
-const { width, height } = Dimensions.get("screen");
+const { width, height } = Dimensions.get('screen');
 const HomeScreen = ({ navigation }) => {
   const [showModal, setShowModal] = useState(false);
   let nowDate = new Date();
 
   const getDailyRewardTime = () => {
-    db.collection("Users")
+    db.collection('Users')
       .doc(auth.currentUser.uid)
       .get()
       .then((documentSnapshot) => {
@@ -113,11 +100,8 @@ const HomeScreen = ({ navigation }) => {
         />
         <Text>Profile Page</Text>
       </TouchableOpacity> */}
-<<<<<<< HEAD
       <InfographicPopup />
-=======
 
->>>>>>> 0c796844dfd1827b3d87b05e837c42ac726d45c9
       <TouchableOpacity
         style={styles.button}
         onPress={() =>
@@ -149,7 +133,7 @@ const HomeScreen = ({ navigation }) => {
         }
       >
         <MaterialCommunityIcons
-          name="baseball"
+          name='baseball'
           size={70}
           color={colors.samRed}
         />
@@ -159,11 +143,11 @@ const HomeScreen = ({ navigation }) => {
         <Modal
           style={{
             borderWidth: 0,
-            borderColor: "none",
-            width: "100%",
-            height: "100%",
+            borderColor: 'none',
+            width: '100%',
+            height: '100%',
           }}
-          animationType={"fade"}
+          animationType={'fade'}
           transparent={true}
           statusBarTranslucent={true}
         >
@@ -172,7 +156,7 @@ const HomeScreen = ({ navigation }) => {
             delay={500}
             duration={1000}
             fade
-            staticType="zoom"
+            staticType='zoom'
           >
             <View style={styles.centeredView}>
               <View
@@ -190,14 +174,14 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Image
                   style={styles.imageDefault}
-                  source={require("../assets/RoutinesPics/confetti.png")}
+                  source={require('../assets/RoutinesPics/confetti.png')}
                 />
                 <Text style={styles.text}>Daily reward:</Text>
                 <View style={styles.rubyContianer}>
                   <Text style={styles.roubieText}>+50</Text>
                   <FontAwesome
                     style={{ marginTop: 5, marginLeft: 5 }}
-                    name="diamond"
+                    name='diamond'
                     size={30}
                     color={colors.samRed}
                   />
@@ -209,7 +193,7 @@ const HomeScreen = ({ navigation }) => {
 
                 <AppButton
                   style={styles.buttonReward}
-                  title="Okay!"
+                  title='Okay!'
                   onPress={() => setShowModal(false)}
                 />
               </View>
@@ -225,26 +209,26 @@ const styles = StyleSheet.create({
   centeredView: {
     //
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 22,
   },
   modalText: {
     //
     marginBottom: 15,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 16,
     color: colors.darkmodeMediumWhite,
   },
   modalView: {
     //
-    width: "70%",
+    width: '70%',
     margin: 20,
     backgroundColor: colors.darkmodeDisabledBlack,
     borderRadius: 20,
     padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
+    alignItems: 'center',
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -265,8 +249,8 @@ const styles = StyleSheet.create({
     height: 120,
   },
   buttonReward: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     margin: 10,
     width: 20,
     height: 10,
@@ -279,14 +263,14 @@ const styles = StyleSheet.create({
   imageDefault: {
     width: 150,
     height: 150,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   imageRuby: {
     width: 40,
     height: 40,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   rowButton: {
     justifyContent: 'center',
@@ -296,9 +280,9 @@ const styles = StyleSheet.create({
   press: {
     width: 200,
     height: 200,
-    justifyContent: "center",
-    alignItems: "center",
-    alignContent: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
 
     backgroundColor: colors.darkmodePressed,
     // flex: 1,
@@ -306,7 +290,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   rubyContianer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginBottom: 10,
   },
   roubieText: {
@@ -317,7 +301,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: colors.darkmodeHighWhite,
     marginBottom: 20,
-    textAlign: "center",
+    textAlign: 'center',
   },
 });
 

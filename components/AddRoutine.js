@@ -1,5 +1,5 @@
-import { auth, db, db1 } from "../firebase";
-import firebase from "firebase/app";
+import { auth, db, db1 } from '../firebase';
+import firebase from 'firebase/app';
 
 //  Just add routine fields as props when
 //  we've decided on the logic for them
@@ -13,7 +13,6 @@ export default (title) => {
   // const increment = db.FieldValue.increment(50);
   // // Document reference
   const userID = auth.currentUser.uid;
-<<<<<<< HEAD
 
   let routineDifficulty = 1;
   db.collection('Routines')
@@ -24,15 +23,11 @@ export default (title) => {
     });
 
   const roubineRef = db.collection('Users').doc(userID);
-=======
-  console.log(userID);
-  const roubineRef = db.collection("Users").doc(userID);
->>>>>>> 0c796844dfd1827b3d87b05e837c42ac726d45c9
 
   const userRoutines = db
-    .collection("Users")
+    .collection('Users')
     .doc(userID)
-    .collection("routines");
+    .collection('routines');
 
   userRoutines
     .doc(title)
@@ -48,13 +43,13 @@ export default (title) => {
         roubineRef.update({ Roubies: increment });
         userRoutines.doc(title).set(
           {
-            ComboFrequency: "2",
+            ComboFrequency: '2',
             DaysInCombo: 2,
             StartDate: new Date(),
             UserAlertTime: 7,
             days: '{"0":0,"1":1,"2":1,"3":1,"4":1,"5":1,"6":0}',
             routineTimes: '[{"key":1,"hours":10,"minutes":30}]',
-            UserRoutineRank: "Rookie",
+            UserRoutineRank: 'Rookie',
             removed: false,
             RoutineDifficulty: routineDifficulty,
           },

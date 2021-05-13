@@ -43,9 +43,8 @@ const AddRoutineScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [shortDescription, setShortDescription] = useState('');
   const [isNameFocused, setIsNameFocused] = useState(false);
-  const [isShortDescriptionFocused, setIsShortDescriptionFocused] = useState(
-    false
-  );
+  const [isShortDescriptionFocused, setIsShortDescriptionFocused] =
+    useState(false);
   const [value, setValue] = useState('empty');
   const [msg, setMsg] = useState();
   const [errorText, setErrorText] = useState();
@@ -111,24 +110,6 @@ const AddRoutineScreen = ({ navigation }) => {
         .collection('Users')
         .doc(user.uid)
         .collection('customRoutines')
-<<<<<<< HEAD
-        .doc(name)
-        .set({
-          routine: name,
-          note: note,
-          days: JSON.stringify(days),
-          routineTimes: JSON.stringify(times),
-          removed: false,
-          isCustom: true,
-        })
-        .then(() => {
-          console.log('Document successfully written!');
-          alert('Routine Created!');
-        })
-        .catch((error) => {
-          console.error('Catch: Error writing document: ', error);
-        });
-=======
         .doc(name);
 
       document.get().then((doc) => {
@@ -172,7 +153,6 @@ const AddRoutineScreen = ({ navigation }) => {
           }
         }
       });
->>>>>>> 0c796844dfd1827b3d87b05e837c42ac726d45c9
     }
   };
 
@@ -335,7 +315,7 @@ const AddRoutineScreen = ({ navigation }) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.inputContainer}>
           <Modal
-            animationType="fade"
+            animationType='fade'
             transparent={true}
             visible={modalShow}
             onRequestClose={() => {
@@ -360,7 +340,7 @@ const AddRoutineScreen = ({ navigation }) => {
               textAlign: 'left',
               color: colors.darkmodeMediumWhite,
             }}
-            placeholder='Edit one of your routines here'
+            placeholder="Edit one of your routines here"
             defaultValue={value}
             containerStyle={{ height: 30 }}
             style={{
@@ -490,13 +470,8 @@ const AddRoutineScreen = ({ navigation }) => {
             ]}
           >
             <FloatingLabelInput
-<<<<<<< HEAD
-              isFocused={isNotesFocused}
-              hint='eg. 10 push-ups'
-=======
               isFocused={isShortDescriptionFocused}
-              hint="eg. 10 push-ups"
->>>>>>> 0c796844dfd1827b3d87b05e837c42ac726d45c9
+              hint='eg. 10 push-ups'
               hintTextColor={colors.darkmodeMediumWhite}
               inputStyles={styles.inputStyles}
               customLabelStyles={{
@@ -544,15 +519,9 @@ const AddRoutineScreen = ({ navigation }) => {
                   </View>
                 ) : null
               }
-<<<<<<< HEAD
               type='text'
-              value={note}
-              onChangeText={(text) => setNote(text)}
-=======
-              type="text"
               value={shortDescription}
               onChangeText={(text) => setShortDescription(text)}
->>>>>>> 0c796844dfd1827b3d87b05e837c42ac726d45c9
               // style={{ color: colors.darkmodeHighWhite, height: 40 }}
             />
           </View>
