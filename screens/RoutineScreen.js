@@ -125,18 +125,19 @@ const RoutineScreen = ({ navigation, route }) => {
   });
 
   const [selected, setSelected] = useState(0);
+
   const descriptionViewer = ({ item }) => {
     return (
       <View>
         <Pressable
-          style={{ width: '100%', alignItems: 'center' }}
+          style={styles.descriptionContainer}
           onPress={() => {
             typeof descriptions[1] != 'undefined'
               ? setSelected(selected === item.key ? null : item.key)
               : null;
           }}
         >
-          <View style={{ width: 340 }}>
+          <View style={styles.descriptionWidth}>
             {item.key === selected ? (
               <View>
                 <Animatable.Text
@@ -146,13 +147,7 @@ const RoutineScreen = ({ navigation, route }) => {
                   useNativeDriver={true}
                   numberOfLines={30}
                   // ellipsizeMode={"end"}
-                  style={{
-                    paddingTop: 4,
-                    color: colors.darkmodeMediumWhite,
-                    fontSize: 22,
-                    lineHeight: 28,
-                    textAlign: 'justify',
-                  }}
+                  style={styles.descriptionText}
                 >
                   {item.text}
                 </Animatable.Text>
@@ -251,13 +246,39 @@ const RoutineScreen = ({ navigation, route }) => {
     );
   };
 
+  const checkNumber = (number) => {
+    if (number < 10) {
+      number = '0' + number.toString();
+    }
+    return number;
+  };
+  let renderTimes = ({ item }) => {
+    return (
+      <View>
+        {typeof item != 'undefined' ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text
+              style={{
+                fontSize: 22,
+                color: colors.darkmodeHighWhite,
+                paddingRight: 8,
+              }}
+            >
+              {checkNumber(item.hours) + ':' + checkNumber(item.minutes)}
+            </Text>
+          </View>
+        ) : null}
+      </View>
+    );
+  };
+
   if (!fontsLoaded) {
     return <AppLoading />;
   } else {
     return (
       <Screen
         style={{
-          backgroundColor: item.color,
+          backgroundColor: item.color ? item.color : colors.pastelRed,
           height: '100%',
         }}
       >
@@ -327,13 +348,48 @@ const RoutineScreen = ({ navigation, route }) => {
               {'   '}difficulty: {stars}
             </Text>
 
-            <FlatList data={descriptions} renderItem={descriptionViewer} />
+            {item.descriptionArray ? (
+              <FlatList data={descriptions} renderItem={descriptionViewer} />
+            ) : (
+              item.shortDescription && (
+                <View style={styles.descriptionContainer}>
+                  <View style={styles.descriptionWidth}>
+                    <Animatable.Text
+                      animation='bounceInUp'
+                      duration={150}
+                      easing={'ease-out-expo'}
+                      useNativeDriver={true}
+                      numberOfLines={30}
+                      // ellipsizeMode={"end"}
+                      style={styles.descriptionText}
+                    >
+                      {item.shortDescription}
+                    </Animatable.Text>
+                  </View>
+                </View>
+              )
+            )}
             {/* </LinearGradient> */}
-            {item.days && (
-              <WeekdayPicker
-                days={JSON.parse(item.days)}
-                onChange={() => null}
-                style={styles.picker}
+            <WeekdayPicker
+              days={
+                item.days
+                  ? JSON.parse(item.days)
+                  : JSON.parse('{"0":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0}')
+              }
+              onChange={() => null}
+              style={[
+                styles.picker,
+                !item.days ? { color: colors.darkmodeDisabledText } : null,
+              ]}
+            />
+            {item.routineTimes && (
+              <FlatList
+                initialNumToRender={item.routineTimes.length}
+                data={item.routineTimes}
+                renderItem={renderTimes}
+                updateCellsBatchingPeriod={0}
+                windowSize={5}
+                contentContainerStyle={{ flexGrow: 0 }}
               />
             )}
             {showModal && (
@@ -519,6 +575,15 @@ const RoutineScreen = ({ navigation, route }) => {
 //  db interaction
 
 const styles = StyleSheet.create({
+  descriptionContainer: { width: '100%', alignItems: 'center' },
+  descriptionWidth: { width: 340 },
+  descriptionText: {
+    paddingTop: 4,
+    color: colors.darkmodeMediumWhite,
+    fontSize: 22,
+    lineHeight: 28,
+    textAlign: 'justify',
+  },
   picker: {
     paddingTop: 10,
     marginBottom: 10,

@@ -25,7 +25,7 @@ import colors from '../config/colors';
 import AppButton from '../components/AppButton';
 import { ScrollView } from 'react-native';
 
-const MyRoutinesScreen = ({ navigation }) => {
+const MyRoutinesScreen = ({ navigation, route }) => {
   const width = Dimensions.get('window').width;
   const user = auth.currentUser;
   const [clickedRoutine, setClickedRoutine] = useState();
@@ -43,6 +43,16 @@ const MyRoutinesScreen = ({ navigation }) => {
   useEffect(() => {
     listItems();
   }, [isFocused]);
+
+  // const { makeYourOwnRoutine } = route.params;
+  // console.log('route parms', route.params);
+  navigation.setOptions({
+    headerRight: () => (
+      <View>
+        <Text>yo</Text>
+      </View>
+    ),
+  });
 
   const removeOfficialRoutine = (clicked) => {
     if (selectedRoutine) {
@@ -115,6 +125,9 @@ const MyRoutinesScreen = ({ navigation }) => {
                   ? oldArray1[oldArray1.length - 1].key + 1
                   : 0,
                 title: routineName,
+                days: doc.data().days,
+                descriptionArray: doc.data().LongDescription,
+                color: doc.data().Color,
               },
             ]);
           }
@@ -139,6 +152,7 @@ const MyRoutinesScreen = ({ navigation }) => {
               title: routineName,
               shortDescription: doc.data()?.shortDescription,
               isCustom: true,
+              routineTimes: JSON.parse(doc.data().routineTimes),
             },
           ]);
 

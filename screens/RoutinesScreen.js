@@ -882,8 +882,8 @@ function RoutinesScreen({ navigation }) {
             activeOpacity={0.9}
             underlayColor={colors.white}
             onPressOut={() =>
-              navigation.navigate('Add Custom Routine', {
-                screen: 'AddRoutine',
+              navigation.navigate('My Routines', {
+                makeYourOwnRoutine: true,
               })
             }
           >

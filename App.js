@@ -220,7 +220,7 @@ const RoutinesStackScreen = () => {
 };
 const MyRoutinesStackScreen = () => {
   return (
-    <RoutinesStack.Navigator
+    <MyRoutinesStack.Navigator
       screenOptions={{
         headerStyle: { backgroundColor: colors.samRed },
         headerTitleStyle: { color: colors.darkmodeHighWhite },
@@ -234,14 +234,13 @@ const MyRoutinesStackScreen = () => {
       }}
       headerMode='float'
     >
-      <RoutinesStack.Screen name='TabBar' component={TabBar} />
-      <RootStack.Screen name='My Routines' component={MyRoutinesScreen} />
+      <MyRoutinesStack.Screen name='My Routines' component={MyRoutinesScreen} />
       <RoutinesStack.Screen
         name='Routine'
         component={RoutineScreen}
         options={{ headerShown: false }}
       />
-    </RoutinesStack.Navigator>
+    </MyRoutinesStack.Navigator>
   );
 };
 
@@ -1612,3 +1611,11 @@ const styles = StyleSheet.create({
 //      - när användaren bockar av med kombo
 //    - när användaren levlar upp
 //    -
+
+//RoutineScreen har nån text utanför
+//stort problem med att visa routinescreen från my routines
+//route params funkar inte
+
+//fixa problem med navigation
+//fixa routinescreen routinetimes
+//fixa Roubine ist för Home
