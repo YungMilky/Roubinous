@@ -19,10 +19,7 @@
     "@expo-google-fonts/the-girl-next-door": "^0.1.0",
     "@expo-google-fonts/unna": "^0.1.0",
     "@freakycoder/react-native-bounceable": "^0.2.4",
-<<<<<<< HEAD
     "@react-native-community/cli-platform-android": "^4.13.0",
-=======
->>>>>>> 0c796844dfd1827b3d87b05e837c42ac726d45c9
     "@react-native-community/datetimepicker": "3.2.0",
     "@react-native-community/google-signin": "^5.0.0",
     "@react-native-community/masked-view": "0.1.10",
@@ -57,13 +54,10 @@
     "react-native-app-intro-slider": "^4.0.4",
     "react-native-autoscroll-flatlist": "^1.9.3",
     "react-native-blur-overlay": "^1.0.7",
-<<<<<<< HEAD
     "react-native-bouncy-checkbox": "^2.1.0",
     "react-native-collapsible": "^1.5.3",
-=======
     "react-native-bounceable": "^0.2.1",
     "react-native-calendars": "^1.1258.0",
->>>>>>> 0c796844dfd1827b3d87b05e837c42ac726d45c9
     "react-native-dropdown-picker": "^4.0.9",
     "react-native-elements": "^3.4.1",
     "react-native-elevation": "^1.0.0",
