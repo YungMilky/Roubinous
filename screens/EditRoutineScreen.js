@@ -3,14 +3,11 @@ import {
   StyleSheet,
   Text,
   View,
-  Modal,
-  Alert,
   TouchableOpacity,
-  Button,
   FlatList,
   Dimensions,
+  Modal,
 } from 'react-native';
-import { Input } from 'react-native-elements';
 import PropTypes from 'prop-types';
 import { db, auth } from '../firebase';
 import WeekdayPicker from 'react-native-weekday-picker';
@@ -20,38 +17,33 @@ import {
   FontAwesome,
   EvilIcons,
 } from '@expo/vector-icons';
-import Icon from 'react-native-vector-icons/Feather';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Swipeable } from 'react-native-gesture-handler';
 import { FloatingLabelInput } from 'react-native-floating-label-input';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 import colors from '../config/colors';
-import AppButton from '../components/AppButton';
 import Screen from '../components/Screen';
-import { set } from 'react-native-reanimated';
-import { setBadgeCountAsync } from 'expo-notifications';
+import AppButton from '../components/AppButton';
 
 const width = Dimensions.get('window').width;
 
 const editIcon = () => {
-  return <MaterialCommunityIcons name='pencil' size={24} color='black' />;
+  return <MaterialCommunityIcons name="pencil" size={24} color="black" />;
 };
 
-const AddRoutineScreen = ({ navigation }) => {
+const EditRoutineScreen = ({ navigation, route }) => {
+  const { item } = route.params;
   const user = auth.currentUser;
-  const [name, setName] = useState('');
+  const [name, setName] = useState(item.title);
   const [shortDescription, setShortDescription] = useState('');
   const [isNameFocused, setIsNameFocused] = useState(false);
   const [isShortDescriptionFocused, setIsShortDescriptionFocused] = useState(
     false
   );
-  const [value, setValue] = useState('empty');
-  const [msg, setMsg] = useState();
-  const [errorText, setErrorText] = useState();
+  const [value, setValue] = useState(item.title);
 
   const [pressed, setPressed] = useState();
-  //const [modalVisible, setModalVisible] = useState(false);
   const [days, setDays] = useState({
     1: 1,
     2: 1,
@@ -61,12 +53,13 @@ const AddRoutineScreen = ({ navigation }) => {
     6: 0,
     0: 0,
   });
-  const [times, setTimes] = useState([{ key: 1, hours: 10, minutes: 30 }]);
+  const [times, setTimes] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
   const [editing, setIsEditing] = useState(false);
   const [clickedTime, setClickedTime] = useState();
+  const [msg, setMsg] = useState();
   const [modalShow, setModalShow] = useState(false);
   const [userRoutines, setUserRoutines] = useState([]);
 
@@ -83,8 +76,6 @@ const AddRoutineScreen = ({ navigation }) => {
       } else {
         console.log(clickedTime);
         setIsEditing(false);
-        //setTimes(times.find(key => key === clicked))
-        //ändra times[clicked] till currentDate
 
         const newTimes = times;
         newTimes[clickedTime].hours = currentDate.getHours();
@@ -102,77 +93,48 @@ const AddRoutineScreen = ({ navigation }) => {
     setShow(true);
   };
 
-  const createRoutine = () => {
+  const editRoutine = () => {
+    const collection = db
+      .collection('Users')
+      .doc(user.uid)
+      .collection('customRoutines');
     if (!name.trim()) {
-      setMsg('! Please enter a name');
+      setMsg('Please Enter a Name');
       return;
     } else {
-      const document = db
-        .collection('Users')
-        .doc(user.uid)
-        .collection('customRoutines')
-<<<<<<< HEAD
-        .doc(name)
-        .set({
-          routine: name,
-          note: note,
-          days: JSON.stringify(days),
-          routineTimes: JSON.stringify(times),
-          removed: false,
-          isCustom: true,
-        })
-        .then(() => {
-          console.log('Document successfully written!');
-          alert('Routine Created!');
-        })
-        .catch((error) => {
-          console.error('Catch: Error writing document: ', error);
-        });
-=======
-        .doc(name);
-
-      document.get().then((doc) => {
-        if (doc.exists) {
-          setMsg('! Routine name already exists');
-        } else {
-          if (times.length === 0) {
-            setMsg('! Please add a time');
-          } else {
-            document
-              .set({
-                routine: name,
-                shortDescription: shortDescription,
-                days: JSON.stringify(days),
-                routineTimes: JSON.stringify(times),
-                removed: false,
-                StartDate: Date.now(),
-              })
-              .then(() => {
-                console.log('Document successfully written!');
-                setModalShow(true);
-              })
-              .catch((error) => {
-                console.error('Catch: Error writing document: ', error);
-              })
-              .then(() => {
-                setName('');
-                setShortDescription('');
-                setDays({
-                  1: 1,
-                  2: 1,
-                  3: 1,
-                  4: 1,
-                  5: 1,
-                  6: 0,
-                  0: 0,
-                });
-                setTimes([{ key: 1, hours: 10, minutes: 30 }]);
-                setMsg('');
-              });
-          }
-        }
-      });
->>>>>>> 0c796844dfd1827b3d87b05e837c42ac726d45c9
+      if (times.length === 0) {
+        setMsg('Please add a time');
+      } else {
+        //om dokumentnamnet ändras tas det gamla dokumentet bort och ett nytt skapas
+        collection
+          .doc(value)
+          .get()
+          .then((doc) => {
+            if (value === name) {
+              console.log('Edit doc');
+            } else {
+              console.log('remove doc');
+              collection.doc(value).delete();
+              setValue(name);
+            }
+          });
+        collection
+          .doc(name)
+          .update({
+            routine: name,
+            shortDescription: shortDescription,
+            days: JSON.stringify(days),
+            routineTimes: JSON.stringify(times),
+            removed: false,
+          })
+          .then(() => {
+            console.log('Document successfully written!');
+            setModalShow(true);
+          })
+          .catch((error) => {
+            console.error('Catch: Error writing document: ', error);
+          });
+      }
     }
   };
 
@@ -181,7 +143,7 @@ const AddRoutineScreen = ({ navigation }) => {
   };
 
   const removeTime = (clicked) => {
-    console.log('removed: ' + clicked);
+    console.log('remove' + clicked);
     setRefresh(!refresh);
 
     const filteredData = times.filter((item, index) => index !== clicked);
@@ -199,7 +161,7 @@ const AddRoutineScreen = ({ navigation }) => {
         minutes: currentDate.getMinutes(),
       },
     ]);
-    console.log('addItem() ran with times: ' + times[0] + ' ' + days[1]);
+    console.log('addItem() ran with times: ' + times);
     setRefresh(true);
   };
   const checkNumber = (number) => {
@@ -250,7 +212,7 @@ const AddRoutineScreen = ({ navigation }) => {
         .doc(value)
         .get()
         .then((documentSnapshot) => {
-          setName(documentSnapshot.id);
+          setName(documentSnapshot.data().routine);
           setShortDescription(documentSnapshot.data().shortDescription);
           setDays(JSON.parse(documentSnapshot.data().days));
           setTimes(JSON.parse(documentSnapshot.data().routineTimes));
@@ -276,7 +238,7 @@ const AddRoutineScreen = ({ navigation }) => {
               style={styles.timeListItemContainer}
             >
               <MaterialCommunityIcons
-                name='close'
+                name="close"
                 size={30}
                 color={'#F45B69'}
               />
@@ -305,7 +267,7 @@ const AddRoutineScreen = ({ navigation }) => {
                   {checkNumber(item.hours) + ':' + checkNumber(item.minutes)}
                 </Text>
                 <MaterialCommunityIcons
-                  name='pencil'
+                  name="pencil"
                   size={14}
                   color={colors.darkmodeHighWhite}
                 />
@@ -317,7 +279,7 @@ const AddRoutineScreen = ({ navigation }) => {
               color={colors.darkmodeHighWhite}
             /> */}
             <EvilIcons
-              name='navicon'
+              name="navicon"
               size={33}
               color={colors.darkmodeHighWhite}
             />
@@ -330,29 +292,28 @@ const AddRoutineScreen = ({ navigation }) => {
   return (
     <Screen style={styles.container}>
       <Text style={styles.message}>{msg}</Text>
-      <Text style={styles.name}>Create a custom routine</Text>
-
+      <Text style={styles.name}>Edit a custom routine</Text>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalShow}
+        onRequestClose={() => {
+          setModalShow(!modalShow);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Routine Edited!</Text>
+            <AppButton
+              style={[styles.button, styles.buttonClose]}
+              title={'Ok'}
+              onPress={() => navigation.navigate('My Routines')}
+            ></AppButton>
+          </View>
+        </View>
+      </Modal>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.inputContainer}>
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={modalShow}
-            onRequestClose={() => {
-              setModalShow(!modalShow);
-            }}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Text style={styles.modalText}>Routine created!</Text>
-                <AppButton
-                  style={[styles.button, styles.buttonClose]}
-                  title={'Ok'}
-                  onPress={() => setModalShow(!modalShow)}
-                ></AppButton>
-              </View>
-            </View>
-          </Modal>
           {/* <DropDownPicker
             items={userRoutines}
             labelStyle={{
@@ -360,7 +321,7 @@ const AddRoutineScreen = ({ navigation }) => {
               textAlign: 'left',
               color: colors.darkmodeMediumWhite,
             }}
-            placeholder='Edit one of your routines here'
+            placeholder="Edit one of your routines here"
             defaultValue={value}
             containerStyle={{ height: 30 }}
             style={{
@@ -417,7 +378,7 @@ const AddRoutineScreen = ({ navigation }) => {
           >
             <FloatingLabelInput
               isFocused={isNameFocused}
-              hint='eg. Morning workout'
+              hint="eg. Morning workout"
               hintTextColor={colors.darkmodeMediumWhite}
               inputStyles={styles.inputStyles}
               customLabelStyles={{
@@ -432,11 +393,11 @@ const AddRoutineScreen = ({ navigation }) => {
               onBlur={() => {
                 setIsNameFocused(false);
               }}
-              label='Routine name'
+              label="Routine name"
               leftComponent={
                 <View style={{ padding: 12 }}>
                   <FontAwesome
-                    name='diamond'
+                    name="diamond"
                     size={22}
                     color={
                       isNameFocused
@@ -457,7 +418,7 @@ const AddRoutineScreen = ({ navigation }) => {
                       }}
                     >
                       <MaterialCommunityIcons
-                        name='close'
+                        name="close"
                         size={20}
                         color={colors.darkmodeMediumWhite}
                       />
@@ -465,7 +426,7 @@ const AddRoutineScreen = ({ navigation }) => {
                   </View>
                 ) : null
               }
-              type='text'
+              type="text"
               value={name}
               onChangeText={(text) => setName(text)}
               // style={{ color: colors.darkmodeHighWhite, height: 40 }}
@@ -490,13 +451,8 @@ const AddRoutineScreen = ({ navigation }) => {
             ]}
           >
             <FloatingLabelInput
-<<<<<<< HEAD
-              isFocused={isNotesFocused}
-              hint='eg. 10 push-ups'
-=======
               isFocused={isShortDescriptionFocused}
               hint="eg. 10 push-ups"
->>>>>>> 0c796844dfd1827b3d87b05e837c42ac726d45c9
               hintTextColor={colors.darkmodeMediumWhite}
               inputStyles={styles.inputStyles}
               customLabelStyles={{
@@ -511,11 +467,11 @@ const AddRoutineScreen = ({ navigation }) => {
               onBlur={() => {
                 setIsShortDescriptionFocused(false);
               }}
-              label='Notes (Optional)'
+              label="Notes (Optional)"
               leftComponent={
                 <View style={{ padding: 12 }}>
                   <FontAwesome
-                    name='diamond'
+                    name="diamond"
                     size={22}
                     color={
                       isShortDescriptionFocused
@@ -536,7 +492,7 @@ const AddRoutineScreen = ({ navigation }) => {
                       }}
                     >
                       <MaterialCommunityIcons
-                        name='close'
+                        name="close"
                         size={20}
                         color={colors.darkmodeMediumWhite}
                       />
@@ -544,15 +500,9 @@ const AddRoutineScreen = ({ navigation }) => {
                   </View>
                 ) : null
               }
-<<<<<<< HEAD
-              type='text'
-              value={note}
-              onChangeText={(text) => setNote(text)}
-=======
               type="text"
               value={shortDescription}
               onChangeText={(text) => setShortDescription(text)}
->>>>>>> 0c796844dfd1827b3d87b05e837c42ac726d45c9
               // style={{ color: colors.darkmodeHighWhite, height: 40 }}
             />
           </View>
@@ -606,7 +556,7 @@ const AddRoutineScreen = ({ navigation }) => {
                   Add
                 </Text>
                 <MaterialCommunityIcons
-                  name='plus'
+                  name="plus"
                   size={22}
                   color={colors.darkmodeHighWhite}
                 />
@@ -617,11 +567,11 @@ const AddRoutineScreen = ({ navigation }) => {
             <View style={styles.timeTitleContainer}>
               {show && (
                 <DateTimePicker
-                  testID='dateTimePicker'
+                  testID="dateTimePicker"
                   value={date}
-                  mode='time'
+                  mode="time"
                   is24Hour={true}
-                  display='spinner'
+                  display="spinner"
                   onChange={onChange}
                 />
               )}
@@ -647,11 +597,11 @@ const AddRoutineScreen = ({ navigation }) => {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            createRoutine();
+            editRoutine();
             getUserRoutines();
           }}
         >
-          <Text style={styles.buttonText}>Create Routine</Text>
+          <Text style={styles.buttonText}>Edit Routine</Text>
         </TouchableOpacity>
       ) : null}
     </Screen>
@@ -706,23 +656,10 @@ const styles = StyleSheet.create({
     height: 500,
     flexGrow: 0,
   },
-  text: {
-    color: colors.darkmodeMediumWhite,
-    textAlign: 'center',
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  picker: {
-    margin: 40,
-  },
-
-  inputContainer: {
-    width: 300,
-    marginTop: 20,
-  },
   message: {
     color: colors.samRed,
     textAlign: 'center',
+    marginBottom: 20,
     paddingBottom: 2,
     fontSize: 24,
   },
@@ -730,7 +667,7 @@ const styles = StyleSheet.create({
     //
     marginBottom: 15,
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 16,
     color: colors.darkmodeHighWhite,
   },
   modalView: {
@@ -750,7 +687,23 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  text: {
+    color: colors.darkmodeMediumWhite,
+    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  picker: {
+    margin: 40,
+  },
+
+  inputContainer: {
+    width: 300,
+    marginTop: 20,
+  },
+
   name: {
+    marginTop: 10,
     marginBottom: 10,
     fontSize: 22,
     color: colors.darkmodeHighWhite,
@@ -795,23 +748,8 @@ const styles = StyleSheet.create({
   },
 });
 
-AddRoutineScreen.propTypes = {
+EditRoutineScreen.propTypes = {
   navigation: PropTypes.object.isRequired,
 };
 
-export default AddRoutineScreen;
-
-// TODO:
-//  manage custom routines?
-//  if routine name already exists?
-//  auto increment times a day by an hour
-//
-//  keyboard:
-//    smoother keyboard
-//    input keeps being focused after hiding keyboard
-//
-//  scrollview only on flatlist?
-//  default no days selected
-//  color picker
-//  add some vector background for color
-//  three lines on press = open swipeable?
+export default EditRoutineScreen;

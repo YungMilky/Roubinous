@@ -7,12 +7,14 @@ import { db, auth } from '../firebase';
 import Screen from '../components/Screen';
 import AppButton from '../components/AppButton';
 import colors from '../config/colors';
+import CancelAllNotifications from '../components/notification/CancelAllNotifications';
 
 const SettingsScreen = ({ navigation }) => {
   const [name, setName] = useState();
   const [newUsername, setNewusername] = useState('');
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [nameModalVisible, setNameModalVisible] = useState(false);
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const [inputError, setInputError] = useState('');
   const user = auth.currentUser;
 
@@ -33,7 +35,7 @@ const SettingsScreen = ({ navigation }) => {
       db.collection('Users').doc(user.uid).update({
         Name: newUsername,
       });
-      alert('Success! Changed name to: ' + newUsername);
+      setNewusername('');
     }
   }
   function deleteAccount() {
@@ -43,10 +45,25 @@ const SettingsScreen = ({ navigation }) => {
     }, 5000);
     auth.currentUser.delete();
   }
+  const signOutUser = () => {
+    CancelAllNotifications();
+    auth.signOut().then(() => {
+      setTimeout(() => navigation.navigate('Welcome'), 0);
+    });
+  };
 
   return (
     <Screen style={styles.container}>
       <View style={styles.container}>
+        <AppButton
+          style={styles.button}
+          title={'Notification Settings'}
+          onPress={() =>
+            navigation.navigate('Notification Settings', {
+              screen: 'Notification Settings',
+            })
+          }
+        />
         <Modal
           animationType="fade"
           transparent={true}
@@ -110,18 +127,37 @@ const SettingsScreen = ({ navigation }) => {
         </Modal>
         <AppButton
           style={[styles.button, styles.buttonOpen]}
-          title={'Delete my account'}
+          title={'Delete account'}
           onPress={() => setDeleteModalVisible(true)}
         ></AppButton>
-
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={logoutModalVisible}
+          onRequestClose={() => {
+            setLogoutModalVisible(!logoutModalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>Log Out?</Text>
+              <AppButton
+                style={styles.button}
+                title={'Yes'}
+                onPress={signOutUser}
+              />
+              <AppButton
+                style={[styles.button, styles.buttonClose]}
+                title={'No'}
+                onPress={() => setLogoutModalVisible(!logoutModalVisible)}
+              ></AppButton>
+            </View>
+          </View>
+        </Modal>
         <AppButton
           style={styles.button}
-          title={'Notification Settings'}
-          onPress={() =>
-            navigation.navigate('Notification Settings', {
-              screen: 'Notification Settings',
-            })
-          }
+          title={'Log Out'}
+          onPress={() => setLogoutModalVisible(!logoutModalVisible)}
         />
       </View>
     </Screen>
@@ -144,6 +180,7 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '60%',
+    color: colors.darkmodeHighWhite,
   },
   text: {
     textAlign: 'center',
@@ -152,12 +189,21 @@ const styles = StyleSheet.create({
   },
 
   centeredView: {
+    //
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 22,
   },
+  modalText: {
+    //
+    marginBottom: 15,
+    textAlign: 'center',
+    fontSize: 20,
+    color: colors.darkmodeHighWhite,
+  },
   modalView: {
+    //
     width: '90%',
     margin: 20,
     backgroundColor: colors.darkmodeDisabledBlack,
@@ -183,12 +229,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
-    fontSize: 16,
-    color: colors.darkmodeMediumWhite,
   },
 });
 

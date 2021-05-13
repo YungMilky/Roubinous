@@ -7,7 +7,9 @@ import {
   FlatList,
   Dimensions,
   Pressable,
+  View, Text,
 } from 'react-native';
+import { Input } from 'react-native-elements';
 import 'react-native-gesture-handler';
 import {
   NavigationContainer,
@@ -37,7 +39,6 @@ import AppLoading from 'expo-app-loading';
 import { LogBox } from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { enableScreens } from 'react-native-screens';
-import RNBounceable from '@freakycoder/react-native-bounceable';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 enableScreens();
 
@@ -69,7 +70,6 @@ import {
 } from 'react-native-gesture-handler';
 import SettingsScreen from './screens/SettingsScreen';
 import JourneyScreen from './screens/JourneyScreen';
-import { View, Text } from 'react-native';
 import Screen from './components/Screen';
 import { ImageBackground } from 'react-native';
 import AppButton from './components/AppButton';
@@ -77,6 +77,9 @@ import headerRoubinesButton from './components/HeaderRoubinesButton';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const { width, height } = Dimensions.get('screen');
+import CalendarScreen from './screens/CalendarScreen';
+import MyRoutinesScreen from './screens/MyRoutinesScreen';
+import EditRoutineScreen from './screens/EditRoutineScreen';
 
 //  TODO:
 //  keep adding nested navigation
@@ -92,6 +95,7 @@ const { width, height } = Dimensions.get('screen');
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
 const RoutinesStack = createStackNavigator();
+const MyRoutinesStack = createStackNavigator();
 const ProfileStack = createStackNavigator();
 const RootStack = createStackNavigator();
 const JourneyStack = createStackNavigator();
@@ -213,6 +217,32 @@ const RoutinesStackScreen = () => {
     </RoutinesStack.Navigator>
   );
 };
+const MyRoutinesStackScreen = () => {
+  return (
+    <RoutinesStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: colors.samRed },
+        headerTitleStyle: { color: colors.darkmodeHighWhite },
+        gestureEnabled: true,
+        gestureDirection: 'horizontal',
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        transitionSpec: {
+          open: config,
+          close: config,
+        },
+      }}
+      headerMode="float"
+    >
+      <RoutinesStack.Screen name="TabBar" component={TabBar} />
+      <RootStack.Screen name="My Routines" component={MyRoutinesScreen} />
+      <RoutinesStack.Screen
+        name="Routine"
+        component={RoutineScreen}
+        options={{ headerShown: false }}
+      />
+    </RoutinesStack.Navigator>
+  );
+};
 
 const JourneyStackScreen = () => {
   return (
@@ -288,7 +318,7 @@ function TabBar() {
           },
           tabBarColor: colors.samRed,
           tabBarIcon: ({ color }) => (
-            // <Image
+            // <
             //   style={{ width: 22, height: 22 }}
             //   source={require('./assets/icons/run.png')}
             // />
@@ -1224,8 +1254,7 @@ export default function App() {
           .get()
           .then((doc) => checkIfIntroCompleted(doc.data().introAnswers));
       } else {
-        setUser(db.collection('Users').doc(user.uid));
-        console.log('NOT logged in ', user);
+        console.log('NOT logged in ');
         setIsLoggedIn(false);
       }
     });
@@ -1349,11 +1378,25 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <RootStack.Screen
-            name='Notification Settings'
+            name="Calendars"
+            component={CalendarScreen}
+            options={{ headerShown: false }}
+          />
+          <RootStack.Screen
+            name="Notification Settings"
             component={NotificationSettingScreen}
             options={{ headerRight: () => headerRoubinesButton() }}
           />
-          <RootStack.Screen name='Settings' component={SettingsScreen} />
+          <RootStack.Screen name="Settings" component={SettingsScreen} />
+          <RootStack.Screen
+            name="My Routines"
+            component={MyRoutinesStackScreen}
+            options={{ headerShown: false }}
+          />
+          <RootStack.Screen
+            name="Edit Custom Routines"
+            component={EditRoutineScreen}
+          />
         </RootStack.Navigator>
       </NavigationContainer>
     );

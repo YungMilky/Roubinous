@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { KeyboardAvoidingView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-import { auth, db } from '../firebase';
+import { auth, db, fv } from '../firebase';
 import { signInWithGoogle } from '../firebase';
 import { signInWithFacebook } from '../firebase';
 import CreateDailyNotification from '../components/notification/CreateDailyNotification';
@@ -20,12 +20,28 @@ const RegisterScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [inputError, setInputError] = useState('');
+  
+  let currentDate = new Date();
+  // let currentDate =
+  //   nowDate.getFullYear() +
+  //   '/' +
+  //   (nowDate.getMonth() + 1) +
+  //   '/' +
+  //   nowDate.getDate();
+
+  
+  let day = currentDate.getDate();
+  let month = currentDate.getMonth()+1;
+  let year = currentDate.getFullYear();
+
+  // const currentDate = fv.Timestamp.fromDate(new Date());
 
   const register = () => {
     if (!email.trim()) {
-      alert('Please write an email');
+      setInputError('Please write an email');
       return;
     } else {
+      auth.signOut();
       auth
         .createUserWithEmailAndPassword(email, password)
         .then((cred) => {
@@ -36,6 +52,12 @@ const RegisterScreen = ({ navigation }) => {
             Roubies: 100,
             UserAlertHour: 10,
             UserAlertMinute: 30,
+            DailyRewardDay: day,
+            DailyRewardMonth: month,
+            DailyRewardYear: year,
+            Exp: 100,
+            // DailyRewardTime: currentDate,
+            
           });
           setTimeout(() => navigation.navigate('Home'), 500);
         })
@@ -62,19 +84,19 @@ const RegisterScreen = ({ navigation }) => {
       <View style={styles.inputContainer}>
         <Input
           style={styles.input}
+          placeholder="Email"
+          type="email"
+          value={email}
+          onChangeText={(text) => setEmail(text)}
+        />
+        <Input
+          style={styles.input}
           placeholder="Name"
           type="name"
           value={name}
           onChangeText={(text) => setName(text)}
         />
 
-        <Input
-          style={styles.input}
-          placeholder="Email"
-          type="email"
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-        />
         <Input
           style={styles.input}
           placeholder="Password"
