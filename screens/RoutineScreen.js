@@ -127,7 +127,7 @@ const RoutineScreen = ({ navigation, route }) => {
   const [selected, setSelected] = useState(0);
   const descriptionViewer = ({ item }) => {
     return (
-      <View style={{}}>
+      <View>
         <Pressable
           style={{ width: '100%', alignItems: 'center' }}
           onPress={() => {
@@ -382,47 +382,50 @@ const RoutineScreen = ({ navigation, route }) => {
             )}
           </View>
         </ScrollView>
-        <View style={{ alignItems: 'flex-end' }}>
-          <TouchableOpacity
-            style={[
-              styles.button,
-              buttonDisabled
-                ? {
-                    color: colors.darkmodeDisabledText,
-                    backgroundColor: colors.darkmodeDisabledBlack,
-                    borderTopWidth: 1,
-                    borderRadius: 0,
-                  }
-                : {
-                    color: 'rgba(0,0,0,0.64)',
-                    backgroundColor: colors.darkmodeHighWhite,
-                    borderRadius: 0,
-                  },
-            ]}
-            title={buttonTitle}
-            disabled={buttonDisabled}
-            onPress={() => {
-              AddRoutine(item.title);
-              setShowModal(true);
-              playSound();
-            }}
-          >
-            <Text
+
+        {!item.isCustom && (
+          <View style={{ alignItems: 'flex-end' }}>
+            <TouchableOpacity
               style={[
+                styles.button,
                 buttonDisabled
                   ? {
                       color: colors.darkmodeDisabledText,
+                      backgroundColor: colors.darkmodeDisabledBlack,
+                      borderTopWidth: 1,
+                      borderRadius: 0,
                     }
                   : {
                       color: 'rgba(0,0,0,0.64)',
+                      backgroundColor: colors.darkmodeHighWhite,
+                      borderRadius: 0,
                     },
-                styles.buttonText,
               ]}
+              title={buttonTitle}
+              disabled={buttonDisabled}
+              onPress={() => {
+                AddRoutine(item.title);
+                setShowModal(true);
+                playSound();
+              }}
             >
-              {buttonTitle}
-            </Text>
-          </TouchableOpacity>
-        </View>
+              <Text
+                style={[
+                  buttonDisabled
+                    ? {
+                        color: colors.darkmodeDisabledText,
+                      }
+                    : {
+                        color: 'rgba(0,0,0,0.64)',
+                      },
+                  styles.buttonText,
+                ]}
+              >
+                {buttonTitle}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </Screen>
     );
   }

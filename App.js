@@ -7,7 +7,8 @@ import {
   FlatList,
   Dimensions,
   Pressable,
-  View, Text,
+  View,
+  Text,
 } from 'react-native';
 import { Input } from 'react-native-elements';
 import 'react-native-gesture-handler';
@@ -231,12 +232,12 @@ const MyRoutinesStackScreen = () => {
           close: config,
         },
       }}
-      headerMode="float"
+      headerMode='float'
     >
-      <RoutinesStack.Screen name="TabBar" component={TabBar} />
-      <RootStack.Screen name="My Routines" component={MyRoutinesScreen} />
+      <RoutinesStack.Screen name='TabBar' component={TabBar} />
+      <RootStack.Screen name='My Routines' component={MyRoutinesScreen} />
       <RoutinesStack.Screen
-        name="Routine"
+        name='Routine'
         component={RoutineScreen}
         options={{ headerShown: false }}
       />
@@ -373,6 +374,9 @@ export default function App() {
   const [duration, setDuration] = useState(2000);
   // const [disableKeyboard, setDisableKeyboard] = useState(false);
   // const [autoFocus, setAutoFocus] = useState(true);
+  const [imReadyContainerAnimation, setImReadyContainerAnimation] =
+    useState('');
+  const [imReadyTextAnimation, setImReadyTextAnimation] = useState('');
 
   const [selections, setSelections] = useState([
     {
@@ -545,6 +549,19 @@ export default function App() {
     },
   ]);
 
+  const onSlideSwipe = () => {
+    //what I would do instead of hardcoding:
+    //introSlider?.current?.state?.activeIndex == introSlides.length-1
+    //but for some reason, the last slide is considered to have the index of 4, so:
+    if (introSlider?.current?.state?.activeIndex == 4) {
+      setImReadyContainerAnimation('fadeIn');
+      setImReadyTextAnimation('fadeInUp');
+    } else {
+      setImReadyContainerAnimation('');
+      setImReadyTextAnimation('');
+    }
+  };
+
   const postIntroAnswers = () => {
     if (isLoggedIn) {
       user.set(
@@ -686,14 +703,15 @@ export default function App() {
           }
           leftComponent={
             <Animatable.Text
-              animation='pulse'
+              animation={name || globalName ? null : 'pulse'}
+              easing='linear'
+              iterationCount={'infinite'}
+              duration={800}
+              iterationDelay={1200}
               style={[
                 { paddingLeft: 20, paddingRight: 6 },
                 styles.introText,
                 { color: colors.darkmodeMediumWhite },
-                isNameFocused
-                  ? { color: colors.darkmodeHighWhite }
-                  : { color: colors.darkmodeMediumWhite },
               ]}
             >
               Hey, I'm
@@ -816,6 +834,7 @@ export default function App() {
               paddingHorizontal: 22,
               textAlign: 'center',
               top: 45,
+              paddingBottom: 68,
             },
           ]}
         >
@@ -835,6 +854,39 @@ export default function App() {
           {'\n'}Following these principles, using psychology, behavioral
           science, and user data, you can predictably reach your goals.
         </Text>
+        {imReadyContainerAnimation != '' && (
+          <Animatable.View
+            animation={imReadyContainerAnimation}
+            duration={4000}
+            style={styles.introDoneButtonContainer}
+          >
+            <Pressable
+              onPress={() => {
+                postIntroAnswers();
+                postRewards();
+                setShowIntro(false);
+              }}
+            >
+              <Animatable.View
+                animation={imReadyTextAnimation}
+                duration={700}
+                delay={100}
+              >
+                <Animatable.Text
+                  ellipsizeMode='clip'
+                  numberOfLines={1}
+                  animation='pulse'
+                  easing='linear'
+                  iterationCount={'infinite'}
+                  duration={1500}
+                  style={styles.introDoneButtonText}
+                >
+                  I'm ready
+                </Animatable.Text>
+              </Animatable.View>
+            </Pressable>
+          </Animatable.View>
+        )}
       </View>
     );
   };
@@ -983,35 +1035,11 @@ export default function App() {
       </View>
     );
   };
-  const IntroDoneButton = () => {
-    return (
-      <Animatable.View
-        animation='fadeIn'
-        duration={4000}
-        style={styles.introDoneButtonContainer}
-      >
-        <Pressable
-          onPress={() => {
-            console.log('hej2');
-            postIntroAnswers();
-            postRewards();
-            setShowIntro(false);
-          }}
-        >
-          <Animatable.View animation='fadeInUp' duration={1000}>
-            <Animatable.Text
-              ellipsizeMode='clip'
-              numberOfLines={1}
-              animation='pulse'
-              style={styles.introDoneButtonText}
-            >
-              I'm ready
-            </Animatable.Text>
-          </Animatable.View>
-        </Pressable>
-      </Animatable.View>
-    );
-  };
+  // const IntroDoneButton = () => {
+  //   return (
+
+  //   );
+  // };
   const [importance, setImportance] = useState('');
   const renderIntroSlides = ({ item }) => {
     return (
@@ -1070,8 +1098,13 @@ export default function App() {
             >
               {item.title}
             </Animatable.Text>
+
             {item.component === 'second' ? <SecondSlideComponent /> : null}
-            {item.component === 'fourth' ? <FourthSlideComponent /> : null}
+            {item.component === 'fourth' ? (
+              <View>
+                <FourthSlideComponent />
+              </View>
+            ) : null}
 
             <Animatable.Text
               animation={item.key == 0 ? 'fadeOut' : 'fadeIn'}
@@ -1106,7 +1139,6 @@ export default function App() {
                 <LoginAsGuestComponent />
               </Animatable.View>
             )}
-            <IntroDoneButton />
             <View
               style={{ flexDirection: 'row', justifyContent: 'space-around' }}
             >
@@ -1353,7 +1385,7 @@ export default function App() {
           headerMode='float'
         >
           <RootStack.Screen
-            name='Home'
+            name='Roubine'
             component={TabBar}
             options={{
               headerRight: () => headerRoubinesButton(),
@@ -1378,23 +1410,23 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <RootStack.Screen
-            name="Calendars"
+            name='Calendars'
             component={CalendarScreen}
             options={{ headerShown: false }}
           />
           <RootStack.Screen
-            name="Notification Settings"
+            name='Notification Settings'
             component={NotificationSettingScreen}
             options={{ headerRight: () => headerRoubinesButton() }}
           />
-          <RootStack.Screen name="Settings" component={SettingsScreen} />
+          <RootStack.Screen name='Settings' component={SettingsScreen} />
           <RootStack.Screen
-            name="My Routines"
+            name='My Routines'
             component={MyRoutinesStackScreen}
             options={{ headerShown: false }}
           />
           <RootStack.Screen
-            name="Edit Custom Routines"
+            name='Edit Custom Routines'
             component={EditRoutineScreen}
           />
         </RootStack.Navigator>
@@ -1429,6 +1461,7 @@ export default function App() {
   } else {
     return scrollEnabled ? (
       <AppIntroSlider
+        onSlideChange={onSlideSwipe}
         ref={introSlider}
         renderItem={renderIntroSlides}
         data={introSlides}
@@ -1529,17 +1562,15 @@ const styles = StyleSheet.create({
   },
   introDoneButtonContainer: {
     alignSelf: 'center',
-    // backgroundColor: colors.darkmodeFocused,
-    // bottom: 286,
+    backgroundColor: colors.darkmodeFocused,
     height: 55,
     width: 160,
     alignItems: 'center',
-    // marginTop: 200,
-    paddingTop: 55,
+    // marginTop: 70,
   },
   introDoneButtonText: {
     width: 130,
-    fontSize: 32,
+    fontSize: 34,
     color: colors.pastelPink,
     textAlign: 'center',
     paddingBottom: 3,

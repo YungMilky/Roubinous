@@ -31,12 +31,10 @@ const MyRoutinesScreen = ({ navigation }) => {
   const [clickedRoutine, setClickedRoutine] = useState();
   const [officialRoutines, setOfficialRoutines] = useState([]);
   const [customRoutines, setCustomRoutines] = useState([]);
-  const [removeCustomModalVisible, setRemoveCustomModalVisible] = useState(
-    false
-  );
-  const [removeOfficialModalVisible, setRemoveOfficialModalVisible] = useState(
-    false
-  );
+  const [removeCustomModalVisible, setRemoveCustomModalVisible] =
+    useState(false);
+  const [removeOfficialModalVisible, setRemoveOfficialModalVisible] =
+    useState(false);
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [selectedRoutine, setSelectedRoutine] = useState();
   const [refresh, setRefresh] = useState(false);
@@ -139,6 +137,8 @@ const MyRoutinesScreen = ({ navigation }) => {
                 ? oldArray1[oldArray1.length - 1].key + 1
                 : 0,
               title: routineName,
+              shortDescription: doc.data()?.shortDescription,
+              isCustom: true,
             },
           ]);
 
@@ -170,7 +170,7 @@ const MyRoutinesScreen = ({ navigation }) => {
               style={styles.routineListItemContainer}
             >
               <MaterialCommunityIcons
-                name="close"
+                name='close'
                 size={30}
                 color={colors.samRed}
               />
@@ -200,6 +200,7 @@ const MyRoutinesScreen = ({ navigation }) => {
     );
   };
   let renderItems = ({ item }) => {
+    console.log(item);
     return (
       <Swipeable
         friction={3}
@@ -217,7 +218,7 @@ const MyRoutinesScreen = ({ navigation }) => {
                 }}
               >
                 <MaterialCommunityIcons
-                  name="pencil"
+                  name='pencil'
                   size={30}
                   color={colors.samBlue}
                 />
@@ -233,7 +234,7 @@ const MyRoutinesScreen = ({ navigation }) => {
                 }}
               >
                 <MaterialCommunityIcons
-                  name="close"
+                  name='close'
                   size={30}
                   color={colors.samRed}
                 />
@@ -271,7 +272,7 @@ const MyRoutinesScreen = ({ navigation }) => {
       {/* <ScrollView> */}
       <View styles={styles.flatlist}>
         <Modal
-          animationType="fade"
+          animationType='fade'
           transparent={true}
           visible={removeCustomModalVisible}
           onRequestClose={() => {
@@ -302,7 +303,7 @@ const MyRoutinesScreen = ({ navigation }) => {
           </View>
         </Modal>
         <Modal
-          animationType="fade"
+          animationType='fade'
           transparent={true}
           visible={removeOfficialModalVisible}
           onRequestClose={() => {
@@ -351,13 +352,13 @@ const MyRoutinesScreen = ({ navigation }) => {
           >
             <MaterialCommunityIcons
               style={{ marginTop: -3 }}
-              name="information-outline"
+              name='information-outline'
               size={30}
               color={colors.darkmodeHighWhite}
             />
           </TouchableOpacity>
           <Modal
-            animationType="fade"
+            animationType='fade'
             transparent={true}
             visible={infoModalVisible}
             onRequestClose={() => {
