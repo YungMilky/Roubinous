@@ -10,7 +10,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 // import firestore from '@react-native-firebase/firestore';
-import { db, auth } from '../firebase';
+import { db, auth, cloud } from '../firebase';
 import PropTypes from 'prop-types';
 import { Swipeable } from 'react-native-gesture-handler';
 import { useIsFocused } from '@react-navigation/native';
@@ -109,7 +109,6 @@ const MyRoutinesScreen = ({ navigation, route }) => {
   const listItems = () => {
     setOfficialRoutines([]);
     setCustomRoutines([]);
-    console.log('listitems');
     db.collection('Users')
       .doc(user.uid)
       .collection('routines')
@@ -117,20 +116,56 @@ const MyRoutinesScreen = ({ navigation, route }) => {
       .then((docs) => {
         docs.forEach((doc) => {
           let routineName = doc.id;
-          if (!doc.data().removed) {
-            setOfficialRoutines((oldArray1) => [
-              ...oldArray1,
-              {
-                key: oldArray1.length
-                  ? oldArray1[oldArray1.length - 1].key + 1
-                  : 0,
-                title: routineName,
-                days: doc.data().days,
-                descriptionArray: doc.data().LongDescription,
-                color: doc.data().Color,
-              },
-            ]);
-          }
+
+          let imageRefRoutine = cloud.ref(
+            'RoutineScreen/' + routineName + '.png'
+          );
+
+          db.collection('Routines')
+            .doc(routineName)
+            .get()
+            .then((documentsnapshot) => {
+              imageRefRoutine
+                .getDownloadURL()
+                .then((urlRoutine) => {
+                  if (!doc.data().removed) {
+                    setOfficialRoutines((oldArray1) => [
+                      ...oldArray1,
+                      {
+                        key: oldArray1.length
+                          ? oldArray1[oldArray1.length - 1].key + 1
+                          : 0,
+                        title: routineName,
+                        days: doc.data().days,
+                        descriptionArray:
+                          documentsnapshot.data().LongDescription,
+                        color: documentsnapshot.data().Color,
+                        image: true,
+                        imageRoutine: urlRoutine,
+                      },
+                    ]);
+                  }
+                })
+                .catch((err) => {
+                  if (!doc.data().removed) {
+                    setOfficialRoutines((oldArray1) => [
+                      ...oldArray1,
+                      {
+                        key: oldArray1.length
+                          ? oldArray1[oldArray1.length - 1].key + 1
+                          : 0,
+                        title: routineName,
+                        days: doc.data().days,
+                        descriptionArray:
+                          documentsnapshot.data().LongDescription,
+                        color: documentsnapshot.data().Color,
+                        image: false,
+                      },
+                    ]);
+                  }
+                });
+              // Here you can handle the error for individual download
+            });
         });
       });
 
@@ -214,7 +249,6 @@ const MyRoutinesScreen = ({ navigation, route }) => {
     );
   };
   let renderItems = ({ item }) => {
-    console.log(item);
     return (
       <Swipeable
         friction={3}

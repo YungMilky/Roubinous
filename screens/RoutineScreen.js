@@ -256,7 +256,13 @@ const RoutineScreen = ({ navigation, route }) => {
     return (
       <View>
         {typeof item != 'undefined' ? (
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: 20,
+            }}
+          >
             <Text
               style={{
                 fontSize: 22,
@@ -275,6 +281,7 @@ const RoutineScreen = ({ navigation, route }) => {
   if (!fontsLoaded) {
     return <AppLoading />;
   } else {
+    console.log(item);
     return (
       <Screen
         style={{

@@ -51,7 +51,7 @@ export default (title) => {
             routineTimes: '[{"key":1,"hours":10,"minutes":30}]',
             UserRoutineRank: 'Rookie',
             removed: false,
-            RoutineDifficulty: routineDifficulty,
+            RoutineDifficulty: routineDifficulty ? routineDifficulty : null,
           },
           { merge: true }
         );
