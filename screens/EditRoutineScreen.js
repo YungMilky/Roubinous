@@ -38,9 +38,8 @@ const EditRoutineScreen = ({ navigation, route }) => {
   const [name, setName] = useState(item.title);
   const [shortDescription, setShortDescription] = useState('');
   const [isNameFocused, setIsNameFocused] = useState(false);
-  const [isShortDescriptionFocused, setIsShortDescriptionFocused] = useState(
-    false
-  );
+  const [isShortDescriptionFocused, setIsShortDescriptionFocused] =
+    useState(false);
   const [value, setValue] = useState(item.title);
 
   const [pressed, setPressed] = useState();
@@ -159,6 +158,7 @@ const EditRoutineScreen = ({ navigation, route }) => {
           : 0,
         hours: currentDate.getHours(),
         minutes: currentDate.getMinutes(),
+        isDone: false,
       },
     ]);
     console.log('addItem() ran with times: ' + times);

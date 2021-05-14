@@ -26,6 +26,7 @@ import { Swipeable } from 'react-native-gesture-handler';
 import { FloatingLabelInput } from 'react-native-floating-label-input';
 import DropDownPicker from 'react-native-dropdown-picker';
 
+import firebase from 'firebase/app';
 import colors from '../config/colors';
 import AppButton from '../components/AppButton';
 import Screen from '../components/Screen';
@@ -35,7 +36,7 @@ import { setBadgeCountAsync } from 'expo-notifications';
 const width = Dimensions.get('window').width;
 
 const editIcon = () => {
-  return <MaterialCommunityIcons name='pencil' size={24} color='black' />;
+  return <MaterialCommunityIcons name="pencil" size={24} color="black" />;
 };
 
 const AddRoutineScreen = ({ navigation }) => {
@@ -60,7 +61,9 @@ const AddRoutineScreen = ({ navigation }) => {
     6: 0,
     0: 0,
   });
-  const [times, setTimes] = useState([{ key: 1, hours: 10, minutes: 30 }]);
+  const [times, setTimes] = useState([
+    { key: 1, hours: 10, minutes: 30, isDone: false },
+  ]);
   const [refresh, setRefresh] = useState(false);
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
@@ -126,9 +129,13 @@ const AddRoutineScreen = ({ navigation }) => {
                 days: JSON.stringify(days),
                 routineTimes: JSON.stringify(times),
                 removed: false,
-                StartDate: Date.now(),
+                isDone: false,
               })
               .then(() => {
+                const increment = firebase.firestore.FieldValue.increment(10);
+                db.collection('Users')
+                  .doc(user.uid)
+                  .update({ Roubies: increment, Exp: increment });
                 console.log('Document successfully written!');
                 setModalShow(true);
               })
@@ -147,7 +154,7 @@ const AddRoutineScreen = ({ navigation }) => {
                   6: 0,
                   0: 0,
                 });
-                setTimes([{ key: 1, hours: 10, minutes: 30 }]);
+                setTimes([{ key: 1, hours: 10, minutes: 30, isDone: false }]);
                 setMsg('');
               });
           }
@@ -177,6 +184,7 @@ const AddRoutineScreen = ({ navigation }) => {
           : 0,
         hours: currentDate.getHours(),
         minutes: currentDate.getMinutes(),
+        isDone: false,
       },
     ]);
     console.log('addItem() ran with times: ' + times[0] + ' ' + days[1]);
@@ -256,7 +264,7 @@ const AddRoutineScreen = ({ navigation }) => {
               style={styles.timeListItemContainer}
             >
               <MaterialCommunityIcons
-                name='close'
+                name="close"
                 size={30}
                 color={'#F45B69'}
               />
@@ -285,7 +293,7 @@ const AddRoutineScreen = ({ navigation }) => {
                   {checkNumber(item.hours) + ':' + checkNumber(item.minutes)}
                 </Text>
                 <MaterialCommunityIcons
-                  name='pencil'
+                  name="pencil"
                   size={14}
                   color={colors.darkmodeHighWhite}
                 />
@@ -297,7 +305,7 @@ const AddRoutineScreen = ({ navigation }) => {
               color={colors.darkmodeHighWhite}
             /> */}
             <EvilIcons
-              name='navicon'
+              name="navicon"
               size={33}
               color={colors.darkmodeHighWhite}
             />
@@ -315,7 +323,7 @@ const AddRoutineScreen = ({ navigation }) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.inputContainer}>
           <Modal
-            animationType='fade'
+            animationType="fade"
             transparent={true}
             visible={modalShow}
             onRequestClose={() => {
@@ -397,7 +405,7 @@ const AddRoutineScreen = ({ navigation }) => {
           >
             <FloatingLabelInput
               isFocused={isNameFocused}
-              hint='eg. Morning workout'
+              hint="eg. Morning workout"
               hintTextColor={colors.darkmodeMediumWhite}
               inputStyles={styles.inputStyles}
               customLabelStyles={{
@@ -412,11 +420,11 @@ const AddRoutineScreen = ({ navigation }) => {
               onBlur={() => {
                 setIsNameFocused(false);
               }}
-              label='Routine name'
+              label="Routine name"
               leftComponent={
                 <View style={{ padding: 12 }}>
                   <FontAwesome
-                    name='diamond'
+                    name="diamond"
                     size={22}
                     color={
                       isNameFocused
@@ -437,7 +445,7 @@ const AddRoutineScreen = ({ navigation }) => {
                       }}
                     >
                       <MaterialCommunityIcons
-                        name='close'
+                        name="close"
                         size={20}
                         color={colors.darkmodeMediumWhite}
                       />
@@ -445,7 +453,7 @@ const AddRoutineScreen = ({ navigation }) => {
                   </View>
                 ) : null
               }
-              type='text'
+              type="text"
               value={name}
               onChangeText={(text) => setName(text)}
               // style={{ color: colors.darkmodeHighWhite, height: 40 }}
@@ -471,7 +479,7 @@ const AddRoutineScreen = ({ navigation }) => {
           >
             <FloatingLabelInput
               isFocused={isShortDescriptionFocused}
-              hint='eg. 10 push-ups'
+              hint="eg. 10 push-ups"
               hintTextColor={colors.darkmodeMediumWhite}
               inputStyles={styles.inputStyles}
               customLabelStyles={{
@@ -486,11 +494,11 @@ const AddRoutineScreen = ({ navigation }) => {
               onBlur={() => {
                 setIsShortDescriptionFocused(false);
               }}
-              label='Notes (Optional)'
+              label="Notes (Optional)"
               leftComponent={
                 <View style={{ padding: 12 }}>
                   <FontAwesome
-                    name='diamond'
+                    name="diamond"
                     size={22}
                     color={
                       isShortDescriptionFocused
@@ -511,7 +519,7 @@ const AddRoutineScreen = ({ navigation }) => {
                       }}
                     >
                       <MaterialCommunityIcons
-                        name='close'
+                        name="close"
                         size={20}
                         color={colors.darkmodeMediumWhite}
                       />
@@ -519,7 +527,7 @@ const AddRoutineScreen = ({ navigation }) => {
                   </View>
                 ) : null
               }
-              type='text'
+              type="text"
               value={shortDescription}
               onChangeText={(text) => setShortDescription(text)}
               // style={{ color: colors.darkmodeHighWhite, height: 40 }}
@@ -575,7 +583,7 @@ const AddRoutineScreen = ({ navigation }) => {
                   Add
                 </Text>
                 <MaterialCommunityIcons
-                  name='plus'
+                  name="plus"
                   size={22}
                   color={colors.darkmodeHighWhite}
                 />
@@ -586,11 +594,11 @@ const AddRoutineScreen = ({ navigation }) => {
             <View style={styles.timeTitleContainer}>
               {show && (
                 <DateTimePicker
-                  testID='dateTimePicker'
+                  testID="dateTimePicker"
                   value={date}
-                  mode='time'
+                  mode="time"
                   is24Hour={true}
-                  display='spinner'
+                  display="spinner"
                   onChange={onChange}
                 />
               )}
