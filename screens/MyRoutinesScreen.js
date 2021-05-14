@@ -10,7 +10,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 // import firestore from '@react-native-firebase/firestore';
-import { db, auth } from '../firebase';
+import { db, auth, cloud } from '../firebase';
 import PropTypes from 'prop-types';
 import { Swipeable } from 'react-native-gesture-handler';
 import { useIsFocused } from '@react-navigation/native';
@@ -25,18 +25,16 @@ import colors from '../config/colors';
 import AppButton from '../components/AppButton';
 import { ScrollView } from 'react-native';
 
-const MyRoutinesScreen = ({ navigation }) => {
+const MyRoutinesScreen = ({ navigation, route }) => {
   const width = Dimensions.get('window').width;
   const user = auth.currentUser;
   const [clickedRoutine, setClickedRoutine] = useState();
   const [officialRoutines, setOfficialRoutines] = useState([]);
   const [customRoutines, setCustomRoutines] = useState([]);
-  const [removeCustomModalVisible, setRemoveCustomModalVisible] = useState(
-    false
-  );
-  const [removeOfficialModalVisible, setRemoveOfficialModalVisible] = useState(
-    false
-  );
+  const [removeCustomModalVisible, setRemoveCustomModalVisible] =
+    useState(false);
+  const [removeOfficialModalVisible, setRemoveOfficialModalVisible] =
+    useState(false);
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [selectedRoutine, setSelectedRoutine] = useState();
   const [refresh, setRefresh] = useState(false);
@@ -45,6 +43,16 @@ const MyRoutinesScreen = ({ navigation }) => {
   useEffect(() => {
     listItems();
   }, [isFocused]);
+
+  // const { makeYourOwnRoutine } = route.params;
+  // console.log('route parms', route.params);
+  navigation.setOptions({
+    headerRight: () => (
+      <View>
+        <Text>yo</Text>
+      </View>
+    ),
+  });
 
   const removeOfficialRoutine = (clicked) => {
     if (selectedRoutine) {
@@ -101,7 +109,6 @@ const MyRoutinesScreen = ({ navigation }) => {
   const listItems = () => {
     setOfficialRoutines([]);
     setCustomRoutines([]);
-    console.log('listitems');
     db.collection('Users')
       .doc(user.uid)
       .collection('routines')
@@ -109,17 +116,56 @@ const MyRoutinesScreen = ({ navigation }) => {
       .then((docs) => {
         docs.forEach((doc) => {
           let routineName = doc.id;
-          if (!doc.data().removed) {
-            setOfficialRoutines((oldArray1) => [
-              ...oldArray1,
-              {
-                key: oldArray1.length
-                  ? oldArray1[oldArray1.length - 1].key + 1
-                  : 0,
-                title: routineName,
-              },
-            ]);
-          }
+
+          let imageRefRoutine = cloud.ref(
+            'RoutineScreen/' + routineName + '.png'
+          );
+
+          db.collection('Routines')
+            .doc(routineName)
+            .get()
+            .then((documentsnapshot) => {
+              imageRefRoutine
+                .getDownloadURL()
+                .then((urlRoutine) => {
+                  if (!doc.data().removed) {
+                    setOfficialRoutines((oldArray1) => [
+                      ...oldArray1,
+                      {
+                        key: oldArray1.length
+                          ? oldArray1[oldArray1.length - 1].key + 1
+                          : 0,
+                        title: routineName,
+                        days: doc.data().days,
+                        descriptionArray:
+                          documentsnapshot.data().LongDescription,
+                        color: documentsnapshot.data().Color,
+                        image: true,
+                        imageRoutine: urlRoutine,
+                      },
+                    ]);
+                  }
+                })
+                .catch((err) => {
+                  if (!doc.data().removed) {
+                    setOfficialRoutines((oldArray1) => [
+                      ...oldArray1,
+                      {
+                        key: oldArray1.length
+                          ? oldArray1[oldArray1.length - 1].key + 1
+                          : 0,
+                        title: routineName,
+                        days: doc.data().days,
+                        descriptionArray:
+                          documentsnapshot.data().LongDescription,
+                        color: documentsnapshot.data().Color,
+                        image: false,
+                      },
+                    ]);
+                  }
+                });
+              // Here you can handle the error for individual download
+            });
         });
       });
 
@@ -139,6 +185,9 @@ const MyRoutinesScreen = ({ navigation }) => {
                 ? oldArray1[oldArray1.length - 1].key + 1
                 : 0,
               title: routineName,
+              shortDescription: doc.data()?.shortDescription,
+              isCustom: true,
+              routineTimes: JSON.parse(doc.data().routineTimes),
             },
           ]);
 
@@ -170,7 +219,7 @@ const MyRoutinesScreen = ({ navigation }) => {
               style={styles.routineListItemContainer}
             >
               <MaterialCommunityIcons
-                name="close"
+                name='close'
                 size={30}
                 color={colors.samRed}
               />
@@ -217,7 +266,7 @@ const MyRoutinesScreen = ({ navigation }) => {
                 }}
               >
                 <MaterialCommunityIcons
-                  name="pencil"
+                  name='pencil'
                   size={30}
                   color={colors.samBlue}
                 />
@@ -233,7 +282,7 @@ const MyRoutinesScreen = ({ navigation }) => {
                 }}
               >
                 <MaterialCommunityIcons
-                  name="close"
+                  name='close'
                   size={30}
                   color={colors.samRed}
                 />
@@ -271,7 +320,7 @@ const MyRoutinesScreen = ({ navigation }) => {
       {/* <ScrollView> */}
       <View styles={styles.flatlist}>
         <Modal
-          animationType="fade"
+          animationType='fade'
           transparent={true}
           visible={removeCustomModalVisible}
           onRequestClose={() => {
@@ -302,7 +351,7 @@ const MyRoutinesScreen = ({ navigation }) => {
           </View>
         </Modal>
         <Modal
-          animationType="fade"
+          animationType='fade'
           transparent={true}
           visible={removeOfficialModalVisible}
           onRequestClose={() => {
@@ -351,13 +400,13 @@ const MyRoutinesScreen = ({ navigation }) => {
           >
             <MaterialCommunityIcons
               style={{ marginTop: -3 }}
-              name="information-outline"
+              name='information-outline'
               size={30}
               color={colors.darkmodeHighWhite}
             />
           </TouchableOpacity>
           <Modal
-            animationType="fade"
+            animationType='fade'
             transparent={true}
             visible={infoModalVisible}
             onRequestClose={() => {
