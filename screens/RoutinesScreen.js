@@ -1,5 +1,9 @@
 import { db, auth, cloud } from '../firebase';
 
+import { AfterInteractions } from 'react-native-interactions';
+
+import ContentLoader, { Rect, Circle, Path } from 'react-content-loader/native';
+
 import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
@@ -25,7 +29,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 import * as Animatable from 'react-native-animatable';
 
-import { AntDesign, FontAwesome } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 
 import Screen from '../components/Screen';
 import AppText from '../components/AppText';
@@ -132,14 +136,15 @@ function RoutinesScreen({ navigation }) {
     listItems();
   }, [isFocused]);
 
-  function listItems() {
+  async function listItems() {
     //  reset item arrays to prevent
     //  double loading on back navigation
     setItems([]);
     setAlreadyAddedItems([]);
     setLockedItems([]);
     // resetItems;
-    db.collection('Routines')
+    await db
+      .collection('Routines')
       .get()
       .then((docs) => {
         let index = 0;
@@ -170,7 +175,7 @@ function RoutinesScreen({ navigation }) {
             lock = false;
           }
 
-          function onResolve() {
+          async function onResolve() {
             if (removed || (!alreadyAdded && !lock)) {
               imageRefRoutines.getDownloadURL().then((urlRoutines) => {
                 imageRefRoutine.getDownloadURL().then((urlRoutine) => {
@@ -241,7 +246,7 @@ function RoutinesScreen({ navigation }) {
             index++;
           }
           //routines with default images
-          function onReject() {
+          async function onReject() {
             if (removed || (!alreadyAdded && !lock)) {
               setItems((oldArray1) => [
                 ...oldArray1,
@@ -794,99 +799,102 @@ function RoutinesScreen({ navigation }) {
     );
   };
 
-  return (
-    <Screen style={{ backgroundColor: colors.darkmodeBlack, marginTop: -12 }}>
-      <View
-        style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: height * 0.81,
-        }}
+  const placeholderData = [
+    {
+      key: 0,
+    },
+    {
+      key: 1,
+    },
+    {
+      key: 2,
+    },
+    {
+      key: 3,
+    },
+    {
+      key: 4,
+    },
+    {
+      key: 5,
+    },
+  ];
+
+  const renderPlaceholderItems = () => {
+    return (
+      <ContentLoader
+        style={{ marginVertical: -10 }}
+        speed={6}
+        width={width}
+        height={150}
+        viewBox='0 24 405 100'
+        backgroundColor={colors.darkmodeLightBlack}
+        foregroundColor={colors.darkmodeDisabledBlack}
       >
-        <ScrollView
+        <Rect
+          x='17'
+          y='22'
+          rx='16'
+          ry='16'
+          width={width * 0.89}
+          height={ITEM_HEIGHT * 0.78}
+        />
+      </ContentLoader>
+    );
+  };
+
+  const ScreenPlaceholder = () => {
+    return (
+      <Screen style={{ backgroundColor: colors.darkmodeBlack, marginTop: -19 }}>
+        <View
           style={{
-            backgroundColor: colors.darkmodeFocused,
-            borderRadius: 16,
-            width: width * 0.94,
-            height: height * 0.77,
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: height * 0.81,
           }}
         >
-          <View style={{ alignItems: 'center', paddingTop: 2 }}>
-            <SearchBar
-              placeholder='Search routines...'
-              onChangeText={setSearch}
-              value={search}
-              containerStyle={{
-                borderTopLeftRadius: 15,
-                borderTopRightRadius: 15,
-                backgroundColor: 'rgba(0,0,0,0.0)',
-                width: width * 0.92,
-                borderTopWidth: 0,
-                borderBottomWidth: 0,
-                height: 50,
-              }}
-              inputContainerStyle={{
-                borderRadius: 16,
-                borderTopWidth: 0,
-                borderBottomWidth: 0,
-                height: 34,
-              }}
-            />
-          </View>
-
-          <FlatList
-            getItemLayout={getItemLayout}
-            initialNumToRender={items.length}
-            data={items.sort(function (a, b) {
-              return a.difficulty - b.difficulty;
-            })}
-            // keyExtractor={(items) => items.id.toString()}
-            extraData={refresh}
-            renderItem={renderItems}
-            updateCellsBatchingPeriod={0}
-            windowSize={5}
-          />
-
-          {lockedItems.length ? separator('Locked routines') : null}
-
-          <FlatList
-            getItemLayout={getItemLayout}
-            initialNumToRender={lockedItems.length}
-            data={lockedItems.sort(function (a, b) {
-              return a.difficulty - b.difficulty;
-            })}
-            // keyExtractor={(lockedItems) => lockedItems.id.toString()}
-            renderItem={renderLockedItems}
-            updateCellsBatchingPeriod={0}
-            windowSize={5}
-          />
-
-          {alreadyAddeditems.length ? separator('Ongoing routines') : null}
-
-          <FlatList
-            getItemLayout={getItemLayout}
-            initialNumToRender={alreadyAddeditems.length}
-            data={alreadyAddeditems.sort(function (a, b) {
-              return a.difficulty - b.difficulty;
-            })}
-            // keyExtractor={(alreadyAddeditems) =>
-            //   alreadyAddeditems.id.toString()
-            // }
-            extraData={refresh}
-            renderItem={renderAlreadyAddedItems}
-            updateCellsBatchingPeriod={0}
-            windowSize={5}
-          />
-
-          <TouchableHighlight
-            activeOpacity={0.9}
-            underlayColor={colors.white}
-            onPressOut={() =>
-              navigation.navigate('My Routines', {
-                makeYourOwnRoutine: true,
-              })
-            }
+          <View
+            style={{
+              backgroundColor: colors.darkmodeFocused,
+              borderRadius: 16,
+              width: width * 0.94,
+              height: height * 0.77,
+            }}
           >
+            <View style={{ alignItems: 'center', paddingTop: 2 }}>
+              <SearchBar
+                placeholder='Search routines...'
+                // onChangeText={setSearch}
+                // value={search}
+                containerStyle={{
+                  borderTopLeftRadius: 15,
+                  borderTopRightRadius: 15,
+                  backgroundColor: 'rgba(0,0,0,0.0)',
+                  width: width * 0.92,
+                  borderTopWidth: 0,
+                  borderBottomWidth: 0,
+                  height: 50,
+                }}
+                inputContainerStyle={{
+                  borderRadius: 16,
+                  borderTopWidth: 0,
+                  borderBottomWidth: 0,
+                  height: 34,
+                }}
+              />
+            </View>
+
+            {separator('Available routines')}
+
+            <FlatList
+              getItemLayout={getItemLayout}
+              initialNumToRender={placeholderData.length}
+              data={placeholderData}
+              renderItem={renderPlaceholderItems}
+              useNativeDriver={true}
+              windowSize={5}
+            />
+
             <View style={itemStyles.makeYourOwnRoutine}>
               <AppText style={itemStyles.makeYourOwnRoutineText}>
                 Make your own routine
@@ -899,10 +907,128 @@ function RoutinesScreen({ navigation }) {
                 />
               </View>
             </View>
-          </TouchableHighlight>
-        </ScrollView>
-      </View>
-    </Screen>
+          </View>
+        </View>
+      </Screen>
+    );
+  };
+
+  const makeYourOwnRoutine = true;
+
+  return (
+    <AfterInteractions placeholder={<ScreenPlaceholder />}>
+      <Screen style={{ backgroundColor: colors.darkmodeBlack, marginTop: -10 }}>
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: height * 0.81,
+          }}
+        >
+          <ScrollView
+            style={{
+              backgroundColor: colors.darkmodeFocused,
+              borderRadius: 16,
+              width: width * 0.94,
+              height: height * 0.77,
+            }}
+          >
+            <View style={{ alignItems: 'center', paddingTop: 2 }}>
+              <SearchBar
+                placeholder='Search routines...'
+                onChangeText={setSearch}
+                value={search}
+                containerStyle={{
+                  borderTopLeftRadius: 15,
+                  borderTopRightRadius: 15,
+                  backgroundColor: 'rgba(0,0,0,0.0)',
+                  width: width * 0.92,
+                  borderTopWidth: 0,
+                  borderBottomWidth: 0,
+                  height: 50,
+                }}
+                inputContainerStyle={{
+                  borderRadius: 16,
+                  borderTopWidth: 0,
+                  borderBottomWidth: 0,
+                  height: 34,
+                }}
+              />
+            </View>
+
+            {items.length ? separator('Available routines') : null}
+
+            <FlatList
+              getItemLayout={getItemLayout}
+              initialNumToRender={items.length}
+              data={items.sort(function (a, b) {
+                return a.difficulty - b.difficulty;
+              })}
+              // keyExtractor={(items) => items.id.toString()}
+              extraData={refresh}
+              renderItem={renderItems}
+              useNativeDriver={true}
+              updateCellsBatchingPeriod={0}
+              windowSize={5}
+            />
+
+            {lockedItems.length ? separator('Locked routines') : null}
+
+            <FlatList
+              getItemLayout={getItemLayout}
+              initialNumToRender={lockedItems.length}
+              data={lockedItems.sort(function (a, b) {
+                return a.difficulty - b.difficulty;
+              })}
+              // keyExtractor={(lockedItems) => lockedItems.id.toString()}
+              renderItem={renderLockedItems}
+              useNativeDriver={true}
+              updateCellsBatchingPeriod={0}
+              windowSize={5}
+            />
+
+            {alreadyAddeditems.length ? separator('Ongoing routines') : null}
+
+            <FlatList
+              getItemLayout={getItemLayout}
+              initialNumToRender={alreadyAddeditems.length}
+              data={alreadyAddeditems.sort(function (a, b) {
+                return a.difficulty - b.difficulty;
+              })}
+              // keyExtractor={(alreadyAddeditems) =>
+              //   alreadyAddeditems.id.toString()
+              // }
+              extraData={refresh}
+              renderItem={renderAlreadyAddedItems}
+              useNativeDriver={true}
+              updateCellsBatchingPeriod={0}
+              windowSize={5}
+            />
+
+            <TouchableHighlight
+              activeOpacity={0.9}
+              underlayColor={colors.white}
+              onPressOut={() =>
+                navigation.navigate('My Routines', makeYourOwnRoutine)
+              }
+            >
+              <View style={itemStyles.makeYourOwnRoutine}>
+                <AppText style={itemStyles.makeYourOwnRoutineText}>
+                  Make your own routine
+                </AppText>
+                <View style={itemStyles.makeYourOwnRoutinePlus}>
+                  <AntDesign
+                    name='plus'
+                    size={28}
+                    color={colors.darkmodeHighWhite}
+                  />
+                </View>
+              </View>
+            </TouchableHighlight>
+          </ScrollView>
+        </View>
+      </Screen>
+    </AfterInteractions>
   );
 }
 const styles = StyleSheet.create({

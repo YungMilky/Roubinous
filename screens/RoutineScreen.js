@@ -21,6 +21,12 @@ import { useFonts, BadScript_400Regular } from '@expo-google-fonts/bad-script';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 import WeekdayPicker from 'react-native-weekday-picker';
+import {
+  ToastBannerProvider,
+  ToastBannerPresenter,
+  useToastBannerToggler /* or withToastBannerToggler */,
+  Transition,
+} from 'react-native-toast-banner';
 
 // import { SharedElement } from "react-navigation-shared-element";
 
@@ -33,12 +39,111 @@ import AppText from '../components/AppText';
 import { Audio } from 'expo-av';
 import AddRoutine from '../components/AddRoutine';
 import AddAndRemoveButton from '../components/AddAndRemoveButton';
+import { TouchableWithoutFeedback } from 'react-native';
+import RemoveRoutine from '../components/RemoveRoutine';
 
 const { width, height } = Dimensions.get('screen');
 const ITEM_HEIGHT = height * 0.18;
 const ITEM_SIZE = width * 0.9;
 
 const RoutineScreen = ({ navigation, route }) => {
+  const { showBanner, hideBanner } = useToastBannerToggler();
+
+  const DeleteRoutineToast = () => {
+    /* If you don't want hooks, there is also HOC 'withToastBannerToggler' */
+    const { showBanner, hideBanner } = useToastBannerToggler();
+
+    const ContentView = () => {
+      return (
+        <View style={{ height: 120 }}>
+          <Text
+            style={{
+              top: 60,
+              fontSize: 18,
+              color: colors.darkmodeHighWhite,
+              textAlign: 'center',
+            }}
+          >
+            Routine removed.
+          </Text>
+        </View>
+      );
+    };
+
+    const onPress = () => {
+      showBanner({
+        contentView: <ContentView />,
+        // defaultTextContainer: {
+        //   padding: 10,
+        //   fontSize: 16,
+        //   color: colors.darkmodeHighWhite,
+        // },
+        backgroundColor: colors.samSexyRed /* default: undefined */,
+        duration: 2500 /* default: 3000 */,
+        transitions: [
+          Transition.Move,
+          Transition.MoveLinear,
+          Transition.FadeInOut,
+        ] /* default: [Transition.Move] */,
+      });
+    };
+
+    return (
+      showMinus && (
+        <Animated.View
+          style={{
+            top: 20,
+            width: animationWidth,
+          }}
+        >
+          <Pressable
+            onPress={() => {
+              if (expanded) {
+                toggleExpansion();
+                setTimeout(() => setExpanded(true), 3000);
+              } else {
+                onPress();
+                // setTimeout(() => toggleExpansion(), 500);
+                RemoveRoutine(item.title);
+                toggleShowMinus();
+                setTimeout(() => {
+                  setButtonDisabled(false);
+                  setButtonTitle('Give it another shot');
+                  item.removed = true;
+                }, 550);
+              }
+            }}
+            style={{
+              // position: "absolute",
+              zIndex: 1,
+            }}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              {!expanded && (
+                <Text
+                  // numberOfLines={expanded ? 1 : 0}
+                  style={{
+                    color: colors.darkmodeDisabledWhite,
+                    fontWeight: '700',
+                    fontSize: 16,
+                    paddingRight: 6,
+                  }}
+                >
+                  tap to quit
+                </Text>
+              )}
+              <MaterialCommunityIcons
+                name='minus'
+                size={28}
+                color={colors.darkmodeErrorColor}
+              />
+            </View>
+          </Pressable>
+        </Animated.View>
+      )
+    );
+  };
+
   const { item } = route.params;
 
   let [fontsLoaded, error] = useFonts({
@@ -63,7 +168,9 @@ const RoutineScreen = ({ navigation, route }) => {
 
   const [showModal, setShowModal] = useState(false);
 
-  const [buttonTitle, setButtonTitle] = useState('I got this!');
+  const [buttonTitle, setButtonTitle] = useState(
+    item.fromMyRoutines ? 'Ongoing routine' : 'I got this!'
+  );
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
   const [sound, setSound] = React.useState();
@@ -270,7 +377,8 @@ const RoutineScreen = ({ navigation, route }) => {
                 paddingRight: 8,
               }}
             >
-              {checkNumber(item.hours) + ':' + checkNumber(item.minutes)}
+              {item.hours &&
+                checkNumber(item.hours) + ':' + checkNumber(item.minutes)}
             </Text>
           </View>
         ) : null}
@@ -278,10 +386,36 @@ const RoutineScreen = ({ navigation, route }) => {
     );
   };
 
+  const [showMinus, setShowMinus] = useState(item.removed ? false : true);
+  const toggleShowMinus = () => {
+    setShowMinus(!showMinus);
+  };
+  const [expanded, setExpanded] = useState(true);
+  const animationWidth = useRef(new Animated.Value(2)).current;
+  const toggleExpansion = () => {
+    setExpanded(!expanded);
+  };
+  useEffect(() => {
+    if (expanded) {
+      Animated.timing(animationWidth, {
+        duration: 400,
+        toValue: 46,
+        easing: Easing.bounce,
+        useNativeDriver: false,
+      }).start();
+    } else {
+      Animated.timing(animationWidth, {
+        duration: 100,
+        toValue: 110,
+        easing: Easing.linear,
+        useNativeDriver: false,
+      }).start();
+    }
+  }, [expanded]);
+
   if (!fontsLoaded) {
     return <AppLoading />;
   } else {
-    console.log(item);
     return (
       <Screen
         style={{
@@ -289,18 +423,32 @@ const RoutineScreen = ({ navigation, route }) => {
           height: '100%',
         }}
       >
-        <TouchableOpacity
-          style={styles.one}
-          onPress={() => {
-            navigation.goBack();
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
           }}
         >
-          <MaterialCommunityIcons
-            name='window-close'
-            color={colors.darkmodeMediumWhite}
-            size={28}
-          />
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.one}
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
+            <MaterialCommunityIcons
+              name='window-close'
+              color={colors.darkmodeMediumWhite}
+              size={28}
+            />
+          </TouchableOpacity>
+          {item.alreadyAdded && !item.removed && (
+            <ToastBannerProvider>
+              <DeleteRoutineToast />
+              <ToastBannerPresenter />
+            </ToastBannerProvider>
+          )}
+        </View>
         <View style={styles.imgcontainer}>
           <View style={styles.two}>
             {item.image ? (
@@ -327,18 +475,6 @@ const RoutineScreen = ({ navigation, route }) => {
               // locations={[0.4, 0.1]}
             > */}
 
-            {item.alreadyAdded && !item.removed && (
-              <AddAndRemoveButton
-                check={false}
-                routine={item.title}
-                style={{
-                  backgroundColor: 'rgba(0.0.0.0,0)',
-                  borderWidth: 0,
-                }}
-                // size={40}
-              />
-            )}
-
             <View style={styles.three}>
               {/* <SharedElement id={`item.${item.id}.title`} style={styles.three}> */}
               <Animatable.Text
@@ -358,7 +494,8 @@ const RoutineScreen = ({ navigation, route }) => {
             {item.descriptionArray ? (
               <FlatList data={descriptions} renderItem={descriptionViewer} />
             ) : (
-              item.shortDescription && (
+              item.shortDescription &&
+              item.shortDescription != '' && (
                 <View style={styles.descriptionContainer}>
                   <View style={styles.descriptionWidth}>
                     <Animatable.Text
@@ -451,7 +588,7 @@ const RoutineScreen = ({ navigation, route }) => {
             <TouchableOpacity
               style={[
                 styles.button,
-                buttonDisabled
+                buttonDisabled || item.fromMyRoutines
                   ? {
                       color: colors.darkmodeDisabledText,
                       backgroundColor: colors.darkmodeDisabledBlack,
@@ -474,7 +611,7 @@ const RoutineScreen = ({ navigation, route }) => {
             >
               <Text
                 style={[
-                  buttonDisabled
+                  buttonDisabled || item.fromMyRoutines
                     ? {
                         color: colors.darkmodeDisabledText,
                       }

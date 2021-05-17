@@ -40,50 +40,20 @@ export default () => {
   const [lastTipReceived, setLastTipReceived] = useState();
 
   const [globalAnswers, setGlobalAnswers] = useState();
-  const [globalRoutines, setGlobalRoutines] = useState();
+  const [globalRoutines, setGlobalRoutines] = useState(); //name, difficulty, startdate, color
   const [globalUserRank, setGlobalUserRank] = useState();
 
   const [globalFirstSteps, setGlobalFirstSteps] = useState();
   const [globalGeneralTips, setGlobalGeneralTips] = useState();
   const [globalMinmaxgodTips, setGlobalMinmaxgodTips] = useState();
   const [globalRoutineSpecificTips, setGlobalRoutineSpecificTips] = useState();
+  const [tipsLineup, setTipsLineup] = useState([]);
 
   const [expanded, setExpanded] = useState(false);
   const [show, setShow] = useState('wobble');
   const animationHeight = useRef(new Animated.Value(2)).current;
 
   const isFocused = useIsFocused();
-  useEffect(() => {
-    setTimeout(() => {
-      setTipShown();
-    }, 3000);
-  }, [isFocused]);
-
-  useEffect(() => {
-    getLastTipReceived();
-  }, []);
-
-  function getStuff() {
-    getAnswers();
-    getRoutines();
-    getUserRank();
-
-    getFirstStepsTips();
-    getGeneralTips();
-    getMinmaxgodTips();
-    getRoutineSpecificTips();
-  }
-
-  function weightedRandom(number) {
-    var i,
-      sum = 0,
-      random = Math.random();
-
-    for (i in number) {
-      sum += number[i];
-      if (random <= sum) return i;
-    }
-  }
 
   //utility functions to add days and hours
   //handles months and years when incrementing
@@ -98,10 +68,43 @@ export default () => {
     return this;
   };
 
+  useEffect(() => {
+    getLastTipReceived();
+    setTimeout(() => {
+      setTipShown();
+    }, 3000);
+  }, [isFocused]);
+
   let currentTime = new Date();
-  //if user hasn't received a tip in the last 3 hours
-  if (lastTipReceived >= currentTime.addHoursCRAZYNAMEAVOIDSUPDATE(3)) {
-    getStuff();
+  useEffect(() => {
+    //if user hasn't received a tip in the last 3 hours
+    if (lastTipReceived <= currentTime.addHoursCRAZYNAMEAVOIDSUPDATE(3)) {
+      getStuff();
+    }
+  }, [lastTipReceived]);
+
+  function getStuff() {
+    getAnswers();
+    getRoutines();
+    getUserRank();
+
+    getFirstStepsTips();
+    getGeneralTips();
+    getMinmaxgodTips();
+    getRoutineSpecificTips();
+
+    setPopup();
+  }
+
+  function weightedRandom(number) {
+    var i,
+      sum = 0,
+      random = Math.random();
+
+    for (i in number) {
+      sum += number[i];
+      if (random <= sum) return i;
+    }
   }
 
   function setTipShown() {}
@@ -247,7 +250,6 @@ export default () => {
         // boolean: routineSpecific[0][0][2]
         setGlobalRoutineSpecificTips(routineSpecific[0]);
       });
-      setPopup();
     }
   }
 
@@ -256,6 +258,7 @@ export default () => {
   // const [globalMinmaxgodTips, setGlobalMinmaxgodTips] = useState();
 
   function setPopup() {
+    setTipsLineup([]);
     if (globalFirstSteps) {
       let length = Object.keys(globalFirstSteps.Tips).length;
       for (let i = 0; i < length; i++) {
@@ -265,6 +268,7 @@ export default () => {
           // title: globalFirstSteps.Tips[i][0]
           // text: globalFirstSteps.Tips[i][1]
           // boolean: globalFirstSteps.Tips[i][2]
+          setTipsLineup((oldArray) => [...oldArray, globalFirstSteps.Tips[i]]);
         }
       }
     }
@@ -278,6 +282,7 @@ export default () => {
           // title: globalGeneralTips.Tips[i][0]
           // text: globalGeneralTips.Tips[i][1]
           // boolean: globalGeneralTips.Tips[i][2]
+          setTipsLineup((oldArray) => [...oldArray, globalGeneralTips.Tips[i]]);
         }
       }
     }
@@ -295,23 +300,27 @@ export default () => {
     // }
 
     if (globalRoutineSpecificTips) {
-      // console.log(globalRoutineSpecificTips);
       let length = Object.keys(globalRoutineSpecificTips).length;
       for (let i = 0; i < length; i++) {
         //boolean values for each array object in the RoutineTips array
         //if a tip hasn't been shown (false)
         if (!globalRoutineSpecificTips[i][2]) {
-          // title: globalRoutineSpecificTips[i][0]
-          // text: globalRoutineSpecificTips[i][1]
-          // boolean: globalRoutineSpecificTips[i][2]
+          setTipsLineup((oldArray) => [
+            ...oldArray,
+            globalRoutineSpecificTips[i],
+          ]);
         }
       }
     }
+    console.log(
+      'kgeageagkgeageagkgeageagkgeageagkgeageagkgeageagkgeageagkgeageagkgeageagkgeageagkgeageagkgeageagkgeageag'
+    );
+    console.log(tipsLineup);
   }
 
   function setWeights() {}
 
-  weightedRandom({ 0: 0.8, 1: 0.1, 2: 0.1 });
+  // weightedRandom({ 0: 0.8, 1: 0.1, 2: 0.1 });
 
   useEffect(() => {
     if (expanded) {

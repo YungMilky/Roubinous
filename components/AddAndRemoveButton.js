@@ -69,12 +69,14 @@ function AddAndRemoveButton({ style, size, check, routine }) {
         duration: 500,
         toValue: 20,
         easing: Easing.bounce,
+        useNativeDriver: false,
       }).start();
     } else {
       Animated.timing(animationWidth, {
         duration: 150,
         toValue: maxWidth,
         easing: Easing.linear,
+        useNativeDriver: false,
       }).start();
     }
   }, [expanded]);

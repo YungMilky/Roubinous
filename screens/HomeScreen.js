@@ -105,7 +105,7 @@ const HomeScreen = ({ navigation }) => {
       <TouchableOpacity
         style={styles.button}
         onPress={() =>
-          navigation.navigate('Browse Routines', { screen: 'Browse Routines' })
+          navigation.navigate('Browse routines', { screen: 'Browse routines' })
         }
       >
         <MaterialCommunityIcons

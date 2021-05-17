@@ -39,8 +39,9 @@ import { Constants } from 'react-native-unimodules';
 import AppLoading from 'expo-app-loading';
 import { LogBox } from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
-import { enableScreens } from 'react-native-screens';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
+import { AfterInteractions } from 'react-native-interactions';
+import { enableScreens } from 'react-native-screens';
 enableScreens();
 
 import {
@@ -58,6 +59,7 @@ import WelcomeScreen from './screens/WelcomeScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import HomeScreen from './screens/HomeScreen';
+import ShopScreen from './screens/ShopScreen';
 import LoginScreen from './screens/LoginScreen';
 import RoutinesScreen from './screens/RoutinesScreen';
 import ResetPasswordScreen from './screens/ResetPasswordScreen';
@@ -106,7 +108,6 @@ const config = {
   config: {
     duration: 150,
     easing: Easing.linear,
-
     // stiffness: 5000,
     // damping: 100,
     // mass: 1,
@@ -197,7 +198,7 @@ const RoutinesStackScreen = () => {
     >
       <RoutinesStack.Screen name='TabBar' component={TabBar} />
       <RoutinesStack.Screen
-        name='Browse Routines'
+        name='Browse routines'
         component={RoutinesScreen}
         options={{
           headerShown: true,
@@ -210,10 +211,8 @@ const RoutinesStackScreen = () => {
         component={RoutineScreen}
         options={{ headerShown: false }}
       />
-      <RoutinesStack.Screen
-        name='Add Custom Routine'
-        component={AddRoutineScreen}
-      />
+      <RoutinesStack.Screen name='My Routines' component={MyRoutinesScreen} />
+      <RoutinesStack.Screen name='Add routine' component={AddRoutineScreen} />
       <RoutinesStack.Screen name='Settings' component={SettingsScreen} />
     </RoutinesStack.Navigator>
   );
@@ -235,6 +234,8 @@ const MyRoutinesStackScreen = () => {
       headerMode='float'
     >
       <MyRoutinesStack.Screen name='My Routines' component={MyRoutinesScreen} />
+      <RoutinesStack.Screen name='Add routine' component={AddRoutineScreen} />
+      <RoutinesStack.Screen name='Browse routines' component={RoutinesScreen} />
       <RoutinesStack.Screen
         name='Routine'
         component={RoutineScreen}
@@ -1368,68 +1369,70 @@ export default function App() {
   let content;
   if (isLoggedIn) {
     content = (
-      <NavigationContainer>
-        <RootStack.Navigator
-          screenOptions={{
-            headerStyle: { backgroundColor: colors.samRed },
-            headerTitleStyle: { color: colors.darkmodeHighWhite },
-            gestureEnabled: true,
-            gestureDirection: 'horizontal',
-            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-            transitionSpec: {
-              open: config,
-              close: config,
-            },
-          }}
-          headerMode='float'
-        >
-          <RootStack.Screen
-            name='Roubine'
-            component={TabBar}
-            options={{
-              headerRight: () => headerRoubinesButton(),
-              headerShown: true,
-              headerLeft: () => null,
+      <AfterInteractions>
+        <NavigationContainer>
+          <RootStack.Navigator
+            screenOptions={{
+              headerStyle: { backgroundColor: colors.samRed },
+              headerTitleStyle: { color: colors.darkmodeHighWhite },
+              gestureEnabled: true,
+              gestureDirection: 'horizontal',
+              cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+              transitionSpec: {
+                open: config,
+                close: config,
+              },
             }}
-          />
-          <RootStack.Screen
-            name='Profile'
-            component={ProfileStackScreen}
-            options={{ title: 'Profile' }}
-          />
-          <RootStack.Screen name='Register' component={RegisterScreen} />
-          <RootStack.Screen name='Login' component={LoginScreen} />
-          <RootStack.Screen
-            name='Reset Password'
-            component={ResetPasswordScreen}
-          />
-          <RootStack.Screen
-            name='Browse Routines'
-            component={RoutinesStackScreen}
-            options={{ headerShown: false }}
-          />
-          <RootStack.Screen
-            name='Calendars'
-            component={CalendarScreen}
-            options={{ headerShown: false }}
-          />
-          <RootStack.Screen
-            name='Notification Settings'
-            component={NotificationSettingScreen}
-            options={{ headerRight: () => headerRoubinesButton() }}
-          />
-          <RootStack.Screen name='Settings' component={SettingsScreen} />
-          <RootStack.Screen
-            name='My Routines'
-            component={MyRoutinesStackScreen}
-            options={{ headerShown: false }}
-          />
-          <RootStack.Screen
-            name='Edit Custom Routines'
-            component={EditRoutineScreen}
-          />
-        </RootStack.Navigator>
-      </NavigationContainer>
+            headerMode='float'
+          >
+            <RootStack.Screen
+              name='Roubine'
+              component={TabBar}
+              options={{
+                headerRight: () => headerRoubinesButton(),
+                headerShown: true,
+                headerLeft: () => null,
+              }}
+            />
+            <RootStack.Screen
+              name='Profile'
+              component={ProfileStackScreen}
+              options={{ title: 'Profile' }}
+            />
+            <RootStack.Screen name='Register' component={RegisterScreen} />
+            <RootStack.Screen name='Login' component={LoginScreen} />
+            <RootStack.Screen
+              name='Reset Password'
+              component={ResetPasswordScreen}
+            />
+            <RootStack.Screen
+              name='Browse routines'
+              component={RoutinesStackScreen}
+              options={{ headerShown: false }}
+            />
+            <RootStack.Screen
+              name='Calendars'
+              component={CalendarScreen}
+              options={{ headerShown: false }}
+            />
+            <RootStack.Screen
+              name='Notification Settings'
+              component={NotificationSettingScreen}
+              options={{ headerRight: () => headerRoubinesButton() }}
+            />
+            <RootStack.Screen name='Settings' component={SettingsScreen} />
+            <RootStack.Screen
+              name='My Routines'
+              component={MyRoutinesStackScreen}
+              options={{ headerShown: false }}
+            />
+            <RootStack.Screen
+              name='Edit Custom Routines'
+              component={EditRoutineScreen}
+            />
+          </RootStack.Navigator>
+        </NavigationContainer>
+      </AfterInteractions>
     );
   } else {
     content = (

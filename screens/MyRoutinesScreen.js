@@ -7,6 +7,7 @@ import {
   FlatList,
   Dimensions,
   Modal,
+  Pressable,
   TouchableWithoutFeedback,
 } from 'react-native';
 // import firestore from '@react-native-firebase/firestore';
@@ -16,9 +17,13 @@ import { Swipeable } from 'react-native-gesture-handler';
 import { useIsFocused } from '@react-navigation/native';
 import {
   MaterialCommunityIcons,
+  Octicons,
   FontAwesome,
-  EvilIcons,
 } from '@expo/vector-icons';
+
+import * as Animatable from 'react-native-animatable';
+
+import { useNavigationState } from '@react-navigation/native';
 
 import Screen from '../components/Screen';
 import colors from '../config/colors';
@@ -43,16 +48,6 @@ const MyRoutinesScreen = ({ navigation, route }) => {
   useEffect(() => {
     listItems();
   }, [isFocused]);
-
-  // const { makeYourOwnRoutine } = route.params;
-  // console.log('route parms', route.params);
-  navigation.setOptions({
-    headerRight: () => (
-      <View>
-        <Text>yo</Text>
-      </View>
-    ),
-  });
 
   const removeOfficialRoutine = (clicked) => {
     if (selectedRoutine) {
@@ -106,10 +101,12 @@ const MyRoutinesScreen = ({ navigation, route }) => {
     setRemoveCustomModalVisible(true);
   };
 
-  const listItems = () => {
+  const listItems = async () => {
     setOfficialRoutines([]);
     setCustomRoutines([]);
-    db.collection('Users')
+
+    await db
+      .collection('Users')
       .doc(user.uid)
       .collection('routines')
       .get()
@@ -142,6 +139,7 @@ const MyRoutinesScreen = ({ navigation, route }) => {
                         color: documentsnapshot.data().Color,
                         image: true,
                         imageRoutine: urlRoutine,
+                        fromMyRoutines: true,
                       },
                     ]);
                   }
@@ -160,6 +158,7 @@ const MyRoutinesScreen = ({ navigation, route }) => {
                           documentsnapshot.data().LongDescription,
                         color: documentsnapshot.data().Color,
                         image: false,
+                        fromMyRoutines: true,
                       },
                     ]);
                   }
@@ -239,6 +238,7 @@ const MyRoutinesScreen = ({ navigation, route }) => {
                 fontSize: 22,
                 color: colors.darkmodeHighWhite,
                 paddingRight: 8,
+                paddingLeft: 3,
               }}
             >
               {item.title}
@@ -267,7 +267,7 @@ const MyRoutinesScreen = ({ navigation, route }) => {
               >
                 <MaterialCommunityIcons
                   name='pencil'
-                  size={30}
+                  size={24}
                   color={colors.samBlue}
                 />
               </TouchableOpacity>
@@ -280,6 +280,7 @@ const MyRoutinesScreen = ({ navigation, route }) => {
                     ]
                   );
                 }}
+                style={{ paddingLeft: 4 }}
               >
                 <MaterialCommunityIcons
                   name='close'
@@ -304,6 +305,7 @@ const MyRoutinesScreen = ({ navigation, route }) => {
                   fontSize: 22,
                   color: colors.darkmodeHighWhite,
                   paddingRight: 8,
+                  paddingLeft: 3,
                 }}
               >
                 {item.title}
@@ -314,6 +316,24 @@ const MyRoutinesScreen = ({ navigation, route }) => {
       </Swipeable>
     );
   };
+
+  navigation.setOptions({
+    headerRight: () => (
+      <TouchableOpacity
+        onPress={() => {
+          setInfoModalVisible(!infoModalVisible);
+        }}
+        style={styles.iconContainer}
+      >
+        <MaterialCommunityIcons
+          style={{ paddingRight: 14 }}
+          name='information-outline'
+          size={25}
+          color={colors.darkmodeHighWhite}
+        />
+      </TouchableOpacity>
+    ),
+  });
 
   return (
     <Screen style={styles.container}>
@@ -382,29 +402,7 @@ const MyRoutinesScreen = ({ navigation, route }) => {
           </View>
         </Modal>
         <View style={styles.titleContainer}>
-          <Text
-            style={[
-              styles.titleText,
-              {
-                marginLeft: 100,
-              },
-            ]}
-          >
-            Official routines:
-          </Text>
-          <TouchableOpacity
-            onPress={() => {
-              setInfoModalVisible(!infoModalVisible);
-            }}
-            style={styles.iconContainer}
-          >
-            <MaterialCommunityIcons
-              style={{ marginTop: -3 }}
-              name='information-outline'
-              size={30}
-              color={colors.darkmodeHighWhite}
-            />
-          </TouchableOpacity>
+          <Text style={[styles.titleText]}>Official routines</Text>
           <Modal
             animationType='fade'
             transparent={true}
@@ -454,10 +452,44 @@ const MyRoutinesScreen = ({ navigation, route }) => {
                   //Style={{ flexGrow: 1 }}
                 />
               ) : null}
+              <Pressable onPress={() => navigation.navigate('Browse routines')}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: 10,
+                    paddingHorizontal: 22,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      color: colors.darkmodeDisabledText,
+                      paddingRight: 8,
+                      fontWeight: '700',
+                    }}
+                  >
+                    {' '}
+                    Browse routines...
+                  </Text>
+                  {/* <FontAwesome
+                    name='bars'
+                    size={20}
+                    color={colors.darkmodeDisabledText}
+                    style={{
+                      shadowColor: colors.pastelBlue,
+                      shadowOpacity: 2,
+                      textShadowRadius: 4,
+                      textShadowOffset: { width: 2, height: 2 },
+                    }}
+                  /> */}
+                </View>
+              </Pressable>
             </View>
           )}
           <View style={[styles.titleContainer, { marginTop: 20 }]}>
-            <Text style={styles.titleText}>Custom routines:</Text>
+            <Text style={[styles.titleText]}>Custom routines</Text>
             {/* <MaterialCommunityIcons
                 style={{ marginTop: 3 }}
                 name="gesture-swipe-left"
@@ -480,6 +512,48 @@ const MyRoutinesScreen = ({ navigation, route }) => {
                   //contentContainerStyle={{ flexGrow: 1 }}
                 />
               ) : null}
+              <Animatable.View
+                animation={route.params ? 'tada' : null}
+                duration={1200}
+                // iterationCount={2}
+                delay={800}
+                useNativeDriver={true}
+              >
+                <Pressable onPress={() => navigation.navigate('Add routine')}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: 10,
+                      paddingHorizontal: 22,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 18,
+                        color: colors.darkmodeDisabledText,
+                        paddingRight: 8,
+                        fontWeight: '700',
+                      }}
+                    >
+                      {' '}
+                      New custom routine...
+                    </Text>
+                    <Octicons
+                      name='plus'
+                      size={18}
+                      color={colors.darkmodeDisabledText}
+                      style={{
+                        shadowColor: colors.pastelBlue,
+                        shadowOpacity: 2,
+                        textShadowRadius: 4,
+                        textShadowOffset: { width: 2, height: 2 },
+                      }}
+                    />
+                  </View>
+                </Pressable>
+              </Animatable.View>
             </View>
           )}
         </View>
@@ -489,6 +563,9 @@ const MyRoutinesScreen = ({ navigation, route }) => {
   );
 };
 const styles = StyleSheet.create({
+  headerAddButton: {
+    paddingRight: 15,
+  },
   button: {
     //
     justifyContent: 'center',
@@ -536,6 +613,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   routineListItemContainer: {
+    alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: colors.darkmodeDisabledBlack,
     padding: 10,
@@ -552,9 +630,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   titleText: {
+    color: colors.darkmodeMediumWhite,
     textAlign: 'center',
-    fontSize: 22,
-    color: colors.darkmodeHighWhite,
+    fontSize: 20,
+    fontWeight: '700',
   },
 });
 
