@@ -40,7 +40,7 @@ export default (title) => {
           removed: false,
         });
       } else {
-        roubineRef.update({ Roubies: increment });
+        roubineRef.update({ Roubies: increment, Exp: increment });
         userRoutines.doc(title).set(
           {
             ComboFrequency: '2',
@@ -48,7 +48,7 @@ export default (title) => {
             StartDate: new Date(),
             UserAlertTime: 7,
             days: '{"0":0,"1":1,"2":1,"3":1,"4":1,"5":1,"6":0}',
-            routineTimes: '[{"key":1,"hours":10,"minutes":30}]',
+            routineTimes: '[{"key":1,"hours":10,"minutes":30,"isDone":false}]',
             UserRoutineRank: 'Rookie',
             removed: false,
             RoutineDifficulty: routineDifficulty ? routineDifficulty : null,

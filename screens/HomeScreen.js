@@ -27,7 +27,7 @@ const HomeScreen = ({ navigation }) => {
   const [showModal, setShowModal] = useState(false);
   let nowDate = new Date();
 
-  const getDailyRewardTime = () => {
+  const checkDailyRewardTime = () => {
     db.collection('Users')
       .doc(auth.currentUser.uid)
       .get()
@@ -52,6 +52,8 @@ const HomeScreen = ({ navigation }) => {
             });
           setShowModal(true);
           console.log('Eligible for daily reward!!');
+          resetRoutinesIsDone('routines');
+          resetRoutinesIsDone('customRoutines');
         } else {
           console.log('Not eligible for daily reward!');
         }
@@ -59,8 +61,47 @@ const HomeScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    getDailyRewardTime();
+    checkDailyRewardTime();
   }, []);
+
+  const resetRoutinesIsDone = (routineType) => {
+    db.collection('Users')
+      .doc(auth.currentUser.uid)
+      .collection(routineType)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          let times = [];
+
+          db.collection('Users')
+            .doc(auth.currentUser.uid)
+            .collection(routineType)
+            .doc(doc.id)
+            .get()
+            .then((doc) => {
+              times = JSON.parse(doc.data().routineTimes);
+              // console.log(JSON.parse(doc.data().routineTimes));
+            });
+
+          setTimeout(() => {
+            for (let i = 0; i < times.length; i++) {
+              times[i].isDone = false;
+            }
+
+            db.collection('Users')
+              .doc(auth.currentUser.uid)
+              .collection(routineType)
+              .doc(doc.id)
+              .update({
+                routineTimes: JSON.stringify(times),
+              })
+              .then(() => {
+                console.log('IsDone updated!');
+              });
+          }, 500);
+        });
+      });
+  };
 
   // const user = auth.currentUser;
 
@@ -109,7 +150,7 @@ const HomeScreen = ({ navigation }) => {
         }
       >
         <MaterialCommunityIcons
-          name='baseball'
+          name="baseball"
           size={70}
           color={colors.samRed}
         />
@@ -117,7 +158,7 @@ const HomeScreen = ({ navigation }) => {
       </TouchableOpacity>
       <TouchableOpacity style={styles.button}>
         <MaterialCommunityIcons
-          name='clock-time-eight'
+          name="clock-time-eight"
           size={70}
           color={colors.samRed}
           onPress={() =>
@@ -133,7 +174,7 @@ const HomeScreen = ({ navigation }) => {
         }
       >
         <MaterialCommunityIcons
-          name='baseball'
+          name="baseball"
           size={70}
           color={colors.samRed}
         />
@@ -156,7 +197,7 @@ const HomeScreen = ({ navigation }) => {
             delay={500}
             duration={1000}
             fade
-            staticType='zoom'
+            staticType="zoom"
           >
             <View style={styles.centeredView}>
               <View
@@ -181,7 +222,7 @@ const HomeScreen = ({ navigation }) => {
                   <Text style={styles.roubieText}>+50</Text>
                   <FontAwesome
                     style={{ marginTop: 5, marginLeft: 5 }}
-                    name='diamond'
+                    name="diamond"
                     size={30}
                     color={colors.samRed}
                   />
@@ -193,7 +234,7 @@ const HomeScreen = ({ navigation }) => {
 
                 <AppButton
                   style={styles.buttonReward}
-                  title='Okay!'
+                  title="Okay!"
                   onPress={() => setShowModal(false)}
                 />
               </View>

@@ -9,8 +9,10 @@ import {
   Image,
 } from 'react-native';
 import { db, auth } from '../firebase';
-import colors from '../config/colors';
 import { Icon } from 'react-native-elements';
+
+import firebase from 'firebase/app';
+import colors from '../config/colors';
 
 const timeToString = (time) => {
   const date = new Date(time);
@@ -19,10 +21,19 @@ const timeToString = (time) => {
 
 function CalendarScreen() {
   const [items, setItems] = useState({});
+  const [addedRoutines, setAddedRoutines] = useState([]);
 
   const userId = auth.currentUser.uid;
 
   let allRoutinesData = [];
+  let routinesThatHaveBeenAdded = [];
+
+  const checkNumber = (number) => {
+    if (number < 10) {
+      number = '0' + number.toString();
+    }
+    return number;
+  };
 
   const getItems = (routineType) => {
     db.collection('Users')
@@ -31,56 +42,83 @@ function CalendarScreen() {
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          let today = new Date();
-          let day = new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate()
-          );
-          let times = JSON.parse(doc.data().routineTimes);
-          const days = JSON.parse(doc.data().days);
+          if (!getIfRoutineHasBeenAdded(doc.id)) {
+            let today = new Date();
+            let day = new Date(
+              today.getFullYear(),
+              today.getMonth(),
+              today.getDate()
+            );
+            let times = JSON.parse(doc.data().routineTimes);
+            const days = JSON.parse(doc.data().days);
+            if (!doc.data().removed) {
+              const daysCurrent = {};
+              let daysDateStrings = [];
 
-          if (!doc.data().removed) {
-            const daysCurrent = {};
-            let daysDateStrings = [];
-
-            let firstDayFound = false;
-            let x = 1;
-            //förlänger daysobjektet och gör så att det börjar på dagens datum
-            for (let o = 0; o < 2; o++) {
-              for (let i = 0; i < 7; i++) {
-                //förläng objektet så det har 30+ items
-                if (firstDayFound) {
-                  daysCurrent[x] = days[i];
-                  x++;
-                }
-                if (i === today.getDay() && !firstDayFound) {
-                  daysCurrent[0] = days[i]; //köra getDay så man vet vart i objektet man ska börja
-                  firstDayFound = true;
+              let firstDayFound = false;
+              let x = 1;
+              //förlänger daysobjektet och gör så att det börjar på dagens datum
+              for (let o = 0; o < 2; o++) {
+                for (let i = 0; i < 7; i++) {
+                  //förläng objektet så det har 30+ items
+                  if (firstDayFound) {
+                    daysCurrent[x] = days[i];
+                    x++;
+                  }
+                  if (i === today.getDay() && !firstDayFound) {
+                    daysCurrent[0] = days[i]; //köra getDay så man vet vart i objektet man ska börja
+                    firstDayFound = true;
+                  }
                 }
               }
-            }
-            for (let i = 0; i < 10; i++) {
-              //loopar igenom objektet med items och kollar true/false
-              day.setDate(day.getDate() + 1);
-              if (daysCurrent[i] === 1) {
-                daysDateStrings.push(day.toISOString().split('T')[0]); //ny array där alla de datum i dateStrings listas
+              for (let i = 0; i < 10; i++) {
+                //loopar igenom objektet med items och kollar true/false
+                day.setDate(day.getDate() + 1);
+                if (daysCurrent[i] === 1) {
+                  daysDateStrings.push(day.toISOString().split('T')[0]); //ny array där alla de datum i dateStrings listas
+                }
+              }
+              //lägger till flera om man har flera tider för rutinen
+              for (let i = 0; i < times.length; i++) {
+                for (let x = 0; x < daysDateStrings.length; x++) {
+                  allRoutinesData.push({
+                    routineName: doc.id,
+                    dates: daysDateStrings[x],
+                    isDone: doc.data().isDone,
+                    times: times[i],
+                  });
+                }
               }
             }
-            //lägger till flera om man har flera tider för rutinen
-            for (let i = 0; i < times.length; i++) {
-              for (let x = 0; x < daysDateStrings.length; x++) {
-                allRoutinesData.push({
-                  routineName: doc.id,
-                  dates: daysDateStrings[x],
-                  isDone: doc.data().isDone,
-                  times: times[i],
-                });
-              }
-            }
+            routinesThatHaveBeenAdded.push({
+              name: doc.id,
+              type: routineType,
+            });
+            setAddedRoutines(routinesThatHaveBeenAdded);
           }
         });
       });
+  };
+
+  const getIfRoutineHasBeenAdded = (routineName) => {
+    let hasBeenAdded = false;
+
+    for (let i = 0; i < routinesThatHaveBeenAdded.length; i++) {
+      if (routineName == routinesThatHaveBeenAdded[i].name) {
+        hasBeenAdded = true;
+      }
+    }
+    return hasBeenAdded;
+  };
+
+  const getRoutineType = (routineName) => {
+    let routineType = '';
+    for (let i = 0; i < addedRoutines.length; i++) {
+      if (routineName === addedRoutines[i].name) {
+        routineType = addedRoutines[i].type;
+      }
+    }
+    return routineType;
   };
 
   const loadItems = () => {
@@ -93,6 +131,7 @@ function CalendarScreen() {
         let routinesDoneForThatDay = [];
         let routineHoursThatDay = [];
         let routineMinutesThatDay = [];
+        let routineTimesKey = [];
 
         // console.log(allRoutinesData.length);
         // for (let i = 0; i < routinestimes.length; i++) {
@@ -110,7 +149,8 @@ function CalendarScreen() {
             const hoursThatDay = allRoutinesData[i].times.hours;
             const minutesThatDay = allRoutinesData[i].times.minutes;
             const notes = allRoutinesData[i].notes;
-            const isDone = allRoutinesData[i].isDone;
+            const isDone = allRoutinesData[i].times.isDone;
+            const key = allRoutinesData[i].times.key;
 
             if (strTime === strTimeCompare) {
               routinesNameThatDay.push(routineNames);
@@ -118,6 +158,7 @@ function CalendarScreen() {
               routinesDoneForThatDay.push(isDone);
               routineHoursThatDay.push(hoursThatDay);
               routineMinutesThatDay.push(minutesThatDay);
+              routineTimesKey.push(key);
             }
           }
 
@@ -131,8 +172,13 @@ function CalendarScreen() {
                 dayNotes: notesForThatDay[i],
                 ItemisDone: routinesDoneForThatDay[i],
                 itemTime: strTime,
-                timeToDo: `${routineHoursThatDay[i]}:${routineMinutesThatDay[i]}`,
+                timeToDo: `${checkNumber(routineHoursThatDay[i])}:${checkNumber(
+                  routineMinutesThatDay[i]
+                )}`,
+                hours: routineHoursThatDay[i],
+                minutes: routineMinutesThatDay[i],
                 height: 100,
+                timeKey: routineTimesKey[i],
                 // height: Math.max(50, Math.floor(Math.random() * 150)),
               });
             }
@@ -150,7 +196,7 @@ function CalendarScreen() {
         });
         // console.log(newItems);
         setItems(newItems);
-      }, 1000);
+      }, 500);
     } catch (e) {
       console.log('Något gick fel!');
     }
@@ -165,12 +211,12 @@ function CalendarScreen() {
       const todayCheck = new Date().toISOString().split('T')[0];
       const itemTimeCompare = item.itemTime;
 
-      if (!item.ItemisDone && todayCheck == itemTimeCompare) {
+      if (!item.ItemisDone && todayCheck === itemTimeCompare) {
         {
           return (
             <TouchableOpacity
               style={[styles.item, { height: item.height }]}
-              onPress={() =>
+              onPress={() => {
                 Alert.alert(
                   item.name,
                   item.dayNotes,
@@ -189,8 +235,8 @@ function CalendarScreen() {
                     cancelable: true,
                     onDismiss: () => console.log('Dismissed'),
                   }
-                )
-              }
+                );
+              }}
             >
               <View style={styles.box}>
                 <Text style={styles.fonts}>{item.name}</Text>
@@ -199,11 +245,14 @@ function CalendarScreen() {
                   source={require('../assets/RoutinesPics/WaterDrinking.png')}
                 />
               </View>
-              <Text style={styles.timeSheet}>{item.timeToDo}</Text>
+              <Text style={styles.timeSheet}>
+                {' '}
+                {checkNumber(item.hours)}:{checkNumber(item.minutes)}
+              </Text>
             </TouchableOpacity>
           );
         }
-      } else if (item.ItemisDone && todayCheck == itemTimeCompare) {
+      } else if (item.ItemisDone && todayCheck === itemTimeCompare) {
         return (
           <View style={[styles.itemDone, { height: item.height }]}>
             <View style={styles.box}>
@@ -247,19 +296,55 @@ function CalendarScreen() {
     //Sätter item till annan render i logiken under loadItems
     item.ItemisDone = true;
 
+    let doneTime = [
+      {
+        key: item.timeKey,
+        hours: item.hours,
+        minutes: item.minutes,
+        isDone: true,
+      },
+    ];
+    let times = [];
+    let newTimes = [];
+
     db.collection('Users')
       .doc(userId)
-      .collection('routines')
+      .collection(getRoutineType(routineName))
       .doc(routineName)
-      .update({
-        isDone: true,
+      .get()
+      .then((doc) => {
+        times = JSON.parse(doc.data().routineTimes);
+        // console.log(JSON.parse(doc.data().routineTimes));
       });
 
+    const increment = firebase.firestore.FieldValue.increment(1);
+    db.collection('Users')
+      .doc(userId)
+      .update({ Roubies: increment, Exp: increment });
+
+    setTimeout(() => {
+      for (let i = 0; i < times.length; i++) {
+        if (times[i].key == item.timeKey) {
+          times[i].isDone = true;
+        }
+        console.log('times[i].key): ' + times[i].key);
+        console.log('item.timeKey: ' + item.timeKey);
+        console.log('times.length: ' + times.length);
+      }
+      console.log(times);
+      db.collection('Users')
+        .doc(userId)
+        .collection(getRoutineType(routineName))
+        .doc(routineName)
+        .update({
+          routineTimes: JSON.stringify(times),
+        });
+    }, 500);
     allRoutinesData = [];
     getItems('routines');
     getItems('customRoutines');
     loadItems();
-    renderItem();
+    renderItem(item);
   };
 
   const [refreshing, setRefresh] = useState(false);
