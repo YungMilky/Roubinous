@@ -799,6 +799,37 @@ function RoutinesScreen({ navigation }) {
     );
   };
 
+  function searchFilterFunction(text) {
+    setSearch(text);
+
+    if (text) {
+      const searchItems = items.filter((item) => {
+        const itemData = item.title.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      const searchLockedItems = lockedItems.filter((item) => {
+        const itemData = item.title.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      const searchAlreadyAddedItems = alreadyAddeditems.filter((item) => {
+        const itemData = item.title.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setItems(searchItems);
+      setLockedItems(searchLockedItems);
+      setAlreadyAddedItems(searchAlreadyAddedItems);
+    } else {
+      clearSearchFilter();
+    }
+  }
+
+  function clearSearchFilter() {
+    listItems();
+  }
+
   const placeholderData = [
     {
       key: 0,
@@ -956,7 +987,8 @@ function RoutinesScreen({ navigation }) {
             <View style={{ alignItems: 'center', paddingTop: 2 }}>
               <SearchBar
                 placeholder="Search routines..."
-                onChangeText={setSearch}
+                onChangeText={searchFilterFunction}
+                onClear={clearSearchFilter}
                 value={search}
                 containerStyle={{
                   borderTopLeftRadius: 15,
