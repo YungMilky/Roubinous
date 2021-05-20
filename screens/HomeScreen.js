@@ -21,10 +21,12 @@ import { TouchableWithoutFeedback } from 'react-native';
 import AppButton from '../components/AppButton';
 import InfographicPopup from '../components/InfographicPopup';
 import { SimpleAnimation } from 'react-native-simple-animations';
+import { useIsFocused } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('screen');
 const HomeScreen = ({ navigation }) => {
   const [showModal, setShowModal] = useState(false);
+  const [name, setName] = useState(false);
   let nowDate = new Date();
 
   const checkDailyRewardTime = () => {
@@ -35,6 +37,7 @@ const HomeScreen = ({ navigation }) => {
         const date = documentSnapshot.data().DailyRewardDay;
         const month = documentSnapshot.data().DailyRewardMonth;
         const year = documentSnapshot.data().DailyRewardYear;
+        setName(documentSnapshot.data().Name);
 
         if (
           date < nowDate.getDate() ||
@@ -60,9 +63,10 @@ const HomeScreen = ({ navigation }) => {
       });
   };
 
+  const isFocused = useIsFocused();
   useEffect(() => {
     checkDailyRewardTime();
-  }, []);
+  }, [isFocused]);
 
   const resetRoutinesIsDone = (routineType) => {
     db.collection('Users')
@@ -141,45 +145,55 @@ const HomeScreen = ({ navigation }) => {
         />
         <Text>Profile Page</Text>
       </TouchableOpacity> */}
-      <InfographicPopup />
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() =>
-          navigation.navigate('Browse routines', { screen: 'Browse routines' })
-        }
-      >
-        <MaterialCommunityIcons
-          name="baseball"
-          size={70}
-          color={colors.samRed}
-        />
-        <Text style={styles.buttonText}>Browse Routines</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button}>
-        <MaterialCommunityIcons
-          name="clock-time-eight"
-          size={70}
-          color={colors.samRed}
+      {/* <InfographicPopup /> */}
+      <Image style={styles.logo} source={require('../assets/icons/ruby.png')} />
+      <Text style={styles.nameText}>Good day {name}!</Text>
+      <Text style={styles.separator}>
+        ───────────────────────────────────────────
+      </Text>
+      <View>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('Calendars', { screen: 'Calendars' })
+          }
+          style={styles.routineButtonContainer}
+        >
+          <MaterialCommunityIcons
+            name="checkbox-marked-outline"
+            size={35}
+            color={colors.samRed}
+          />
+          <Text style={styles.routineButtonText}>Check Routines</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('Browse routines', {
+              screen: 'Browse routines',
+            })
+          }
+          style={styles.routineButtonContainer}
+        >
+          <MaterialCommunityIcons
+            name="bell-plus-outline"
+            size={35}
+            color={colors.samRed}
+          />
+          <Text style={styles.routineButtonText}>Add Routines</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
           onPress={() =>
             navigation.navigate('My Routines', { screen: 'My Routines' })
           }
-        />
-        <Text style={styles.buttonText}>My Routines</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() =>
-          navigation.navigate('Calendars', { screen: 'Calendars' })
-        }
-      >
-        <MaterialCommunityIcons
-          name="baseball"
-          size={70}
-          color={colors.samRed}
-        />
-        <Text style={styles.buttonText}>Calendars</Text>
-      </TouchableOpacity>
+          style={styles.routineButtonContainer}
+        >
+          <MaterialCommunityIcons
+            name="weight-lifter"
+            size={35}
+            color={colors.samRed}
+          />
+          <Text style={styles.routineButtonText}>My Routines</Text>
+        </TouchableOpacity>
+      </View>
       {showModal && (
         <Modal
           style={{
@@ -254,6 +268,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 22,
   },
+  logo: {
+    width: 150,
+    height: 150,
+    marginBottom: 50,
+  },
   modalText: {
     //
     marginBottom: 15,
@@ -313,6 +332,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  nameText: {
+    fontSize: 30,
+    color: colors.darkmodeMediumWhite,
+    fontWeight: 'bold',
+  },
   rowButton: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -337,6 +361,23 @@ const styles = StyleSheet.create({
   roubieText: {
     fontSize: 30,
     color: colors.darkmodeHighWhite,
+  },
+
+  routineButtonContainer: {
+    flexDirection: 'row',
+    margin: 20,
+  },
+  routineButtonText: {
+    fontSize: 24,
+    color: colors.samRed,
+    fontWeight: 'bold',
+    marginTop: 3,
+    marginLeft: 20,
+  },
+  separator: {
+    fontSize: 10,
+    color: colors.darkmodeMediumWhite,
+    margin: 10,
   },
   text: {
     fontSize: 25,

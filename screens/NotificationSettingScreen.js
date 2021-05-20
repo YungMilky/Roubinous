@@ -101,17 +101,15 @@ const NotificationSettingScreen = ({ navigation }) => {
       setExpoPushToken(token)
     );
 
-    notificationListener.current = Notifications.addNotificationReceivedListener(
-      (notification) => {
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
-      }
-    );
+      });
 
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(
-      (response) => {
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
         console.log(response);
-      }
-    );
+      });
 
     return () => {
       Notifications.removeNotificationSubscription(notificationListener);
@@ -232,13 +230,8 @@ const NotificationSettingScreen = ({ navigation }) => {
     await CancelAllNotifications();
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: 'This is a daily notification',
-        body:
-          'You should get this at: ' +
-          selectedDate.getHours() +
-          ':' +
-          checkNumber(selectedDate.getMinutes()) +
-          ' , now do your routines stupid!',
+        title: 'Roubine',
+        body: 'Dont forget to do your routines!',
         data: { data: 'goes here' },
       },
       trigger: {
@@ -281,9 +274,8 @@ const NotificationSettingScreen = ({ navigation }) => {
 async function registerForPushNotificationsAsync() {
   let token;
   if (Constants.isDevice) {
-    const {
-      status: existingStatus,
-    } = await Notifications.getPermissionsAsync();
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
     if (existingStatus !== 'granted') {
       const { status } = await Notifications.requestPermissionsAsync();

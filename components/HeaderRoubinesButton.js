@@ -36,13 +36,9 @@ const headerRoubinesButton = () => {
     <View style={styles.groupButton}>
       {/* <TouchableOpacity onPress={() => navigation.navigate('TimosShop')}> */}
       <View style={styles.container}>
-        {/* <Image
-            style={styles.logo}
-            source={require('../assets/icons/ruby.png')}
-          /> */}
         <AppText style={styles.apptext}>{roubies}</AppText>
         <FontAwesome
-          style={{ marginTop: 14, marginRight: -5 }}
+          style={{ marginTop: 14, marginRight: -10, marginLeft: 2 }}
           name="diamond"
           size={20}
           color={'#a30010'}
@@ -55,10 +51,6 @@ const headerRoubinesButton = () => {
           style={{ paddingRight: 10 }}
           onPress={() => navigation.navigate('Settings')}
         >
-          {/* <Image
-        style={{ width: 26, height: 26 }}
-        source={require('./assets/icons/tune-vertical.png')}
-      /> */}
           <Octicons
             name="settings"
             size={26}
@@ -96,7 +88,6 @@ const styles = StyleSheet.create({
   separator: {
     width: 1,
     height: 25,
-    // backgroundColor: '#bf2a39',
     marginTop: 12,
     marginLeft: 15,
     marginRight: 10,

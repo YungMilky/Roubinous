@@ -218,11 +218,12 @@ function CalendarScreen() {
               style={[styles.item, { height: item.height }]}
               onPress={() => {
                 Alert.alert(
+                  'Are you done this routine?',
                   item.name,
-                  item.dayNotes,
+                  //item.dayNotes,
                   [
                     {
-                      text: 'Nope',
+                      text: 'No',
                       onPress: () => console.log('Nope Pressed'),
                       style: 'cancel',
                     },
@@ -364,6 +365,12 @@ function CalendarScreen() {
       // minDate={new Date() }
       onRefresh={onRefresh}
       refreshing={refreshing}
+      theme={{
+        agendaDayTextColor: colors.samRed,
+        agendaDayNumColor: colors.samRed,
+        agendaTodayColor: colors.samRed,
+        agendaKnobColor: colors.samRed,
+      }}
     />
   );
 }

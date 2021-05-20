@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   container: {
-    backgroundColor: colors.samBlack,
+    backgroundColor: colors.darkmodeLightBlack,
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,

@@ -135,8 +135,8 @@ const MyRoutinesScreen = ({ navigation, route }) => {
                         title: routineName,
                         days: doc.data().days,
                         descriptionArray:
-                          documentsnapshot.data().LongDescription,
-                        color: documentsnapshot.data().Color,
+                          documentsnapshot.data()?.LongDescription,
+                        color: documentsnapshot.data()?.Color,
                         image: true,
                         imageRoutine: urlRoutine,
                         fromMyRoutines: true,
@@ -155,8 +155,8 @@ const MyRoutinesScreen = ({ navigation, route }) => {
                         title: routineName,
                         days: doc.data().days,
                         descriptionArray:
-                          documentsnapshot.data().LongDescription,
-                        color: documentsnapshot.data().Color,
+                          documentsnapshot.data()?.LongDescription,
+                        color: documentsnapshot.data()?.Color,
                         image: false,
                         fromMyRoutines: true,
                       },
@@ -218,7 +218,7 @@ const MyRoutinesScreen = ({ navigation, route }) => {
               style={styles.routineListItemContainer}
             >
               <MaterialCommunityIcons
-                name='close'
+                name="close"
                 size={30}
                 color={colors.samRed}
               />
@@ -266,7 +266,7 @@ const MyRoutinesScreen = ({ navigation, route }) => {
                 }}
               >
                 <MaterialCommunityIcons
-                  name='pencil'
+                  name="pencil"
                   size={24}
                   color={colors.samBlue}
                 />
@@ -283,7 +283,7 @@ const MyRoutinesScreen = ({ navigation, route }) => {
                 style={{ paddingLeft: 4 }}
               >
                 <MaterialCommunityIcons
-                  name='close'
+                  name="close"
                   size={30}
                   color={colors.samRed}
                 />
@@ -327,7 +327,7 @@ const MyRoutinesScreen = ({ navigation, route }) => {
       >
         <MaterialCommunityIcons
           style={{ paddingRight: 14 }}
-          name='information-outline'
+          name="information-outline"
           size={25}
           color={colors.darkmodeHighWhite}
         />
@@ -340,7 +340,7 @@ const MyRoutinesScreen = ({ navigation, route }) => {
       {/* <ScrollView> */}
       <View styles={styles.flatlist}>
         <Modal
-          animationType='fade'
+          animationType="fade"
           transparent={true}
           visible={removeCustomModalVisible}
           onRequestClose={() => {
@@ -371,7 +371,7 @@ const MyRoutinesScreen = ({ navigation, route }) => {
           </View>
         </Modal>
         <Modal
-          animationType='fade'
+          animationType="fade"
           transparent={true}
           visible={removeOfficialModalVisible}
           onRequestClose={() => {
@@ -403,8 +403,9 @@ const MyRoutinesScreen = ({ navigation, route }) => {
         </Modal>
         <View style={styles.titleContainer}>
           <Text style={[styles.titleText]}>Official routines</Text>
+
           <Modal
-            animationType='fade'
+            animationType="fade"
             transparent={true}
             visible={infoModalVisible}
             onRequestClose={() => {
@@ -436,9 +437,45 @@ const MyRoutinesScreen = ({ navigation, route }) => {
         </View>
         <View>
           {officialRoutines.length < 1 ? (
-            <Text style={styles.text}>
-              You don't have any official routines.
-            </Text>
+            <View>
+              <Text style={styles.text}>
+                You don't have any official routines.
+              </Text>
+              <Pressable onPress={() => navigation.navigate('Browse routines')}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: 10,
+                    paddingHorizontal: 22,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      color: colors.darkmodeDisabledText,
+                      paddingRight: 8,
+                      fontWeight: '700',
+                    }}
+                  >
+                    {' '}
+                    Browse routines...
+                  </Text>
+                  {/* <FontAwesome
+                name='bars'
+                size={20}
+                color={colors.darkmodeDisabledText}
+                style={{
+                  shadowColor: colors.pastelBlue,
+                  shadowOpacity: 2,
+                  textShadowRadius: 4,
+                  textShadowOffset: { width: 2, height: 2 },
+                }}
+              /> */}
+                </View>
+              </Pressable>
+            </View>
           ) : (
             <View styles={styles.flatlist}>
               {typeof officialRoutines != 'undefined' ? (
@@ -490,12 +527,6 @@ const MyRoutinesScreen = ({ navigation, route }) => {
           )}
           <View style={[styles.titleContainer, { marginTop: 20 }]}>
             <Text style={[styles.titleText]}>Custom routines</Text>
-            {/* <MaterialCommunityIcons
-                style={{ marginTop: 3 }}
-                name="gesture-swipe-left"
-                size={18}
-                color={colors.darkmodeHighWhite}
-              /> */}
           </View>
           {customRoutines.length < 1 ? (
             <Text style={styles.text}>You don't have any custom routines.</Text>
@@ -509,53 +540,51 @@ const MyRoutinesScreen = ({ navigation, route }) => {
                   updateCellsBatchingPeriod={0}
                   windowSize={5}
                   extraData={refresh}
-                  //contentContainerStyle={{ flexGrow: 1 }}
                 />
               ) : null}
-              <Animatable.View
-                animation={route.params ? 'tada' : null}
-                duration={1200}
-                // iterationCount={2}
-                delay={800}
-                useNativeDriver={true}
-              >
-                <Pressable onPress={() => navigation.navigate('Add routine')}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: 10,
-                      paddingHorizontal: 22,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 18,
-                        color: colors.darkmodeDisabledText,
-                        paddingRight: 8,
-                        fontWeight: '700',
-                      }}
-                    >
-                      {' '}
-                      New custom routine...
-                    </Text>
-                    <Octicons
-                      name='plus'
-                      size={18}
-                      color={colors.darkmodeDisabledText}
-                      style={{
-                        shadowColor: colors.pastelBlue,
-                        shadowOpacity: 2,
-                        textShadowRadius: 4,
-                        textShadowOffset: { width: 2, height: 2 },
-                      }}
-                    />
-                  </View>
-                </Pressable>
-              </Animatable.View>
             </View>
           )}
+          <Animatable.View
+            animation={route.params ? 'tada' : null}
+            duration={1200}
+            delay={800}
+            useNativeDriver={true}
+          >
+            <Pressable onPress={() => navigation.navigate('Add routine')}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: 10,
+                  paddingHorizontal: 22,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: colors.darkmodeDisabledText,
+                    paddingRight: 8,
+                    fontWeight: '700',
+                  }}
+                >
+                  {' '}
+                  New custom routine...
+                </Text>
+                <Octicons
+                  name="plus"
+                  size={18}
+                  color={colors.darkmodeDisabledText}
+                  style={{
+                    shadowColor: colors.pastelBlue,
+                    shadowOpacity: 2,
+                    textShadowRadius: 4,
+                    textShadowOffset: { width: 2, height: 2 },
+                  }}
+                />
+              </View>
+            </Pressable>
+          </Animatable.View>
         </View>
       </View>
       {/* </ScrollView> */}

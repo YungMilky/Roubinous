@@ -394,7 +394,7 @@ function RoutinesScreen({ navigation }) {
       //   ]}
       // >
       <Animatable.View
-        animation='zoomIn'
+        animation="zoomIn"
         duration={200}
         useNativeDriver={true}
         style={[
@@ -688,7 +688,7 @@ function RoutinesScreen({ navigation }) {
       //   ]}
       // >
       <Animatable.View
-        animation='zoomIn'
+        animation="zoomIn"
         duration={200}
         useNativeDriver={true}
         style={[
@@ -827,15 +827,15 @@ function RoutinesScreen({ navigation }) {
         speed={6}
         width={width}
         height={150}
-        viewBox='0 24 405 100'
+        viewBox="0 24 405 100"
         backgroundColor={colors.darkmodeLightBlack}
         foregroundColor={colors.darkmodeDisabledBlack}
       >
         <Rect
-          x='17'
-          y='22'
-          rx='16'
-          ry='16'
+          x="17"
+          y="22"
+          rx="16"
+          ry="16"
           width={width * 0.89}
           height={ITEM_HEIGHT * 0.78}
         />
@@ -863,7 +863,7 @@ function RoutinesScreen({ navigation }) {
           >
             <View style={{ alignItems: 'center', paddingTop: 2 }}>
               <SearchBar
-                placeholder='Search routines...'
+                placeholder="Search routines..."
                 // onChangeText={setSearch}
                 // value={search}
                 containerStyle={{
@@ -901,7 +901,7 @@ function RoutinesScreen({ navigation }) {
               </AppText>
               <View style={itemStyles.makeYourOwnRoutinePlus}>
                 <AntDesign
-                  name='plus'
+                  name="plus"
                   size={28}
                   color={colors.darkmodeHighWhite}
                 />
@@ -933,9 +933,29 @@ function RoutinesScreen({ navigation }) {
               height: height * 0.77,
             }}
           >
+            <TouchableHighlight
+              activeOpacity={0.9}
+              underlayColor={colors.white}
+              onPressOut={() =>
+                navigation.navigate('My Routines', makeYourOwnRoutine)
+              }
+            >
+              <View style={itemStyles.makeYourOwnRoutine}>
+                <AppText style={itemStyles.makeYourOwnRoutineText}>
+                  Make your own routine
+                </AppText>
+                <View style={itemStyles.makeYourOwnRoutinePlus}>
+                  <AntDesign
+                    name="plus"
+                    size={28}
+                    color={colors.darkmodeHighWhite}
+                  />
+                </View>
+              </View>
+            </TouchableHighlight>
             <View style={{ alignItems: 'center', paddingTop: 2 }}>
               <SearchBar
-                placeholder='Search routines...'
+                placeholder="Search routines..."
                 onChangeText={setSearch}
                 value={search}
                 containerStyle={{
@@ -1004,27 +1024,6 @@ function RoutinesScreen({ navigation }) {
               updateCellsBatchingPeriod={0}
               windowSize={5}
             />
-
-            <TouchableHighlight
-              activeOpacity={0.9}
-              underlayColor={colors.white}
-              onPressOut={() =>
-                navigation.navigate('My Routines', makeYourOwnRoutine)
-              }
-            >
-              <View style={itemStyles.makeYourOwnRoutine}>
-                <AppText style={itemStyles.makeYourOwnRoutineText}>
-                  Make your own routine
-                </AppText>
-                <View style={itemStyles.makeYourOwnRoutinePlus}>
-                  <AntDesign
-                    name='plus'
-                    size={28}
-                    color={colors.darkmodeHighWhite}
-                  />
-                </View>
-              </View>
-            </TouchableHighlight>
           </ScrollView>
         </View>
       </Screen>

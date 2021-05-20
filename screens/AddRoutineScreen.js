@@ -129,7 +129,6 @@ const AddRoutineScreen = ({ navigation }) => {
                 days: JSON.stringify(days),
                 routineTimes: JSON.stringify(times),
                 removed: false,
-                isDone: false,
               })
               .then(() => {
                 const increment = firebase.firestore.FieldValue.increment(10);
@@ -299,11 +298,6 @@ const AddRoutineScreen = ({ navigation }) => {
                 />
               </View>
             ) : null}
-            {/* <FontAwesome5
-              name="tune"
-              size={30}
-              color={colors.darkmodeHighWhite}
-            /> */}
             <EvilIcons
               name="navicon"
               size={33}

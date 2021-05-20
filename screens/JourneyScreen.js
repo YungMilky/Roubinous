@@ -4,12 +4,13 @@ import PropTypes from 'prop-types';
 import { db, auth } from '../firebase';
 import { useIsFocused } from '@react-navigation/native';
 import { Divider } from 'react-native-elements';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
+import { ScrollView } from 'react-native-gesture-handler';
 
 import colors from '../config/colors';
 import Screen from '../components/Screen';
-import { ScrollView } from 'react-native-gesture-handler';
-import Separator from '../components/Separator';
+import AppButton from '../components/AppButton';
+import { TouchableOpacity } from 'react-native';
 
 const JourneyScreen = ({ navigation }) => {
   const [totalRoubies, setTotalRoubies] = useState('');
@@ -62,7 +63,7 @@ const JourneyScreen = ({ navigation }) => {
       .doc(user.uid)
       .get()
       .then((documentSnapshot) => {
-        setTotalRoubies(documentSnapshot.data().Exp);
+        setTotalRoubies(documentSnapshot.data().Roubies);
       });
   };
   const isFocused = useIsFocused();
@@ -107,6 +108,34 @@ const JourneyScreen = ({ navigation }) => {
       <Text style={styles.separator}>───────────────────────────────</Text>
       {/* </View> */}
       {/* </ScrollView> */}
+      {/* <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('Browse routines', {
+            screen: 'Browse routines',
+          })
+        }
+        style={styles.routineButtonContainer}
+      >
+        <MaterialCommunityIcons
+          name="bell-plus-outline"
+          size={35}
+          color={colors.samRed}
+        />
+        <Text style={styles.routineButtonText}>Add Routines</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('My Routines', { screen: 'My Routines' })
+        }
+        style={styles.routineButtonContainer}
+      >
+        <MaterialCommunityIcons
+          name="weight-lifter"
+          size={35}
+          color={colors.samRed}
+        />
+        <Text style={styles.routineButtonText}>My Routines</Text>
+      </TouchableOpacity> */}
     </Screen>
   );
 };
@@ -124,6 +153,17 @@ const styles = StyleSheet.create({
   bigNumberText: {
     fontSize: 50,
     color: colors.darkmodeHighWhite,
+  },
+  routineButtonContainer: {
+    flexDirection: 'row',
+    margin: 5,
+  },
+  routineButtonText: {
+    fontSize: 24,
+    color: colors.samRed,
+    fontWeight: 'bold',
+    marginTop: 3,
+    marginLeft: 20,
   },
   routineInfo: {
     flexDirection: 'row',

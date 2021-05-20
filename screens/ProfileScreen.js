@@ -46,13 +46,12 @@ const ProfileScreen = ({ navigation }) => {
         setGuest(documentSnapshot.data().Guest);
       });
   };
-  // useEffect(() => {
-  //   getUserInfo();
-  // }, []);
+
   const isFocused = useIsFocused();
   useEffect(() => {
     getUserInfo();
   }, [isFocused]);
+
   return (
     <Screen style={styles.container}>
       <ScrollView>
@@ -61,16 +60,9 @@ const ProfileScreen = ({ navigation }) => {
             rounded
             size="large"
             source={{
-              uri:
-                'https://png.pngtree.com/png-vector/20190803/ourlarge/pngtree-avatar-user-basic-abstract-circle-background-flat-color-icon-png-image_1647265.jpg',
+              uri: 'https://png.pngtree.com/png-vector/20190803/ourlarge/pngtree-avatar-user-basic-abstract-circle-background-flat-color-icon-png-image_1647265.jpg',
             }}
           />
-          {/* <MaterialCommunityIcons
-            name="account-circle-outline"
-            size={80}
-            color={colors.darkmodeMediumWhite}
-          /> */}
-
           <View style={styles.topTextContainer}>
             <Text style={styles.name}>{name}</Text>
             <Text style={styles.description}>Rank: {userRank}</Text>
@@ -123,37 +115,38 @@ const ProfileScreen = ({ navigation }) => {
                   <Text style={styles.buttonText}>Log in</Text>
                 </TouchableOpacity>
               </View>
-              {/* <TouchableOpacity onPress={signOutUser}>
-                  <Text style={styles.link}>I want to Logout</Text>
-                </TouchableOpacity> */}
             </View>
           )}
 
           <View style={styles.separator} />
-          {/* <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.rowButton}
-              onPress={() => navigation.navigate('My Routines')}
-            >
-              <MaterialCommunityIcons
-                name="clock-time-eight"
-                size={60}
-                color={colors.samRed}
-              />
-              <Text style={styles.buttonText}>My Routines</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.rowButton}
-              onPress={() => navigation.navigate('Journey')}
-            >
-              <MaterialCommunityIcons
-                name="run"
-                size={60}
-                color={colors.samRed}
-              />
-              <Text style={styles.buttonText}>My Journey</Text>
-            </TouchableOpacity>
-          </View> */}
+          {/* <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('Browse routines', {
+                screen: 'Browse routines',
+              })
+            }
+            style={styles.routineButtonContainer}
+          >
+            <MaterialCommunityIcons
+              name="bell-plus-outline"
+              size={35}
+              color={colors.samRed}
+            />
+            <Text style={styles.routineButtonText}>Add Routines</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('My Routines', { screen: 'My Routines' })
+            }
+            style={styles.routineButtonContainer}
+          >
+            <MaterialCommunityIcons
+              name="weight-lifter"
+              size={35}
+              color={colors.samRed}
+            />
+            <Text style={styles.routineButtonText}>My Routines</Text>
+          </TouchableOpacity> */}
         </View>
       </ScrollView>
     </Screen>
@@ -204,6 +197,18 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: colors.darkmodeMediumWhite,
     fontWeight: '600',
+  },
+  routineButtonContainer: {
+    flexDirection: 'row',
+    margin: 5,
+    marginTop: 20,
+  },
+  routineButtonText: {
+    fontSize: 24,
+    color: colors.samRed,
+    fontWeight: 'bold',
+    marginTop: 3,
+    marginLeft: 20,
   },
   rowButton: {
     justifyContent: 'center',

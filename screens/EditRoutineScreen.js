@@ -79,11 +79,11 @@ const EditRoutineScreen = ({ navigation, route }) => {
         const newTimes = times;
         newTimes[clickedTime].hours = currentDate.getHours();
         newTimes[clickedTime].minutes = currentDate.getMinutes();
+        newTimes[clickedTime].isDone = false;
         setTimes(newTimes);
         setRefresh(!refresh);
       }
     } else {
-      //cancel button clicked
       console.log('Cancel button pressed');
     }
   };
@@ -119,7 +119,7 @@ const EditRoutineScreen = ({ navigation, route }) => {
           });
         collection
           .doc(name)
-          .update({
+          .set({
             routine: name,
             shortDescription: shortDescription,
             days: JSON.stringify(days),
@@ -196,12 +196,10 @@ const EditRoutineScreen = ({ navigation, route }) => {
       });
   };
 
-  //kör getRoutineInfo enbart om man ändrar rutin i dropdownpickern (om value-hooken ändrar värde)
   useEffect(() => {
     getRoutineInfo();
   }, [value]);
 
-  //hämtar det valda namnet i dropdownpickern och hämtar fälten för den rutinen
   const getRoutineInfo = () => {
     if (value === 'empty') {
       console.log('value is empty');
@@ -273,11 +271,6 @@ const EditRoutineScreen = ({ navigation, route }) => {
                 />
               </View>
             ) : null}
-            {/* <FontAwesome5
-              name="tune"
-              size={30}
-              color={colors.darkmodeHighWhite}
-            /> */}
             <EvilIcons
               name="navicon"
               size={33}
